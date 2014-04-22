@@ -4,7 +4,7 @@
  * and open the template in the editor.
  */
 
-package sim.app.bouties;
+package sim.app.bounties;
 
 /**
  *
