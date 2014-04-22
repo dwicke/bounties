@@ -4,14 +4,12 @@
  * and open the template in the editor.
  */
 
-package sim.app.bouties;
+package sim.app.bounties;
 
 /**
  *
  * @author drew
  */
 public class Blah {
- public static void main(String[] args){
-     System.out.println("hi i know how to hellow world");
- }   
+    
 }
