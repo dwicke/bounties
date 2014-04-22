@@ -12,7 +12,7 @@ import sim.portrayal.grid.*;
 import java.awt.*;
 import javax.swing.*;
 
-public class BountiesWithUI extends GUIState
+public class BWithUI extends GUIState
     {
     public Display2D display;
     public JFrame displayFrame;
