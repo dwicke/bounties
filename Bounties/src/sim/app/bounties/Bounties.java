@@ -7,7 +7,7 @@
 package sim.app.bounties;
 
 import sim.engine.*;
-//import static sim.engine.SimState.doLoop;
+import static sim.engine.SimState.doLoop;
 import sim.field.grid.*;
 import sim.util.*;
 
@@ -152,7 +152,7 @@ public /*strictfp*/ class Bounties extends SimState
 
         for(int x=0; x < numAnts; x++)
             {
-            Bounties ant = new Bounties(reward);
+            Robot ant = new Robot(3L);
             buggrid.setObjectLocation(ant,(HOME_XMAX+HOME_XMIN)/2,(HOME_YMAX+HOME_YMIN)/2);
             schedule.scheduleRepeating(Schedule.EPOCH + x, 0, ant, 1);
             }

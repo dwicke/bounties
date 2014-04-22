@@ -28,8 +28,8 @@ public class BountiesWithUI extends GUIState
         new BountiesWithUI().createController();
         }
     
-    public AntsForageWithUI() { super(new AntsForage(System.currentTimeMillis())); }
-    public AntsForageWithUI(SimState state) { super(state); }
+    public BountiesWithUI() { super(new Bounties(System.currentTimeMillis())); }
+    public BountiesWithUI(SimState state) { super(state); }
     
     // allow the user to inspect the model
     public Object getSimulationInspectedObject() { return state; }  // non-volatile
@@ -38,13 +38,13 @@ public class BountiesWithUI extends GUIState
     
     public void setupPortrayals()
         {
-        AntsForage af = (AntsForage)state;
+        Bounties af = (Bounties)state;
 
         // tell the portrayals what to portray and how to portray them
         homePheromonePortrayal.setField(af.toHomeGrid);
         homePheromonePortrayal.setMap(new sim.util.gui.SimpleColorMap(
                 0,
-                AntsForage.LIKELY_MAX_PHEROMONE,
+                Bounties.LIKELY_MAX_PHEROMONE,
                 // home pheromones are beneath all, just make them opaque
                 Color.white, //new Color(0,255,0,0),
                 new Color(0,255,0,255) )
@@ -52,7 +52,7 @@ public class BountiesWithUI extends GUIState
         foodPheromonePortrayal.setField(af.toFoodGrid);
         foodPheromonePortrayal.setMap(new sim.util.gui.SimpleColorMap(
                 0,
-                AntsForage.LIKELY_MAX_PHEROMONE,
+                Bounties.LIKELY_MAX_PHEROMONE,
                 new Color(0,0,255,0),
                 new Color(0,0,255,255) )
             { public double filterLevel(double level) { return Math.sqrt(Math.sqrt(level)); } } );  // map with custom level filtering
