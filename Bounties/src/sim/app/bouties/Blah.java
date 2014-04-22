@@ -11,5 +11,7 @@ package sim.app.bouties;
  * @author drew
  */
 public class Blah {
-    
+ public static void main(String[] args){
+     System.out.println("hi i know how to hellow world");
+ }   
 }
