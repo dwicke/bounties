@@ -4,7 +4,7 @@
   See the file "LICENSE" for more information
 */
 
-package sim.app.bouties;
+package sim.app.bounties;
 
 import sim.engine.*;
 //import static sim.engine.SimState.doLoop;
