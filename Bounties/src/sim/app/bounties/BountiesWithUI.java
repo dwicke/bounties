@@ -17,11 +17,9 @@ public class BountiesWithUI extends GUIState
     public Display2D display;
     public JFrame displayFrame;
 
-    FastValueGridPortrayal2D homePheromonePortrayal = new FastValueGridPortrayal2D("Home Pheromone");
-    FastValueGridPortrayal2D foodPheromonePortrayal = new FastValueGridPortrayal2D("Food Pheromone");
-    FastValueGridPortrayal2D sitesPortrayal = new FastValueGridPortrayal2D("Site", true);  // immutable
-    FastValueGridPortrayal2D obstaclesPortrayal = new FastValueGridPortrayal2D("Obstacle", true);  // immutable
-    SparseGridPortrayal2D bugPortrayal = new SparseGridPortrayal2D();
+    FastValueGridPortrayal2D goalsPortrayal = new FastValueGridPortrayal2D("Site", true);  // immutable
+    FastValueGridPortrayal2D tasksPortrayal = new FastValueGridPortrayal2D("Obstacle", true);  // immutable
+    SparseGridPortrayal2D robotPortrayal = new SparseGridPortrayal2D();
                 
     public static void main(String[] args)
         {
@@ -34,41 +32,28 @@ public class BountiesWithUI extends GUIState
     // allow the user to inspect the model
     public Object getSimulationInspectedObject() { return state; }  // non-volatile
 
-    public static String getName() { return "Ant Foraging"; }
+    public static String getName() { return "Bounties"; }
     
     public void setupPortrayals()
         {
-        Bounties af = (Bounties)state;
+        Bounties bounties = (Bounties)state;
 
         // tell the portrayals what to portray and how to portray them
-        homePheromonePortrayal.setField(af.toHomeGrid);
-        homePheromonePortrayal.setMap(new sim.util.gui.SimpleColorMap(
-                0,
-                Bounties.LIKELY_MAX_PHEROMONE,
-                // home pheromones are beneath all, just make them opaque
-                Color.white, //new Color(0,255,0,0),
-                new Color(0,255,0,255) )
-            { public double filterLevel(double level) { return Math.sqrt(Math.sqrt(level)); } } );  // map with custom level filtering
-        foodPheromonePortrayal.setField(af.toFoodGrid);
-        foodPheromonePortrayal.setMap(new sim.util.gui.SimpleColorMap(
-                0,
-                Bounties.LIKELY_MAX_PHEROMONE,
-                new Color(0,0,255,0),
-                new Color(0,0,255,255) )
-            { public double filterLevel(double level) { return Math.sqrt(Math.sqrt(level)); } } );  // map with custom level filtering
-        sitesPortrayal.setField(af.sites);
-        sitesPortrayal.setMap(new sim.util.gui.SimpleColorMap(
+        
+        goalsPortrayal.setField(bounties.sites);
+        goalsPortrayal.setMap(new sim.util.gui.SimpleColorMap(
                 0,
                 1,
                 new Color(0,0,0,0),
                 new Color(255,0,0,255) ));
-        obstaclesPortrayal.setField(af.obstacles);
-        obstaclesPortrayal.setMap(new sim.util.gui.SimpleColorMap(
+        
+        tasksPortrayal.setField(bounties.obstacles);
+        tasksPortrayal.setMap(new sim.util.gui.SimpleColorMap(
                 0,
                 1,
                 new Color(0,0,0,0),
                 new Color(128,64,64,255) ));
-        bugPortrayal.setField(af.buggrid);
+        robotPortrayal.setField(bounties.robotgrid);
             
         // reschedule the displayer
         display.reset();
@@ -102,11 +87,10 @@ public class BountiesWithUI extends GUIState
         displayFrame.setVisible(true);
 
         // attach the portrayals from bottom to top
-        display.attach(homePheromonePortrayal,"Pheromones To Home");
-        display.attach(foodPheromonePortrayal,"Pheromones To Food");
-        display.attach(sitesPortrayal,"Site Locations");
-        display.attach(obstaclesPortrayal,"Obstacles");
-        display.attach(bugPortrayal,"Agents");
+        
+        display.attach(goalsPortrayal,"Goal Locations");
+        display.attach(tasksPortrayal,"Tasks");
+        display.attach(robotPortrayal,"Agents");
         
         // specify the backdrop color  -- what gets painted behind the displays
         display.setBackdrop(Color.white);
