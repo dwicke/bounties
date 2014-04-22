@@ -152,7 +152,7 @@ public /*strictfp*/ class Bounties extends SimState
 
         for(int x=0; x < numAnts; x++)
             {
-            Robot ant = new Robot(3L);
+            Robot ant = new Robot(reward);
             buggrid.setObjectLocation(ant,(HOME_XMAX+HOME_XMIN)/2,(HOME_YMAX+HOME_YMIN)/2);
             schedule.scheduleRepeating(Schedule.EPOCH + x, 0, ant, 1);
             }
