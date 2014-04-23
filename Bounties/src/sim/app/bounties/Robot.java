@@ -202,7 +202,7 @@ public class Robot extends OvalPortrayal2D implements Steppable
         last = location;
         }
 
-    public void step( final SimState state )
+    public void step( final SimState state ) //called by scheduler each time step
         {
         depositPheromone(state);
         act(state);
