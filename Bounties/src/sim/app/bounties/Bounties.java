@@ -65,7 +65,7 @@ public class Bounties extends SimState {
                 this.random);
         
         for (int i = 0; i < tasksLocs.numObjs; i++) {
-            tasksGrid.setObjectLocation(tasksLocs.objs[i], ((Task)tasksLocs.objs[i]).getLoc());
+            tasksGrid.setObjectLocation(tasksLocs.objs[i], ((Task)tasksLocs.objs[i]).getLocation());
         }
         
         

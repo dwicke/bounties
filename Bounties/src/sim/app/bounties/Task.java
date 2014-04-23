@@ -44,7 +44,7 @@ public class Task extends OvalPortrayal2D {
     public void setID(int id){
         this.id = id; 
     }
-    public Int2D getLoc() {
+    public Int2D getLocation() {
         return initialLocation;
     }
     public void setLoc(Int2D loc) {

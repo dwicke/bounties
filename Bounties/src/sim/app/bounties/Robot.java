@@ -77,11 +77,13 @@ public class Robot extends OvalPortrayal2D implements Steppable {
 
     public void step(final SimState state) {
         final Bounties af = (Bounties) state;
-        bondsman = af.bondsman;// set the bondsman
+        bondsman = af.bondsman; // set the bondsman
         
-        gotoPosition(state, ((Task)af.tasksGrid.allObjects.objs[0]).getLoc());
-        if(hasTaskItem){
-             gotoPosition(state, ((Task)af.tasksGrid.allObjects.objs[0]).getLoc());
+        
+        if(hasTaskItem){// if I have it goto the goal
+            gotoPosition(state, curGoal.getLocation());
+        }else if (curTask != null) {
+            gotoPosition(state, curTask.getLocation());
         }else{
             decideTask();
         }
@@ -90,6 +92,8 @@ public class Robot extends OvalPortrayal2D implements Steppable {
     public void decideTask(){
         //consult q table
         //myQTable.getBestAction(0);
+        
+        // must set the goal and task 
     }
     // a few tweaks by Sean
     private Color noTaskColor = Color.black;
