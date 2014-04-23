@@ -61,7 +61,7 @@ public class Bounties extends SimState {
         Bag goalLocs = bondsman.initGoals(new Int2D(tasksGrid.getWidth(), tasksGrid.getHeight()),
                 this.random);
         for (int i = 0; i < goalLocs.numObjs; i++) {
-            tasksGrid.setObjectLocation(goalLocs.objs[i], ((Goal)goalLocs.objs[i]).getLocation());
+            goalsGrid.setObjectLocation(goalLocs.objs[i], ((Goal)goalLocs.objs[i]).getLocation());
         }
         
         tasksGrid = new SparseGrid2D(GRID_WIDTH, GRID_HEIGHT);

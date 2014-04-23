@@ -48,7 +48,7 @@ public class Bondsman implements Steppable {
     }
     
     public Bag initGoals(Int2D field, MersenneTwisterFast rand) {
-        for (int i = 0; i < numTasks; i++) {
+        for (int i = 0; i < numGoals; i++) {
             Goal t = new Goal();
             t.setLocation(new Int2D(rand.nextInt(field.x), rand.nextInt(field.y)));
             t.setId(i);
