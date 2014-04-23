@@ -14,6 +14,7 @@ import sim.util.*;
 
 public class Bounties extends SimState
     {
+    
     private static final long serialVersionUID = 1;
 
     public static final int GRID_HEIGHT = 100;
@@ -33,6 +34,7 @@ public class Bounties extends SimState
     public static final int TASK_IDS[] = {1, 2, 3, 4, 5};
     public static final int GOAL_IDS[] = {1, 2, 3, 4, 5};    
         
+    public Bondsman bondsman = new Bondsman();// robots will publish their task to the bondsman. robots can then grab tasks form the bondsman
     public int numRobots = 2;
         
         

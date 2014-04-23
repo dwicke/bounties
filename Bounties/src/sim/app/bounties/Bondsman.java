@@ -15,6 +15,16 @@ import sim.util.Bag;
  */
 public class Bondsman {
     public Bondsman(){}
-    Bag tasks = new Bag();
-    
+    private Bag tasks = new Bag();
+    public Bag getTasks(){
+        return tasks;
+    }
+    public void addTask(Task a){
+        tasks.add(a);
+    }
+    public void incrementBounty(){
+        for(int i = 0; i< tasks.size(); i++){
+            ((Task)tasks.objs[i]).incrementCurrentReward();
+        }
+    }
 }
