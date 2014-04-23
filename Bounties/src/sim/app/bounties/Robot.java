@@ -44,7 +44,7 @@ public class Robot extends OvalPortrayal2D implements Steppable
         {
         final Bounties af = (Bounties)state;
                 
-        Int2D location = af.buggrid.getObjectLocation(this);
+        Int2D location = af.robotgrid.getObjectLocation(this);
         int x = location.x;
         int y = location.y;
                 
@@ -93,12 +93,10 @@ public class Robot extends OvalPortrayal2D implements Steppable
         {
         final Bounties af = (Bounties)state;
                 
-        Int2D location = af.buggrid.getObjectLocation(this);
+        Int2D location = af.robotgrid.getObjectLocation(this);
         int x = location.x;
         int y = location.y;
-                
-        if (hasFoodItem)  // follow home pheromone
-            {
+       
             double max = Bounties.IMPOSSIBLY_BAD_PHEROMONE;
             int max_x = x;
             int max_y = y;
@@ -125,80 +123,9 @@ public class Robot extends OvalPortrayal2D implements Steppable
                         max_y = _y;
                         }
                     }
-            if (max == 0 && last != null)  // nowhere to go!  Maybe go straight
-                {
-                if (state.random.nextBoolean(af.momentumProbability))
-                    {
-                    int xm = x + (x - last.x);
-                    int ym = y + (y - last.y);
-                    if (xm >= 0 && xm < Bounties.GRID_WIDTH && ym >= 0 && ym < Bounties.GRID_HEIGHT && af.obstacles.field[xm][ym] == 0)
-                        { max_x = xm; max_y = ym; }
-                    }
-                }
-            else if (state.random.nextBoolean(af.randomActionProbability))  // Maybe go randomly
-                {
-                int xd = (state.random.nextInt(3) - 1);
-                int yd = (state.random.nextInt(3) - 1);
-                int xm = x + xd;
-                int ym = y + yd;
-                if (!(xd == 0 && yd == 0) && xm >= 0 && xm < Bounties.GRID_WIDTH && ym >= 0 && ym < Bounties.GRID_HEIGHT && af.obstacles.field[xm][ym] == 0)
-                    { max_x = xm; max_y = ym; }
-                }
-            af.buggrid.setObjectLocation(this, new Int2D(max_x, max_y));
-            if (af.sites.field[max_x][max_y] == Bounties.HOME)  // reward me next time!  And change my status
-                { reward = af.reward ; hasFoodItem = ! hasFoodItem; }
-            }
-        else
-            {
-            double max = Bounties.IMPOSSIBLY_BAD_PHEROMONE;
-            int max_x = x;
-            int max_y = y;
-            int count = 2;
-            for(int dx = -1; dx < 2; dx++)
-                for(int dy = -1; dy < 2; dy++)
-                    {
-                    int _x = dx+x;
-                    int _y = dy+y;
-                    if ((dx == 0 && dy == 0) ||
-                        _x < 0 || _y < 0 ||
-                        _x >= Bounties.GRID_WIDTH || _y >= Bounties.GRID_HEIGHT || 
-                        af.obstacles.field[_x][_y] == 1) continue;  // nothing to see here
-                    double m = af.toFoodGrid.field[_x][_y];
-                    if (m > max)
-                        {
-                        count = 2;
-                        }
-                    // no else, yes m > max is repeated
-                    if (m > max || (m == max && state.random.nextBoolean(1.0 / count++)))  // this little magic makes all "==" situations equally likely
-                        {
-                        max = m;
-                        max_x = _x;
-                        max_y = _y;
-                        }
-                    }
-            if (max == 0 && last != null)  // nowhere to go!  Maybe go straight
-                {
-                if (state.random.nextBoolean(af.momentumProbability))
-                    {
-                    int xm = x + (x - last.x);
-                    int ym = y + (y - last.y);
-                    if (xm >= 0 && xm < Bounties.GRID_WIDTH && ym >= 0 && ym < Bounties.GRID_HEIGHT && af.obstacles.field[xm][ym] == 0)
-                        { max_x = xm; max_y = ym; }
-                    }
-                }
-            else if (state.random.nextBoolean(af.randomActionProbability))  // Maybe go randomly
-                {
-                int xd = (state.random.nextInt(3) - 1);
-                int yd = (state.random.nextInt(3) - 1);
-                int xm = x + xd;
-                int ym = y + yd;
-                if (!(xd == 0 && yd == 0) && xm >= 0 && xm < Bounties.GRID_WIDTH && ym >= 0 && ym < Bounties.GRID_HEIGHT && af.obstacles.field[xm][ym] == 0)
-                    { max_x = xm; max_y = ym; }
-                }
-            af.buggrid.setObjectLocation(this, new Int2D(max_x, max_y));
-            if (af.sites.field[max_x][max_y] == Bounties.FOOD)  // reward me next time!  And change my status
-                { reward = af.reward; hasFoodItem = ! hasFoodItem; }
-            }
+        
+            af.robotgrid.setObjectLocation(this, new Int2D(max_x, max_y));
+            
         last = location;
         }
 
