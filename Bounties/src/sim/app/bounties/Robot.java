@@ -70,17 +70,17 @@ public class Robot extends OvalPortrayal2D implements Steppable {
     }
     public void decideTask(){
         //consult q table
-        myQTable.getBestAction(0);
+        //myQTable.getBestAction(0);
     }
     // a few tweaks by Sean
-    private Color noFoodColor = Color.black;
-    private Color foodColor = Color.red;
+    private Color noTaskColor = Color.black;
+    private Color hasTaskColor = Color.red;
 
     public final void draw(Object object, Graphics2D graphics, DrawInfo2D info) {
         if (hasTaskItem) {
-            graphics.setColor(foodColor);
+            graphics.setColor(hasTaskColor);
         } else {
-            graphics.setColor(noFoodColor);
+            graphics.setColor(noTaskColor);
         }
 
         // this code was stolen from OvalPortrayal2D

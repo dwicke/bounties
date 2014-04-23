@@ -20,10 +20,10 @@ public class BountiesWithUI extends GUIState {
     // each type of ball has a particular goal location.  So, ball type 1 has goal location 1
     // ball type 2 has goal location 2.  There can be multiple balls of type 1 but they
     // may be of different tasks but they each must be brought to goal location 1.
-    FastValueGridPortrayal2D goalsPortrayal = new FastValueGridPortrayal2D("Goals Grid", true);  // immutable
+    SparseGridPortrayal2D goalsPortrayal = new SparseGridPortrayal2D();  // immutable
 
     // the grid that displays the balls.
-    FastValueGridPortrayal2D ballGridPortrayal = new FastValueGridPortrayal2D("Ball Grid", false);
+    SparseGridPortrayal2D ballGridPortrayal = new SparseGridPortrayal2D();
     SparseGridPortrayal2D robotPortrayal = new SparseGridPortrayal2D();
 
     public static void main(String[] args) {
@@ -51,20 +51,12 @@ public class BountiesWithUI extends GUIState {
         Bounties bounties = (Bounties) state;
 
         // tell the portrayals what to portray and how to portray them
-        goalsPortrayal.setField(bounties.goals);
-        goalsPortrayal.setMap(new sim.util.gui.SimpleColorMap(
-                0,// default so make it black
-                1,
-                new Color(0, 0, 0, 0),
-                new Color(255, 0, 0, 255)));
+        goalsPortrayal.setField(bounties.goalsGrid);
+        
 
-        ballGridPortrayal.setField(bounties.tasks);
+        ballGridPortrayal.setField(bounties.tasksGrid);
 
-        ballGridPortrayal.setMap(new sim.util.gui.SimpleColorMap(
-                0,// this is the default value so make it black
-                1,
-                new Color(0, 0, 0, 0),
-                new Color(128, 64, 64, 255)));
+        
 
         robotPortrayal.setField(bounties.robotgrid);
 

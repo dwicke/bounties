@@ -19,8 +19,6 @@ public class Bounties extends SimState {
 
     
     
-    public static final int TASK_IDS[] = {1}; //
-    public static final int GOAL_IDS[] = {1}; // for now only have one type of goal and ball    
         
     public Bondsman bondsman = new Bondsman();// robots will publish their task to the bondsman. robots can then grab tasks form the bondsman
     public int numRobots = 2;
@@ -38,8 +36,8 @@ public class Bounties extends SimState {
         }
     }
 
-    public IntGrid2D goals = new IntGrid2D(GRID_WIDTH, GRID_HEIGHT, 0);
-    public SparseGrid2D tasks = new SparseGrid2D(GRID_WIDTH, GRID_HEIGHT);
+    public SparseGrid2D goalsGrid = new SparseGrid2D(GRID_WIDTH, GRID_HEIGHT);
+    public SparseGrid2D tasksGrid = new SparseGrid2D(GRID_WIDTH, GRID_HEIGHT);
     public SparseGrid2D robotgrid = new SparseGrid2D(GRID_WIDTH, GRID_HEIGHT);
 
     
@@ -54,31 +52,38 @@ public class Bounties extends SimState {
     public void start() {
         super.start();  // clear out the schedule
 
+        bondsman = new Bondsman();
+        
         // make new grids
-        goals = new IntGrid2D(GRID_WIDTH, GRID_HEIGHT, 0);
+        goalsGrid = new SparseGrid2D(GRID_WIDTH, GRID_HEIGHT);
         
+        // get the goal locations from the bondsman.
+        Bag goalLocs = bondsman.initGoals(new Int2D(tasksGrid.getWidth(), tasksGrid.getHeight()),
+                this.random);
+        for (int i = 0; i < goalLocs.numObjs; i++) {
+            tasksGrid.setObjectLocation(goalLocs.objs[i], ((Goal)goalLocs.objs[i]).getLocation());
+        }
         
+        tasksGrid = new SparseGrid2D(GRID_WIDTH, GRID_HEIGHT);
+        Bag tasksLocs = bondsman.initTasks(new Int2D(tasksGrid.getWidth(), tasksGrid.getHeight()),
+                this.random);
         
-        
-        tasks = new SparseGrid2D(GRID_WIDTH, GRID_HEIGHT);
-        
-        
-        
-        Bag tasks = bondsman.getInitialTasks();
-        for (int i = 0; i < tasks.numObjs; i++) {
-            
+        for (int i = 0; i < tasksLocs.numObjs; i++) {
+            tasksGrid.setObjectLocation(tasksLocs.objs[i], ((Task)tasksLocs.objs[i]).getLoc());
         }
         
         
         robotgrid = new SparseGrid2D(GRID_WIDTH, GRID_HEIGHT);
         for (int x = 0; x < numRobots; x++) {
-            Robot ant = new Robot();
+            Robot bot = new Robot();
             int xloc = random.nextInt(GRID_WIDTH);
             int yloc = random.nextInt(GRID_HEIGHT);
-            robotgrid.setObjectLocation(ant, xloc, yloc);
-            schedule.scheduleRepeating(Schedule.EPOCH + x, 0, ant, 1);
+            robotgrid.setObjectLocation(bot, xloc, yloc);
+            schedule.scheduleRepeating(Schedule.EPOCH + x, 0, bot, 1);
         }
 
+        // now schedule the bondsman so that it can add more tasks as needed.
+        schedule.scheduleRepeating(Schedule.EPOCH + numRobots, 0, bondsman, 1);
     }
 
     public static void main(String[] args) {

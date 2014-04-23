@@ -1,8 +1,12 @@
+package sim.app.bounties;
+
 
 /**
  * Very straight forward implementation of q-learning.
  */
-public class QTable {
+public class QTable implements java.io.Serializable {
+
+    private static final long serialVersionUID = 1;
 
     private int numStates, numActions;
     private double qtable[][];
