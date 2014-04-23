@@ -17,6 +17,8 @@ public class Bounties extends SimState {
     public static final int GRID_HEIGHT = 100;
     public static final int GRID_WIDTH = 100;
 
+    
+    
     public static final int TASK_IDS[] = {1}; //
     public static final int GOAL_IDS[] = {1}; // for now only have one type of goal and ball    
         
@@ -37,9 +39,14 @@ public class Bounties extends SimState {
     }
 
     public IntGrid2D goals = new IntGrid2D(GRID_WIDTH, GRID_HEIGHT, 0);
-    public IntGrid2D tasks = new IntGrid2D(GRID_WIDTH, GRID_HEIGHT, 0);
+    public SparseGrid2D tasks = new SparseGrid2D(GRID_WIDTH, GRID_HEIGHT);
     public SparseGrid2D robotgrid = new SparseGrid2D(GRID_WIDTH, GRID_HEIGHT);
 
+    
+    
+    
+    
+    
     public Bounties(long seed) {
         super(seed);
     }
@@ -49,8 +56,21 @@ public class Bounties extends SimState {
 
         // make new grids
         goals = new IntGrid2D(GRID_WIDTH, GRID_HEIGHT, 0);
+        
+        
+        
+        
+        tasks = new SparseGrid2D(GRID_WIDTH, GRID_HEIGHT);
+        
+        
+        
+        Bag tasks = bondsman.getInitialTasks();
+        for (int i = 0; i < tasks.numObjs; i++) {
+            
+        }
+        
+        
         robotgrid = new SparseGrid2D(GRID_WIDTH, GRID_HEIGHT);
-
         for (int x = 0; x < numRobots; x++) {
             Robot ant = new Robot();
             int xloc = random.nextInt(GRID_WIDTH);

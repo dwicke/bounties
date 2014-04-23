@@ -6,6 +6,8 @@
 
 package sim.app.bounties;
 
+import sim.engine.SimState;
+import sim.engine.Steppable;
 import sim.util.Bag;
 
 /**
