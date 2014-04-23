@@ -21,7 +21,14 @@ import sim.util.Int2D;
 public class Robot extends OvalPortrayal2D implements Steppable {
 
     private static final long serialVersionUID = 1;
+    public boolean hasTaskItem = false;
+    double reward = 0;
+    QTable myQtable;
+    int x;
+    int y;
 
+    Int2D last;
+    
     public boolean getHasTaskItem() {
         return hasTaskItem;
     }
@@ -29,33 +36,42 @@ public class Robot extends OvalPortrayal2D implements Steppable {
     public void setHasTaskItem(boolean val) {
         hasTaskItem = val;
     }
-    public boolean hasTaskItem = false;
-    double reward = 0;
-
-    int x;
-    int y;
-
-    Int2D last;
-
+  
+//TODO: initialize Q-table
+//update reward when task is done/failed
+//consult the qtable for a decision
     public Robot() {
+       // myQtable = new Qtable();
     }
 
-    public void act(final SimState state) {
+    public void act(final SimState state) { // exeucute task we're on if we have one
         final Bounties af = (Bounties) state;
 
         Int2D location = af.robotgrid.getObjectLocation(this);
         int x = location.x;
         int y = location.y;
-
+        
         // use this method to move the robot to the next robot    
         //af.robotgrid.setObjectLocation(this, new Int2D(max_x, max_y));
-        last = location;
+        last = location; //update last location?
+        
+        
+        
+        
     }
 
     public void step(final SimState state) {
-        act(state);
+        if(hasTaskItem){
+             act(state);//do the task we're on
+        }else{
+            decideTask();
+        }
+       
     }
-
+    public void decideTask(){
+        //consult q table
+        myQTable.getBestAction(0);
+    }
     // a few tweaks by Sean
     private Color noFoodColor = Color.black;
     private Color foodColor = Color.red;

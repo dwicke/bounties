@@ -23,19 +23,14 @@ public class Bounties extends SimState {
     public Bondsman bondsman = new Bondsman();// robots will publish their task to the bondsman. robots can then grab tasks form the bondsman
     public int numRobots = 2;
         
-        
-    // some properties
-    public int getNumAnts() { return numRobots; }
-    public void setNumAnts(int val) {if (val > 0) numRobots = val; }
 
-    public int numRobots = 2;
-
+    
     // some properties
-    public int getNumAnts() {
+    public int getNumRobots() {
         return numRobots;
     }
 
-    public void setNumAnts(int val) {
+    public void setNumRobots(int val) {
         if (val > 0) {
             numRobots = val;
         }
