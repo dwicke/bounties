@@ -29,7 +29,6 @@ public class Robot extends OvalPortrayal2D implements Steppable {
     int x;
     int y;
 
-    Int2D last;
     Bondsman bondsman;
     
     public boolean getHasTaskItem() {
@@ -53,33 +52,36 @@ public class Robot extends OvalPortrayal2D implements Steppable {
        // myQtable = new Qtable();
     }
 
-    public void act(final SimState state) { // exeucute task we're on if we have one
+    public void gotoPosition(final SimState state, Int2D position) { // exeucute task we're on if we have one
         final Bounties af = (Bounties) state;
         
         Int2D location = af.robotgrid.getObjectLocation(this);
         int x = location.x;
         int y = location.y;
         
-        
-        
-        
-        
-        
-        
-        // use this method to move the robot to the next robot    
-        //af.robotgrid.setObjectLocation(this, new Int2D(max_x, max_y));
-        last = location; //update last location?
-        
-        
-        
+        System.err.println("X loc " + x + " y loc:" + y + " goal x and y: " + position.toCoordinates());
+        // really simple first get inline with the x
+        if ((position.x - x) != 0) {
+            int unit = (position.x - x) / Math.abs(position.x - x);
+            af.robotgrid.setObjectLocation(this, new Int2D(x + unit, y));
+            return;
+        }
+        // then in y
+        if ((position.y - y) != 0) {
+            int unit = (y - position.y) / Math.abs(y - position.y);
+            af.robotgrid.setObjectLocation(this, new Int2D(x, y - unit));
+            return;
+        }
         
     }
 
     public void step(final SimState state) {
         final Bounties af = (Bounties) state;
         bondsman = af.bondsman;// set the bondsman
+        
+        gotoPosition(state, ((Task)af.tasksGrid.allObjects.objs[0]).getLoc());
         if(hasTaskItem){
-             act(state);//do the task we're on
+             gotoPosition(state, ((Task)af.tasksGrid.allObjects.objs[0]).getLoc());
         }else{
             decideTask();
         }
