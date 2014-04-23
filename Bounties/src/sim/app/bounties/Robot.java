@@ -34,13 +34,7 @@ public class Robot extends OvalPortrayal2D implements Steppable
     Int2D last;
         
     public Robot() {  }
-        
-        
-    // at present we have only one algorithm: value iteration.  I might
-    // revise this and add our alternate (TD) algorithm.  See the papers.
-        
-        
-    
+       
 
     public void act( final SimState state )
         {

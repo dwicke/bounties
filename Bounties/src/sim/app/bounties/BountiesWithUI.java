@@ -49,18 +49,20 @@ public class BountiesWithUI extends GUIState
         
         goalsPortrayal.setField(bounties.goals);
         goalsPortrayal.setMap(new sim.util.gui.SimpleColorMap(
-                0,
+                0,// default so make it black
                 1,
                 new Color(0,0,0,0),
                 new Color(255,0,0,255) ));
         
-        ballGridPortrayal.setField(bounties.obstacles);
+        ballGridPortrayal.setField(bounties.tasks);
         
         ballGridPortrayal.setMap(new sim.util.gui.SimpleColorMap(
-                0,
+                0,// this is the default value so make it black
                 1,
                 new Color(0,0,0,0),
                 new Color(128,64,64,255) ));
+        
+        
         robotPortrayal.setField(bounties.robotgrid);
             
         // reschedule the displayer

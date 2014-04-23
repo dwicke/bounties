@@ -35,6 +35,9 @@ public class Bounties extends SimState
     public IntGrid2D tasks = new IntGrid2D(GRID_WIDTH, GRID_HEIGHT,0);
     public SparseGrid2D robotgrid = new SparseGrid2D(GRID_WIDTH, GRID_HEIGHT);
     
+    
+    
+    
     public Bounties(long seed)
         { 
         super(seed);
@@ -47,20 +50,18 @@ public class Bounties extends SimState
         // make new grids
         goals = new IntGrid2D(GRID_WIDTH, GRID_HEIGHT,0);
         robotgrid = new SparseGrid2D(GRID_WIDTH, GRID_HEIGHT);
-
+        
         
         for(int x=0; x < numRobots; x++)
-            {
+        {
             Robot ant = new Robot();
-            robotgrid.setObjectLocation(ant,  ,  );
+            int xloc = random.nextInt(GRID_WIDTH);
+            int yloc = random.nextInt(GRID_HEIGHT);
+            robotgrid.setObjectLocation(ant, xloc, yloc);
             schedule.scheduleRepeating(Schedule.EPOCH + x, 0, ant, 1);
-            }
+        }
 
-        // Schedule evaporation to happen after the ants move and update
-        schedule.scheduleRepeating(Schedule.EPOCH,1, new Steppable()
-            {
-            public void step(SimState state) { toFoodGrid.multiply(evaporationConstant); toHomeGrid.multiply(evaporationConstant); }
-            }, 1);
+        
 
         }
 
