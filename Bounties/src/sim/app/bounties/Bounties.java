@@ -19,8 +19,8 @@ public class Bounties extends SimState {
 
     
     
-        
-    public Bondsman bondsman = new Bondsman();// robots will publish their task to the bondsman. robots can then grab tasks form the bondsman
+   
+    public Bondsman bondsman = new Bondsman();
     public int numRobots = 2;
         
 
@@ -41,10 +41,6 @@ public class Bounties extends SimState {
     public SparseGrid2D robotgrid = new SparseGrid2D(GRID_WIDTH, GRID_HEIGHT);
 
     
-    
-    
-    
-    
     public Bounties(long seed) {
         super(seed);
     }
@@ -52,7 +48,7 @@ public class Bounties extends SimState {
     public void start() {
         super.start();  // clear out the schedule
 
-        bondsman = new Bondsman();
+        
         
         // make new grids
         goalsGrid = new SparseGrid2D(GRID_WIDTH, GRID_HEIGHT);

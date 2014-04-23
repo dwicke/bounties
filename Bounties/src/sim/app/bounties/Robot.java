@@ -22,12 +22,15 @@ public class Robot extends OvalPortrayal2D implements Steppable {
 
     private static final long serialVersionUID = 1;
     public boolean hasTaskItem = false;
+    public Task curTask;
+    public Goal curGoal;
     double reward = 0;
     QTable myQtable;
     int x;
     int y;
 
     Int2D last;
+    Bondsman bondsman;
     
     public boolean getHasTaskItem() {
         return hasTaskItem;
@@ -36,6 +39,12 @@ public class Robot extends OvalPortrayal2D implements Steppable {
     public void setHasTaskItem(boolean val) {
         hasTaskItem = val;
     }
+
+    public Bondsman getBondsman() {
+        return bondsman;
+    }
+    
+    
   
 //TODO: initialize Q-table
 //update reward when task is done/failed
@@ -46,10 +55,16 @@ public class Robot extends OvalPortrayal2D implements Steppable {
 
     public void act(final SimState state) { // exeucute task we're on if we have one
         final Bounties af = (Bounties) state;
-
+        
         Int2D location = af.robotgrid.getObjectLocation(this);
         int x = location.x;
         int y = location.y;
+        
+        
+        
+        
+        
+        
         
         // use this method to move the robot to the next robot    
         //af.robotgrid.setObjectLocation(this, new Int2D(max_x, max_y));
@@ -61,6 +76,8 @@ public class Robot extends OvalPortrayal2D implements Steppable {
     }
 
     public void step(final SimState state) {
+        final Bounties af = (Bounties) state;
+        bondsman = af.bondsman;// set the bondsman
         if(hasTaskItem){
              act(state);//do the task we're on
         }else{
