@@ -31,6 +31,7 @@ public class Robot extends OvalPortrayal2D implements Steppable {
     }
     public boolean hasTaskItem = false;
     double reward = 0;
+    double totalReward = 0;
 
     int x;
     int y;
@@ -49,6 +50,9 @@ public class Robot extends OvalPortrayal2D implements Steppable {
 
         // use this method to move the robot to the next robot    
         //af.robotgrid.setObjectLocation(this, new Int2D(max_x, max_y));
+        
+        // check if at goal location if so ask bondsman for the reward
+        
         last = location;
     }
 
