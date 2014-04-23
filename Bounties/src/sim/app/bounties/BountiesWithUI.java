@@ -17,8 +17,15 @@ public class BountiesWithUI extends GUIState
     public Display2D display;
     public JFrame displayFrame;
 
-    FastValueGridPortrayal2D goalsPortrayal = new FastValueGridPortrayal2D("Site", true);  // immutable
-    FastValueGridPortrayal2D tasksPortrayal = new FastValueGridPortrayal2D("Obstacle", true);  // immutable
+    
+    // the goals grid displays the locations where balls can be dropped off at
+    // each type of ball has a particular goal location.  So, ball type 1 has goal location 1
+    // ball type 2 has goal location 2.  There can be multiple balls of type 1 but they
+    // may be of different tasks but they each must be brought to goal location 1.
+    FastValueGridPortrayal2D goalsPortrayal = new FastValueGridPortrayal2D("Goals Grid", true);  // immutable
+    
+    // the grid that displays the balls.
+    FastValueGridPortrayal2D ballGridPortrayal = new FastValueGridPortrayal2D("Ball Grid", false); 
     SparseGridPortrayal2D robotPortrayal = new SparseGridPortrayal2D();
                 
     public static void main(String[] args)
@@ -40,15 +47,16 @@ public class BountiesWithUI extends GUIState
 
         // tell the portrayals what to portray and how to portray them
         
-        goalsPortrayal.setField(bounties.sites);
+        goalsPortrayal.setField(bounties.goals);
         goalsPortrayal.setMap(new sim.util.gui.SimpleColorMap(
                 0,
                 1,
                 new Color(0,0,0,0),
                 new Color(255,0,0,255) ));
         
-        tasksPortrayal.setField(bounties.obstacles);
-        tasksPortrayal.setMap(new sim.util.gui.SimpleColorMap(
+        ballGridPortrayal.setField(bounties.obstacles);
+        
+        ballGridPortrayal.setMap(new sim.util.gui.SimpleColorMap(
                 0,
                 1,
                 new Color(0,0,0,0),
@@ -88,8 +96,8 @@ public class BountiesWithUI extends GUIState
 
         // attach the portrayals from bottom to top
         
-        display.attach(goalsPortrayal,"Goal Locations");
-        display.attach(tasksPortrayal,"Tasks");
+        display.attach(goalsPortrayal,"Goals");
+        display.attach(ballGridPortrayal,"Tasks");
         display.attach(robotPortrayal,"Agents");
         
         // specify the backdrop color  -- what gets painted behind the displays
