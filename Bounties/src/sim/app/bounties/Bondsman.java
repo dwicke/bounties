@@ -39,7 +39,7 @@ public class Bondsman implements Steppable {
             Task t = new Task();
             t.setID(i);
             t.setLoc(new Int2D(rand.nextInt(field.x), rand.nextInt(field.y)));
-            
+            t.setGoal((Goal)goals.objs[rand.nextInt(goals.numObjs)]);
             tasks.add(t);
         }
         
@@ -56,7 +56,6 @@ public class Bondsman implements Steppable {
             goals.add(t);
         }
         
-        
         return goals;
     }
     
@@ -72,14 +71,36 @@ public class Bondsman implements Steppable {
         }
     }
 
+    public int getTotalNumTasks() {
+        return tasks.size();
+    }
     
+    public Bag getAvailableTasks() {
+        Bag avail = new Bag();
+        for (int i = 0; i < tasks.size(); i++) {
+            if (((Task) tasks.objs[i]).getIsAvailable()) {
+                avail.add(tasks.objs[i]);
+            }
+        }
+        return avail;
+    }
+    
+    public void makeAvailable() {
+        for (int i = 0; i < tasks.size(); i++) {
+            if (((Task) tasks.objs[i]).isDone()) {
+                ((Task) tasks.objs[i]).setAvailable(true);
+                ((Task) tasks.objs[i]).setDone(false);
+            }
+        }
+    }
     
     @Override
     public void step(SimState state) {
         
-        incrementBounty();// increment the bounties
         
-        // reopen finished tasks
+        // reopen finished tasks (to be more realistic need a time a number of tics before add back in)
+        makeAvailable();
+        incrementBounty();// increment the bounties
         
     }
 
@@ -100,7 +121,8 @@ public class Bondsman implements Steppable {
     }
 
     void finishTask(Task curTask) {
-        
+        curTask.setDone(true);
+        curTask.resetReward(); // start it back at 0
     }
     
     

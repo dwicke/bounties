@@ -19,10 +19,19 @@ import sim.util.Int2D;
 public class Task extends OvalPortrayal2D {
     
     private int currentReward = 0; // controlled by bondsman to increase
-    private boolean done = false;
+    private boolean done = false; // true when at the goal false otherwise
     private boolean available = true;// true when a robot is not carrying and not at a goal it is false if not at the
     private Int2D initialLocation;// location
     private int id = 0;
+    private Goal goal;
+
+    public void setGoal(Goal goal) {
+        this.goal = goal;
+    }
+
+    public Goal getGoal() {
+        return goal;
+    }
     
     public boolean isDone(){
         return done;
@@ -78,6 +87,10 @@ public class Task extends OvalPortrayal2D {
         int width = (int) (info.draw.width);
         int height = (int) (info.draw.height);
         graphics.fillOval(x, y, width, height);
+    }
+
+    void resetReward() {
+        currentReward = 0;
     }
     
 }

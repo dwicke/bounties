@@ -72,6 +72,7 @@ public class Bounties extends SimState {
         robotgrid = new SparseGrid2D(GRID_WIDTH, GRID_HEIGHT);
         for (int x = 0; x < numRobots; x++) {
             Robot bot = new Robot();
+            bot.setId(x);
             int xloc = random.nextInt(GRID_WIDTH);
             int yloc = random.nextInt(GRID_HEIGHT);
             robotgrid.setObjectLocation(bot, xloc, yloc);

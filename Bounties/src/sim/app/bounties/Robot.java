@@ -12,6 +12,7 @@ import sim.engine.SimState;
 import sim.engine.Steppable;
 import sim.portrayal.DrawInfo2D;
 import sim.portrayal.simple.OvalPortrayal2D;
+import sim.util.Bag;
 import sim.util.Int2D;
 
 /**
@@ -21,10 +22,20 @@ import sim.util.Int2D;
 public class Robot extends OvalPortrayal2D implements Steppable {
 
     private static final long serialVersionUID = 1;
-    public boolean hasTaskItem = false;
-    public Task curTask;
-    public Goal curGoal;
-    double reward = 0;
+    boolean hasTaskItem = false;
+    Task curTask;
+    Task prevTask;
+    Goal curGoal;
+    double reward = 0;// what i will get by completing current task
+    double totalReward = 0;
+    double threshold = 0;
+    int id;
+    
+    // make a q-table for each task? and the states are values of the bounty
+    // we would use the dual q-learning again where we are learning the thresholds
+    // for the decision maker and
+    
+    // I guess just make it 5 states and one action take it
     QTable myQtable;
     int x;
     int y;
@@ -42,17 +53,28 @@ public class Robot extends OvalPortrayal2D implements Steppable {
     public Bondsman getBondsman() {
         return bondsman;
     }
+
+    public void setId(int id) {
+        this.id = id;
+    }
+
+    public int getId() {
+        return id;
+    }
+    public int getGoalID() {
+        return (curGoal != null) ? curGoal.id : -1;
+    }
     
+    public int getTaskID() {
+        return (curTask != null) ? curTask.getID() : -1;
+    }
     
   
 //TODO: initialize Q-table
 //update reward when task is done/failed
 //consult the qtable for a decision
     public Robot() {
-       // myQtable = new Qtable();
-       // 5 states (num tasks and 2 actions do it or not)
-       myQtable = new QTable(5, 2, .3, .4);
-        
+       
     }
 
     public boolean gotoPosition(final SimState state, Int2D position) { // exeucute task we're on if we have one
@@ -87,18 +109,32 @@ public class Robot extends OvalPortrayal2D implements Steppable {
         
         if(hasTaskItem){// if I have it goto the goal
             if(gotoPosition(state, curGoal.getLocation())) {
-                // we have made it to the goal so we should learn
-                // update q-table
                 // then we should tell the bondsman that we have done that task
                 bondsman.finishTask(curTask);
+                hasTaskItem = false;
+                prevTask = curTask; // set previous task to the one I finished
+                curTask = null; // set to null since not doing anytihng
+                
+            }
+        }else if (curTask != null) {
+            if (gotoPosition(state, curTask.getLocation())) {
+                hasTaskItem = true;
+                curTask.setAvailable(false);// i am taking it!
             }
             
-            
-        }else if (curTask != null) {
-            gotoPosition(state, curTask.getLocation());
-            
         }else{
-            decideTask();
+            if (myQtable == null) {
+                 myQtable = new QTable(bondsman.getTotalNumTasks(), 1, .7, .2);// focus on current reward
+                 // pick one randomly
+                 if (bondsman.getAvailableTasks().numObjs > 0) {
+                    curTask = (Task) bondsman.getAvailableTasks().objs[state.random.nextInt(bondsman.getAvailableTasks().numObjs)];
+                    curGoal = curTask.getGoal();
+                    reward = curTask.getCurrentReward();
+                 }
+                 return;
+            }
+            if (bondsman.getAvailableTasks().numObjs > 0)
+                decideTask();// don't pick a task if none available.
         }
         
         
@@ -108,16 +144,29 @@ public class Robot extends OvalPortrayal2D implements Steppable {
         //consult q table
         //myQTable.getBestAction(0);
         double max = 0;
-        
-        for (int i = 0; i < 5; i++) {
+        Bag availTasks = bondsman.getAvailableTasks();
+        int bestTaskIndex = 0;
+        for (int i = 0; i < availTasks.numObjs; i++) {
             
-            double cur = myQtable.getBestAction(x);
+            double cur = myQtable.getBestAction(((Task)availTasks.objs[i]).getID());
             if (cur > max) {
-                
+                bestTaskIndex = i;
+                max = cur;
             }
         }
         
-        // must set the goal and task 
+        System.err.println("Robot id " + id + " max Q:" + max + " val " + max * ( (Task) availTasks.objs[bestTaskIndex]).getCurrentReward());
+        // must set the goal and task if above threshold
+        if (max * ( (Task) availTasks.objs[bestTaskIndex]).getCurrentReward() >= threshold) {
+            // update the q-table now that we are transitioning
+            
+            curTask = (Task) availTasks.objs[bestTaskIndex];
+            curGoal = curTask.getGoal();
+            myQtable.update(prevTask.getID(), 0, reward, curTask.getID());
+            reward = curTask.getCurrentReward();
+            threshold += (threshold < 3) ? max : 0;// maybe?
+        }
+        
     }
     // a few tweaks by Sean
     private Color noTaskColor = Color.black;
