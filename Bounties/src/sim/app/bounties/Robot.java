@@ -141,8 +141,6 @@ public class Robot extends OvalPortrayal2D implements Steppable {
                 decideTask();// don't pick a task if none available.
         }
         
-        
-       
     }
     public void decideTask(){
         //consult q table

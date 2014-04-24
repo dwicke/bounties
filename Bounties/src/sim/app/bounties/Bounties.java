@@ -14,8 +14,8 @@ public class Bounties extends SimState {
 
     private static final long serialVersionUID = 1;
 
-    public static final int GRID_HEIGHT = 100;
-    public static final int GRID_WIDTH = 100;
+    public static final int GRID_HEIGHT = 40;
+    public static final int GRID_WIDTH = 60;
 
     
     
