@@ -20,15 +20,24 @@ public class Task extends OvalPortrayal2D {
     
     private int currentReward = 0; // controlled by bondsman to increase
     private boolean done = false;
-    private boolean available = true;
+    private boolean available = true;// true when a robot is not carrying and not at a goal it is false if not at the
     private Int2D initialLocation;// location
     private int id = 0;
+    
     public boolean isDone(){
         return done;
     }
     public void setDone(boolean val){
         done = val;
     }
+
+    public void setAvailable(boolean available) {
+        this.available = available;
+    }
+    public boolean getIsAvailable() {
+        return available;
+    }
+    
     public void setCurrentReward(int reward){
         currentReward = reward;
     }
@@ -57,7 +66,7 @@ public class Task extends OvalPortrayal2D {
     @Override
     public void draw(Object object, Graphics2D graphics, DrawInfo2D info) {
         super.draw(object, graphics, info);
-        if (!available)// then don't draw it
+        if (!getIsAvailable())// then don't draw it
             graphics.setColor(notAvailableColor);
          else 
             graphics.setColor(availableColor);

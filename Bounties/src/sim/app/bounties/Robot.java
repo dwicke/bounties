@@ -50,9 +50,12 @@ public class Robot extends OvalPortrayal2D implements Steppable {
 //consult the qtable for a decision
     public Robot() {
        // myQtable = new Qtable();
+       // 5 states (num tasks and 2 actions do it or not)
+       myQtable = new QTable(5, 2, .3, .4);
+        
     }
 
-    public void gotoPosition(final SimState state, Int2D position) { // exeucute task we're on if we have one
+    public boolean gotoPosition(final SimState state, Int2D position) { // exeucute task we're on if we have one
         final Bounties af = (Bounties) state;
         
         Int2D location = af.robotgrid.getObjectLocation(this);
@@ -61,18 +64,20 @@ public class Robot extends OvalPortrayal2D implements Steppable {
         
         System.err.println("X loc " + x + " y loc:" + y + " goal x and y: " + position.toCoordinates());
         // really simple first get inline with the x
-        if ((position.x - x) != 0) {
+        if (position.x != x) {
             int unit = (position.x - x) / Math.abs(position.x - x);
             af.robotgrid.setObjectLocation(this, new Int2D(x + unit, y));
-            return;
+            int newX = x + unit;
+            return (position.x == newX) && y == position.y;
         }
         // then in y
-        if ((position.y - y) != 0) {
+        if (position.y != y) {
             int unit = (y - position.y) / Math.abs(y - position.y);
             af.robotgrid.setObjectLocation(this, new Int2D(x, y - unit));
-            return;
+            int newY = y - unit;
+            return (position.x == x) && (newY == position.y);
         }
-        
+        return true;// we are there already
     }
 
     public void step(final SimState state) {
@@ -81,17 +86,36 @@ public class Robot extends OvalPortrayal2D implements Steppable {
         
         
         if(hasTaskItem){// if I have it goto the goal
-            gotoPosition(state, curGoal.getLocation());
+            if(gotoPosition(state, curGoal.getLocation())) {
+                // we have made it to the goal so we should learn
+                // update q-table
+                // then we should tell the bondsman that we have done that task
+                bondsman.finishTask(curTask);
+            }
+            
+            
         }else if (curTask != null) {
             gotoPosition(state, curTask.getLocation());
+            
         }else{
             decideTask();
         }
+        
+        
        
     }
     public void decideTask(){
         //consult q table
         //myQTable.getBestAction(0);
+        double max = 0;
+        
+        for (int i = 0; i < 5; i++) {
+            
+            double cur = myQtable.getBestAction(x);
+            if (cur > max) {
+                
+            }
+        }
         
         // must set the goal and task 
     }

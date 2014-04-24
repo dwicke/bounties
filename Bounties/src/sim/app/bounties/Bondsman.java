@@ -79,7 +79,7 @@ public class Bondsman implements Steppable {
         
         incrementBounty();// increment the bounties
         
-        
+        // reopen finished tasks
         
     }
 
@@ -97,6 +97,10 @@ public class Bondsman implements Steppable {
 
     public int getNumTasks() {
         return numTasks;
+    }
+
+    void finishTask(Task curTask) {
+        
     }
     
     
