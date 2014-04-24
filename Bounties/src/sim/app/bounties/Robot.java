@@ -117,10 +117,14 @@ public class Robot extends OvalPortrayal2D implements Steppable {
                 
             }
         }else if (curTask != null) {
-            if (gotoPosition(state, curTask.getLocation())) {
+            if (!curTask.getIsAvailable()) {
+                prevTask = curTask;
+                curTask = null;
+                reward *= -1; // bad don't go after this 
+            } else if (gotoPosition(state, curTask.getLocation())) {
                 hasTaskItem = true;
                 curTask.setAvailable(false);// i am taking it!
-            }
+            } 
             
         }else{
             if (myQtable == null) {
@@ -148,16 +152,18 @@ public class Robot extends OvalPortrayal2D implements Steppable {
         int bestTaskIndex = 0;
         for (int i = 0; i < availTasks.numObjs; i++) {
             
-            double cur = myQtable.getBestAction(((Task)availTasks.objs[i]).getID());
+            double cur = myQtable.getQValue(((Task)availTasks.objs[i]).getID(),0) + 
+                    ( (Task) availTasks.objs[bestTaskIndex]).getCurrentReward();
+            //System.err.println("agent id " + id+ " Cur q-val:  " + cur);
             if (cur > max) {
                 bestTaskIndex = i;
                 max = cur;
             }
         }
         
-        System.err.println("Robot id " + id + " max Q:" + max + " val " + max * ( (Task) availTasks.objs[bestTaskIndex]).getCurrentReward());
+        System.err.println("Robot id " + id + " max Q:" + max + " val " + ( (Task) availTasks.objs[bestTaskIndex]).getCurrentReward());
         // must set the goal and task if above threshold
-        if (max * ( (Task) availTasks.objs[bestTaskIndex]).getCurrentReward() >= threshold) {
+        if (max >= threshold) {
             // update the q-table now that we are transitioning
             
             curTask = (Task) availTasks.objs[bestTaskIndex];

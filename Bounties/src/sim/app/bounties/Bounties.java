@@ -21,7 +21,7 @@ public class Bounties extends SimState {
     
    
     public Bondsman bondsman = new Bondsman();
-    public int numRobots = 2;
+    public int numRobots = 10;
         
 
     
