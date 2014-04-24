@@ -7,6 +7,7 @@ package sim.app.bounties;
 
 import java.awt.Color;
 import java.awt.Graphics2D;
+import sim.app.horde.scenarios.robot.darwin.agent.Real;
 
 import sim.engine.SimState;
 import sim.engine.Steppable;
@@ -101,14 +102,22 @@ public class Robot extends OvalPortrayal2D implements Steppable {
         }
         return true;// we are there already
     }
+    
+    public boolean gotoGoalPosition(final SimState state, Real position) {
+        return gotoPosition(state, position.getLocation());
+    }
 
+    public boolean gotoTaskPosition(final SimState state, Real position) {
+        return gotoPosition(state, position.getLocation());
+    }
+    
     public void step(final SimState state) {
         final Bounties af = (Bounties) state;
         bondsman = af.bondsman; // set the bondsman
         
         
         if(hasTaskItem){// if I have it goto the goal
-            if(gotoPosition(state, curGoal.getLocation())) {
+            if(gotoGoalPosition(state, curGoal)) {
                 // then we should tell the bondsman that we have done that task
                 bondsman.finishTask(curTask);
                 hasTaskItem = false;
@@ -121,7 +130,7 @@ public class Robot extends OvalPortrayal2D implements Steppable {
                 prevTask = curTask;
                 curTask = null;
                 reward *= -1; // bad don't go after this 
-            } else if (gotoPosition(state, curTask.getLocation())) {
+            } else if (gotoTaskPosition(state, curTask)) {
                 hasTaskItem = true;
                 curTask.setAvailable(false);// i am taking it!
             } 

@@ -2,8 +2,10 @@ package sim.app.bounties;
 
 import java.awt.Color;
 import java.awt.Graphics2D;
+import sim.app.horde.scenarios.robot.darwin.agent.Real;
 import sim.portrayal.DrawInfo2D;
 import sim.portrayal.simple.OvalPortrayal2D;
+import sim.util.Double2D;
 import sim.util.Int2D;
 
 /*
@@ -16,7 +18,7 @@ import sim.util.Int2D;
  *
  * @author dfreelan
  */
-public class Task extends OvalPortrayal2D {
+public class Task extends OvalPortrayal2D implements Real{
     
     private int currentReward = 0; // controlled by bondsman to increase
     private boolean done = false; // true when at the goal false otherwise
@@ -92,5 +94,15 @@ public class Task extends OvalPortrayal2D {
     void resetReward() {
         currentReward = 0;
     }
+
+    public Double2D getRealTargetLocation()
+    {
+        return new Double2D((initialLocation.x - 30) * 0.1, (initialLocation.y - 20) * 0.1);
+    }
+   
+    public double getOrientation() { return 0; }
+
+   
     
+
 }

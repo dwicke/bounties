@@ -8,8 +8,10 @@ package sim.app.bounties;
 
 import java.awt.Color;
 import java.awt.Graphics2D;
+import sim.app.horde.scenarios.robot.darwin.agent.Real;
 import sim.portrayal.DrawInfo2D;
 import sim.portrayal.simple.OvalPortrayal2D;
+import sim.util.Double2D;
 import sim.util.Int2D;
 
 /**
@@ -17,7 +19,7 @@ import sim.util.Int2D;
  * overall counts of reaching this particular goal...
  * @author drew
  */
-public class Goal extends OvalPortrayal2D{
+public class Goal extends OvalPortrayal2D implements Real{ 
     
     Int2D location;
     int id;
@@ -55,5 +57,14 @@ public class Goal extends OvalPortrayal2D{
         int height = (int) (info.draw.height);
         graphics.fillOval(x, y, width, height);
     }
+
+    public Double2D getRealTargetLocation()
+    {
+        return new Double2D((location.x - 30) * 0.1, (location.y - 20) * 0.1);
+    }
+   
+    public double getOrientation() { return 0; }
+    
+    
     
 }
