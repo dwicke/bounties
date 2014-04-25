@@ -14,9 +14,8 @@ import sim.util.Bag;
 import sim.util.Int2D;
 
 /**
- *
- * @author dfreelan
- * bondsman is in charge of making tasks.... goodluck?
+ * Makes the tasks and goals
+ * @author drew
  */
 public class Bondsman implements Steppable {
     
@@ -41,7 +40,7 @@ public class Bondsman implements Steppable {
             t.setID(i);
             t.setLoc(new Int2D(rand.nextInt(field.x), rand.nextInt(field.y)));
             t.setGoal((Goal)goals.objs[rand.nextInt(goals.numObjs)]);
-            tasks.add(new MovablePortrayal2D(t));
+            tasks.add(t);
         }
         
         
@@ -54,7 +53,7 @@ public class Bondsman implements Steppable {
             Goal t = new Goal();
             t.setLocation(new Int2D(rand.nextInt(field.x), rand.nextInt(field.y)));
             t.setId(i);
-            goals.add(new MovablePortrayal2D(t));
+            goals.add(t);
         }
         
         return goals;

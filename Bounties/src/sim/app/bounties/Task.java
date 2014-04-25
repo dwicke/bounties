@@ -3,6 +3,7 @@ package sim.app.bounties;
 import java.awt.Color;
 import java.awt.Graphics2D;
 import sim.app.bounties.robot.darwin.agent.Real;
+import sim.field.grid.SparseGrid2D;
 import sim.portrayal.DrawInfo2D;
 import sim.portrayal.Fixed2D;
 import sim.portrayal.simple.OvalPortrayal2D;
@@ -19,7 +20,7 @@ import sim.util.Int2D;
  *
  * @author dfreelan
  */
-public class Task extends OvalPortrayal2D implements Real, Fixed2D{
+public class Task implements Real, Fixed2D{
     
     private int currentReward = 0; // controlled by bondsman to increase
     private boolean done = false; // true when at the goal false otherwise
@@ -27,6 +28,9 @@ public class Task extends OvalPortrayal2D implements Real, Fixed2D{
     private Int2D initialLocation;// location
     private int id = 0;
     private Goal goal;
+    private Color availableColor = Color.RED;// may want to change color if we have different types of tasks
+    private Color notAvailableColor = Color.WHITE;
+    
 
     public void setGoal(Goal goal) {
         this.goal = goal;
@@ -72,25 +76,9 @@ public class Task extends OvalPortrayal2D implements Real, Fixed2D{
         this.initialLocation = loc;
     }
 
-    private Color availableColor = Color.RED;// may want to change color if we have different types of tasks
-    private Color notAvailableColor = Color.WHITE;
     
-    @Override
-    public void draw(Object object, Graphics2D graphics, DrawInfo2D info) {
-        super.draw(object, graphics, info);
-        if (!getIsAvailable())// then don't draw it
-            graphics.setColor(notAvailableColor);
-         else 
-            graphics.setColor(availableColor);
-        
-        
-        // this code was stolen from OvalPortrayal2D
-        int x = (int) (info.draw.x - info.draw.width / 2.0);
-        int y = (int) (info.draw.y - info.draw.height / 2.0);
-        int width = (int) (info.draw.width);
-        int height = (int) (info.draw.height);
-        graphics.fillOval(x, y, width, height);
-    }
+    
+    
 
     void resetReward() {
         currentReward = 0;
@@ -105,8 +93,19 @@ public class Task extends OvalPortrayal2D implements Real, Fixed2D{
 
     @Override
     public boolean maySetLocation(Object field, Object newObjectLocation) {
+        
         initialLocation = (Int2D) newObjectLocation;
+        System.err.println("Set new location to: " + initialLocation.toCoordinates());
+        //((SparseGrid2D)field).setObjectLocation(this, initialLocation);// move myself
         return true;
+    }
+
+    Color getNotAvailableColor() {
+        return notAvailableColor;
+    }
+
+    Color getAvailableColor() {
+        return availableColor;
     }
 
    

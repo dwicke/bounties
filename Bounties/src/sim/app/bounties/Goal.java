@@ -9,6 +9,7 @@ package sim.app.bounties;
 import java.awt.Color;
 import java.awt.Graphics2D;
 import sim.app.bounties.robot.darwin.agent.Real;
+import sim.field.grid.SparseGrid2D;
 import sim.portrayal.DrawInfo2D;
 import sim.portrayal.Fixed2D;
 import sim.portrayal.simple.OvalPortrayal2D;
@@ -20,10 +21,11 @@ import sim.util.Int2D;
  * overall counts of reaching this particular goal...
  * @author drew
  */
-public class Goal extends OvalPortrayal2D implements Real, Fixed2D { 
+public class Goal implements Real, Fixed2D, sim.portrayal.Orientable2D { 
     
     Int2D location;
     int id;
+    private Color goalColor = Color.GREEN;
 
     public Goal() {}
     
@@ -43,22 +45,8 @@ public class Goal extends OvalPortrayal2D implements Real, Fixed2D {
         return id;
     }
     
-       private Color goalColor = Color.GREEN;
+       
     
-    @Override
-    public void draw(Object object, Graphics2D graphics, DrawInfo2D info) {
-        super.draw(object, graphics, info);
-        
-        graphics.setColor(goalColor);
-        
-        // this code was stolen from OvalPortrayal2D
-        int x = (int) (info.draw.x - info.draw.width / 2.0);
-        int y = (int) (info.draw.y - info.draw.height / 2.0);
-        int width = (int) (info.draw.width);
-        int height = (int) (info.draw.height);
-        graphics.fillOval(x, y, width, height);
-    }
-
     public Double2D getRealTargetLocation()
     {
         return new Double2D((location.x - 30) * 0.1, (location.y - 20) * 0.1);
@@ -69,7 +57,23 @@ public class Goal extends OvalPortrayal2D implements Real, Fixed2D {
     @Override
     public boolean maySetLocation(Object field, Object newObjectLocation) {
         location = (Int2D) newObjectLocation;
+        ((SparseGrid2D) field).setObjectLocation(this, location);
+        System.err.println("Goal loc: " + location.toCoordinates());
         return true;
+    }
+
+    @Override
+    public void setOrientation2D(double val) {
+        
+    }
+
+    @Override
+    public double orientation2D() {
+        return 0;
+    }
+
+    Color getGoalColor() {
+        return goalColor;
     }
     
     

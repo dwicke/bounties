@@ -9,6 +9,7 @@ import sim.engine.*;
 import static sim.engine.SimState.doLoop;
 import sim.field.grid.*;
 import sim.portrayal.Portrayal2D;
+import sim.portrayal.simple.MovablePortrayal2D;
 import sim.util.*;
 
 public class Bounties extends SimState {
@@ -58,10 +59,10 @@ public class Bounties extends SimState {
         Bag goalLocs = bondsman.initGoals(new Int2D(tasksGrid.getWidth(), tasksGrid.getHeight()),
                 this.random);
         for (int i = 0; i < goalLocs.numObjs; i++) {
-            Portrayal2D p2d = ((Goal)goalLocs.objs[i]);
+            Goal curGoal = ((Goal)(goalLocs.objs[i]));
             
             
-            goalsGrid.setObjectLocation(goalLocs.objs[i], ((Goal)goalLocs.objs[i]).getLocation());
+            goalsGrid.setObjectLocation(goalLocs.objs[i], curGoal.getLocation());
         }
         
         tasksGrid = new SparseGrid2D(GRID_WIDTH, GRID_HEIGHT);
@@ -69,7 +70,8 @@ public class Bounties extends SimState {
                 this.random);
         
         for (int i = 0; i < tasksLocs.numObjs; i++) {
-            tasksGrid.setObjectLocation(tasksLocs.objs[i], ((Task)tasksLocs.objs[i]).getLocation());
+            Task curTask = ((Task)(tasksLocs.objs[i]));
+            tasksGrid.setObjectLocation(tasksLocs.objs[i], curTask.getLocation());
         }
         
         

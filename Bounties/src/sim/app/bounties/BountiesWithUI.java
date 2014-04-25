@@ -10,7 +10,11 @@ import sim.display.*;
 import sim.portrayal.grid.*;
 import java.awt.*;
 import javax.swing.*;
+import sim.portrayal.SimplePortrayal2D;
+import sim.portrayal.simple.AdjustablePortrayal2D;
 import sim.portrayal.simple.MovablePortrayal2D;
+import sim.portrayal.simple.OrientedPortrayal2D;
+import sim.portrayal.simple.TrailedPortrayal2D;
 
 public class BountiesWithUI extends GUIState {
 
@@ -54,8 +58,22 @@ public class BountiesWithUI extends GUIState {
         // tell the portrayals what to portray and how to portray them
         goalsPortrayal.setField(bounties.goalsGrid);
         
-
         ballGridPortrayal.setField(bounties.tasksGrid);
+        
+        for(int i = 0; i < bounties.goalsGrid.allObjects.numObjs; i++) {
+            System.err.println(bounties.goalsGrid.allObjects.objs[i]);
+            
+            goalsPortrayal.setPortrayalForObject(bounties.goalsGrid.allObjects.objs[i], 
+                    new MovablePortrayal2D(new GoalPortrayal((Goal)bounties.goalsGrid.allObjects.objs[i])));
+            
+        }
+        for(int i = 0; i < bounties.tasksGrid.allObjects.numObjs; i++) {
+            ballGridPortrayal.setPortrayalForObject(bounties.tasksGrid.allObjects.objs[i], 
+                    new MovablePortrayal2D(new TaskPortrayal((Task)bounties.tasksGrid.allObjects.objs[i])));
+        }
+        
+        
+        
 
         
 

@@ -85,7 +85,7 @@ public class Robot extends OvalPortrayal2D implements Steppable {
         int x = location.x;
         int y = location.y;
         
-        System.err.println("X loc " + x + " y loc:" + y + " goal x and y: " + position.toCoordinates());
+        //System.err.println("X loc " + x + " y loc:" + y + " goal x and y: " + position.toCoordinates());
         // really simple first get inline with the x
         if (position.x != x) {
             int unit = (position.x - x) / Math.abs(position.x - x);
