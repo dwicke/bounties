@@ -22,9 +22,11 @@ public class Bounties extends SimState {
     
     
    
-    public Bondsman bondsman = new Bondsman();
+    public Bondsman bondsman;
     public int numRobots = 2;
-        
+    
+    int numTasks = 5;
+    int numGoals = 1;    
 
     
     // some properties
@@ -38,6 +40,28 @@ public class Bounties extends SimState {
         }
     }
 
+    public void setNumGoals(int numGoals) {
+        if (numGoals > 0)
+            this.numGoals = numGoals;
+    }
+
+    public void setNumTasks(int numTasks) {
+        if (numTasks > 0)
+            this.numTasks = numTasks;
+    }
+
+    public int getNumGoals() {
+        return numGoals;
+    }
+
+    public int getNumTasks() {
+        return numTasks;
+    }
+    
+    
+    
+    
+
     public SparseGrid2D goalsGrid = new SparseGrid2D(GRID_WIDTH, GRID_HEIGHT);
     public SparseGrid2D tasksGrid = new SparseGrid2D(GRID_WIDTH, GRID_HEIGHT);
     public SparseGrid2D robotgrid = new SparseGrid2D(GRID_WIDTH, GRID_HEIGHT);
@@ -49,7 +73,7 @@ public class Bounties extends SimState {
 
     public void start() {
         super.start();  // clear out the schedule
-
+        bondsman = new Bondsman(numGoals, numTasks);
         
         
         // make new grids

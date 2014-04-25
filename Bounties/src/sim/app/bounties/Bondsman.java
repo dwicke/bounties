@@ -22,12 +22,20 @@ public class Bondsman implements Steppable {
 
     private Bag tasks = new Bag();
     private Bag goals = new Bag();
+    
     private int numTasks = 5;
     private int numGoals = 1;
     
     
     public Bondsman(){
     }
+
+    Bondsman(int numGoals, int numTasks) {
+        this.numGoals = numGoals;
+        this.numTasks = numTasks;
+    }
+    
+    
     
     /**
      * gets the initial tasks
