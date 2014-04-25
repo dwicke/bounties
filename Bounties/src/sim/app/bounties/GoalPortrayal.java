@@ -9,12 +9,13 @@ package sim.app.bounties;
 import java.awt.Graphics2D;
 import sim.portrayal.DrawInfo2D;
 import sim.portrayal.simple.OvalPortrayal2D;
+import sim.portrayal.simple.RectanglePortrayal2D;
 
 /**
  *
  * @author drew
  */
-public class GoalPortrayal extends OvalPortrayal2D {
+public class GoalPortrayal extends RectanglePortrayal2D {
        private static final long serialVersionUID = 1;
 
     Goal model;
@@ -36,7 +37,7 @@ public class GoalPortrayal extends OvalPortrayal2D {
         int y = (int) (info.draw.y - info.draw.height / 2.0);
         int width = (int) (info.draw.width);
         int height = (int) (info.draw.height);
-        graphics.fillOval(x, y, width, height);
+        graphics.fillRect(x, y, width, height);
     }
 
 }

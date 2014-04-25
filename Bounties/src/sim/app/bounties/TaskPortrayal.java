@@ -7,8 +7,10 @@
 package sim.app.bounties;
 
 import java.awt.Graphics2D;
+import java.awt.geom.Rectangle2D;
 import sim.portrayal.DrawInfo2D;
 import sim.portrayal.simple.OvalPortrayal2D;
+import sim.portrayal.simple.RectanglePortrayal2D;
 
 /**
  *
