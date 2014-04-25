@@ -14,31 +14,28 @@ import sim.portrayal.simple.OvalPortrayal2D;
  *
  * @author drew
  */
-public class TaskPortrayal extends OvalPortrayal2D {
-    private static final long serialVersionUID = 1;
+public class RobotPortrayal extends OvalPortrayal2D{
+        private static final long serialVersionUID = 1;
 
-    Task model;
+    Robot model;
     
-    public TaskPortrayal(Task model) {
+    public RobotPortrayal(Robot model) {
         this.model = model;
     }
     
-    
-    @Override
-    public void draw(Object object, Graphics2D graphics, DrawInfo2D info) {
-        super.draw(object, graphics, info);
-        if (!model.getIsAvailable())// then don't draw it
-            graphics.setColor(model.getNotAvailableColor());
-         else 
-            graphics.setColor(model.getAvailableColor());
-        
-        
+    public final void draw(Object object, Graphics2D graphics, DrawInfo2D info) {
+        if (model.getHasTaskItem()) {
+            graphics.setColor(model.getHasTaskColor());
+        } else {
+            graphics.setColor(model.getNoTaskColor());
+        }
+
         // this code was stolen from OvalPortrayal2D
         int x = (int) (info.draw.x - info.draw.width / 2.0);
         int y = (int) (info.draw.y - info.draw.height / 2.0);
         int width = (int) (info.draw.width);
         int height = (int) (info.draw.height);
         graphics.fillOval(x, y, width, height);
+
     }
-    
 }

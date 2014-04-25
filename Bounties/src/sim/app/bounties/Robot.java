@@ -20,7 +20,7 @@ import sim.util.Int2D;
  *
  * @author drew
  */
-public class Robot extends OvalPortrayal2D implements Steppable {
+public class Robot implements Steppable {
 
     private static final long serialVersionUID = 1;
     boolean hasTaskItem = false;
@@ -42,6 +42,16 @@ public class Robot extends OvalPortrayal2D implements Steppable {
     int y;
 
     Bondsman bondsman;
+    private Color noTaskColor = Color.black;
+    private Color hasTaskColor = Color.red;
+
+    Color getHasTaskColor() {
+        return hasTaskColor;
+    }
+
+    Color getNoTaskColor() {
+        return noTaskColor;
+    }
     
     public boolean getHasTaskItem() {
         return hasTaskItem;
@@ -181,23 +191,8 @@ public class Robot extends OvalPortrayal2D implements Steppable {
         }
         
     }
-    // a few tweaks by Sean
-    private Color noTaskColor = Color.black;
-    private Color hasTaskColor = Color.red;
+    
+    
 
-    public final void draw(Object object, Graphics2D graphics, DrawInfo2D info) {
-        if (hasTaskItem) {
-            graphics.setColor(hasTaskColor);
-        } else {
-            graphics.setColor(noTaskColor);
-        }
-
-        // this code was stolen from OvalPortrayal2D
-        int x = (int) (info.draw.x - info.draw.width / 2.0);
-        int y = (int) (info.draw.y - info.draw.height / 2.0);
-        int width = (int) (info.draw.width);
-        int height = (int) (info.draw.height);
-        graphics.fillOval(x, y, width, height);
-
-    }
+    
 }

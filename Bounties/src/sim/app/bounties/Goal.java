@@ -22,7 +22,8 @@ import sim.util.Int2D;
  * @author drew
  */
 public class Goal implements Real, Fixed2D, sim.portrayal.Orientable2D { 
-    
+        private static final long serialVersionUID = 1;
+
     Int2D location;
     int id;
     private Color goalColor = Color.GREEN;

@@ -17,6 +17,7 @@ import sim.portrayal.simple.OrientedPortrayal2D;
 import sim.portrayal.simple.TrailedPortrayal2D;
 
 public class BountiesWithUI extends GUIState {
+    private static final long serialVersionUID = 1;
 
     public Display2D display;
     public JFrame displayFrame;
@@ -78,7 +79,10 @@ public class BountiesWithUI extends GUIState {
         
 
         robotPortrayal.setField(bounties.robotgrid);
-
+        for(int i = 0; i < bounties.robotgrid.allObjects.numObjs; i++) {
+            robotPortrayal.setPortrayalForObject(bounties.robotgrid.allObjects.objs[i], 
+                    new MovablePortrayal2D(new RobotPortrayal((Robot)bounties.robotgrid.allObjects.objs[i])));
+        }
         // reschedule the displayer
         display.reset();
 

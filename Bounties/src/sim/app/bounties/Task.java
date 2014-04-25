@@ -21,7 +21,8 @@ import sim.util.Int2D;
  * @author dfreelan
  */
 public class Task implements Real, Fixed2D{
-    
+        private static final long serialVersionUID = 1;
+
     private int currentReward = 0; // controlled by bondsman to increase
     private boolean done = false; // true when at the goal false otherwise
     private boolean available = true;// true when a robot is not carrying and not at a goal it is false if not at the

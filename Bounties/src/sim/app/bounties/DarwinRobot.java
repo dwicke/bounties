@@ -20,6 +20,7 @@ import sim.util.Int2D;
  * @author drew
  */
 public class DarwinRobot extends Robot{
+    private static final long serialVersionUID = 1;
 
     static Darwins[] available = new Darwins[8];
     {

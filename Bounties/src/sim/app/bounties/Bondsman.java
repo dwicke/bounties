@@ -18,7 +18,8 @@ import sim.util.Int2D;
  * @author drew
  */
 public class Bondsman implements Steppable {
-    
+        private static final long serialVersionUID = 1;
+
     private Bag tasks = new Bag();
     private Bag goals = new Bag();
     private int numTasks = 5;

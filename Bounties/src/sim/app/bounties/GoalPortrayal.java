@@ -15,7 +15,8 @@ import sim.portrayal.simple.OvalPortrayal2D;
  * @author drew
  */
 public class GoalPortrayal extends OvalPortrayal2D {
-   
+       private static final long serialVersionUID = 1;
+
     Goal model;
 
     public GoalPortrayal(Goal model) {
