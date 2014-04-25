@@ -147,13 +147,14 @@ public class Robot implements Steppable {
             
         }else{
             if (myQtable == null) {
-                 myQtable = new QTable(bondsman.getTotalNumTasks(), 1, .7, .2);// focus on current reward
+                 
                  // pick one randomly no. do the closest one.
                  if (bondsman.getAvailableTasks().numObjs > 0) {
+                    myQtable = new QTable(bondsman.getTotalNumTasks(), 1, .7, .2);// focus on current reward
                     curTask = (Task) bondsman.getAvailableTasks().objs[state.random.nextInt(bondsman.getAvailableTasks().numObjs)];
                     curGoal = curTask.getGoal();
                     reward = curTask.getCurrentReward();
-                 }
+                 } 
                  return;
             }
             if (bondsman.getAvailableTasks().numObjs > 0)
@@ -185,6 +186,7 @@ public class Robot implements Steppable {
             
             curTask = (Task) availTasks.objs[bestTaskIndex];
             curGoal = curTask.getGoal();
+            System.err.println("prev " + prevTask + " curTask " + curTask);
             myQtable.update(prevTask.getID(), 0, reward, curTask.getID());
             reward = curTask.getCurrentReward();
             threshold += (threshold < 3) ? max : 0;// maybe?
