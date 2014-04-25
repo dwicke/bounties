@@ -9,6 +9,7 @@ package sim.app.bounties;
 import ec.util.MersenneTwisterFast;
 import sim.engine.SimState;
 import sim.engine.Steppable;
+import sim.portrayal.simple.MovablePortrayal2D;
 import sim.util.Bag;
 import sim.util.Int2D;
 
@@ -40,7 +41,7 @@ public class Bondsman implements Steppable {
             t.setID(i);
             t.setLoc(new Int2D(rand.nextInt(field.x), rand.nextInt(field.y)));
             t.setGoal((Goal)goals.objs[rand.nextInt(goals.numObjs)]);
-            tasks.add(t);
+            tasks.add(new MovablePortrayal2D(t));
         }
         
         
@@ -53,7 +54,7 @@ public class Bondsman implements Steppable {
             Goal t = new Goal();
             t.setLocation(new Int2D(rand.nextInt(field.x), rand.nextInt(field.y)));
             t.setId(i);
-            goals.add(t);
+            goals.add(new MovablePortrayal2D(t));
         }
         
         return goals;

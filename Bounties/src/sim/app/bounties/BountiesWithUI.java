@@ -10,6 +10,7 @@ import sim.display.*;
 import sim.portrayal.grid.*;
 import java.awt.*;
 import javax.swing.*;
+import sim.portrayal.simple.MovablePortrayal2D;
 
 public class BountiesWithUI extends GUIState {
 

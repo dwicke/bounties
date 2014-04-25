@@ -7,7 +7,7 @@ package sim.app.bounties;
 
 import java.awt.Color;
 import java.awt.Graphics2D;
-import sim.app.horde.scenarios.robot.darwin.agent.Real;
+import sim.app.bounties.robot.darwin.agent.Real;
 
 import sim.engine.SimState;
 import sim.engine.Steppable;
@@ -138,7 +138,7 @@ public class Robot extends OvalPortrayal2D implements Steppable {
         }else{
             if (myQtable == null) {
                  myQtable = new QTable(bondsman.getTotalNumTasks(), 1, .7, .2);// focus on current reward
-                 // pick one randomly
+                 // pick one randomly no. do the closest one.
                  if (bondsman.getAvailableTasks().numObjs > 0) {
                     curTask = (Task) bondsman.getAvailableTasks().objs[state.random.nextInt(bondsman.getAvailableTasks().numObjs)];
                     curGoal = curTask.getGoal();

@@ -8,6 +8,7 @@ package sim.app.bounties;
 import sim.engine.*;
 import static sim.engine.SimState.doLoop;
 import sim.field.grid.*;
+import sim.portrayal.Portrayal2D;
 import sim.util.*;
 
 public class Bounties extends SimState {
@@ -21,7 +22,7 @@ public class Bounties extends SimState {
     
    
     public Bondsman bondsman = new Bondsman();
-    public int numRobots = 5;
+    public int numRobots = 2;
         
 
     
@@ -57,6 +58,9 @@ public class Bounties extends SimState {
         Bag goalLocs = bondsman.initGoals(new Int2D(tasksGrid.getWidth(), tasksGrid.getHeight()),
                 this.random);
         for (int i = 0; i < goalLocs.numObjs; i++) {
+            Portrayal2D p2d = ((Goal)goalLocs.objs[i]);
+            
+            
             goalsGrid.setObjectLocation(goalLocs.objs[i], ((Goal)goalLocs.objs[i]).getLocation());
         }
         

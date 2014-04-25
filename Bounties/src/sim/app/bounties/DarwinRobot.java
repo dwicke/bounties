@@ -6,11 +6,11 @@
 
 package sim.app.bounties;
 
-import sim.app.horde.scenarios.robot.darwin.agent.Darwin;
-import sim.app.horde.scenarios.robot.darwin.agent.Darwins;
-import sim.app.horde.scenarios.robot.darwin.agent.Real;
-import sim.app.horde.scenarios.robot.darwin.behaviors.Motions;
-import sim.app.horde.scenarios.robot.darwin.comm.DarwinParser;
+import sim.app.bounties.robot.darwin.agent.Darwin;
+import sim.app.bounties.robot.darwin.agent.Darwins;
+import sim.app.bounties.robot.darwin.agent.Real;
+import sim.app.bounties.robot.darwin.behaviors.Motions;
+import sim.app.bounties.robot.darwin.comm.DarwinParser;
 import sim.engine.SimState;
 import sim.util.Double2D;
 import sim.util.Int2D;
