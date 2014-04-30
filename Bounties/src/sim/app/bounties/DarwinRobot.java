@@ -71,12 +71,5 @@ public class DarwinRobot extends Robot{
     public boolean gotoTaskPosition(SimState state, Real position) {
         return gotoPosition(state, position);
     }
-
-    
-    
-    
-    
-    
-    
     
 }

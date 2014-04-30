@@ -23,12 +23,15 @@ public class Bounties extends SimState {
     
    
     public Bondsman bondsman;
-    public int numRobots = 2;
+    public int numRobots = 8;
+    public IRobot robots[];// index into this array corresponds to its id
     
-    int numTasks = 5;
+    int numTasks = 20;
     int numGoals = 1;    
 
-    
+    public IRobot[] getRobots() {
+        return robots;
+    }
     // some properties
     public int getNumRobots() {
         return numRobots;
@@ -74,7 +77,7 @@ public class Bounties extends SimState {
     public void start() {
         super.start();  // clear out the schedule
         bondsman = new Bondsman(numGoals, numTasks);
-        
+        bondsman.setWorld(this);
         
         // make new grids
         goalsGrid = new SparseGrid2D(GRID_WIDTH, GRID_HEIGHT);
@@ -98,10 +101,12 @@ public class Bounties extends SimState {
             tasksGrid.setObjectLocation(tasksLocs.objs[i], curTask.getLocation());
         }
         
-        
+        robots = new JumpshipRobot[numRobots];
         robotgrid = new SparseGrid2D(GRID_WIDTH, GRID_HEIGHT);
         for (int x = 0; x < numRobots; x++) {
-            Robot bot = new Robot();
+            //Robot bot = new Robot();
+            JumpshipRobot bot = new JumpshipRobot();
+            robots[x] = bot;
             bot.setId(x);
             int xloc = random.nextInt(GRID_WIDTH);
             int yloc = random.nextInt(GRID_HEIGHT);

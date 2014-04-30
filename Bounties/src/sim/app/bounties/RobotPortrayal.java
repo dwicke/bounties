@@ -17,9 +17,9 @@ import sim.portrayal.simple.OvalPortrayal2D;
 public class RobotPortrayal extends OvalPortrayal2D{
         private static final long serialVersionUID = 1;
 
-    Robot model;
+    IRobot model;
     
-    public RobotPortrayal(Robot model) {
+    public RobotPortrayal(IRobot model) {
         this.model = model;
     }
     

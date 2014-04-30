@@ -22,10 +22,10 @@ public class Bondsman implements Steppable {
 
     private Bag tasks = new Bag();
     private Bag goals = new Bag();
-    
+    private int whosDoingWhatTaskID[];
     private int numTasks = 5;
     private int numGoals = 1;
-    
+    private Bounties bounties;
     
     public Bondsman(){
     }
@@ -35,6 +35,15 @@ public class Bondsman implements Steppable {
         this.numTasks = numTasks;
     }
     
+    
+    public void setWorld(Bounties bounties) {
+        this.bounties = bounties;
+        whosDoingWhatTaskID = new int[this.bounties.numRobots];
+        // set everyone to do task -1 since not doing anytask
+        for (int i = 0; i < whosDoingWhatTaskID.length; i++) {
+            whosDoingWhatTaskID[i] = -1;
+        }
+    }
     
     
     /**
@@ -132,6 +141,22 @@ public class Bondsman implements Steppable {
     void finishTask(Task curTask) {
         curTask.setDone(true);
         curTask.resetReward(); // start it back at 0
+    }
+    
+    public void doingTask(int robotID, int taskID) {
+        whosDoingWhatTaskID[robotID] = taskID;
+    }
+
+    Bag whoseDoingTask(Task b) {
+        Bag robots = new Bag();
+        // only jumpship robots use this.
+        JumpshipRobot[] allRobots = (JumpshipRobot[]) bounties.getRobots();
+        for (int i = 0; i < bounties.numRobots; i++) {
+            if (whosDoingWhatTaskID[i] == b.getID()){
+                robots.add(allRobots[i]);
+            }
+        }
+        return robots;
     }
     
     

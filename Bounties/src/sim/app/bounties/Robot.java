@@ -6,13 +6,10 @@
 package sim.app.bounties;
 
 import java.awt.Color;
-import java.awt.Graphics2D;
 import sim.app.bounties.robot.darwin.agent.Real;
 
 import sim.engine.SimState;
 import sim.engine.Steppable;
-import sim.portrayal.DrawInfo2D;
-import sim.portrayal.simple.OvalPortrayal2D;
 import sim.util.Bag;
 import sim.util.Int2D;
 
@@ -20,7 +17,7 @@ import sim.util.Int2D;
  *
  * @author drew
  */
-public class Robot implements Steppable {
+public class Robot implements Steppable, IRobot {
 
     private static final long serialVersionUID = 1;
     boolean hasTaskItem = false;
@@ -45,11 +42,11 @@ public class Robot implements Steppable {
     private Color noTaskColor = Color.black;
     private Color hasTaskColor = Color.red;
 
-    Color getHasTaskColor() {
+    public Color getHasTaskColor() {
         return hasTaskColor;
     }
 
-    Color getNoTaskColor() {
+    public Color getNoTaskColor() {
         return noTaskColor;
     }
     
@@ -165,10 +162,12 @@ public class Robot implements Steppable {
     public void decideTask(){
         //consult q table
         //myQTable.getBestAction(0);
-        double max = 0;
+        
         Bag availTasks = bondsman.getAvailableTasks();
         int bestTaskIndex = 0;
-        for (int i = 0; i < availTasks.numObjs; i++) {
+        double max = ( (Task) availTasks.objs[bestTaskIndex]).getCurrentReward() +
+                   myQtable.getQValue(((Task)availTasks.objs[bestTaskIndex]).getID(),0);
+        for (int i = 1; i < availTasks.numObjs; i++) {
             
             double cur = myQtable.getQValue(((Task)availTasks.objs[i]).getID(),0) + 
                     ( (Task) availTasks.objs[bestTaskIndex]).getCurrentReward();
