@@ -26,6 +26,9 @@ public class JumpshipRobot implements Steppable, IRobot {
     private Color noTaskColor = Color.black;
     private Color hasTaskColor = Color.red;
     int id;
+    double epsilon = 0.01;
+    int count = 0;
+    int maxCount = 2;
     
     public void setId(int id) {
         this.id = id;
@@ -103,40 +106,64 @@ public class JumpshipRobot implements Steppable, IRobot {
         
         world = (Bounties) state;// set the state of the world
         if (hasTaskItem == false) {
-            int bestTaskIndex = 0;
-            double maxR = 0;
+            // make a probability of moving toward a random task
+            if (state.random.nextDouble() < epsilon) {
+                Bag tasks = world.bondsman.getAvailableTasks();
+                Task randTask = (Task)tasks.objs[state.random.nextInt(tasks.numObjs)];
+                hasTaskItem = gotoTaskPosition(randTask);
+                if (hasTaskItem) {
+                    myCurTask = randTask;
+                    myCurTask.setAvailable(false);
 
-            Bag tasks = world.bondsman.getAvailableTasks();
-            
-            for(int i = 0; i < tasks.numObjs; i++) {
-                Task curTask = (Task) tasks.objs[i];
-                // note that the expectedTimeToComplete is based off of the current
-                // time so don't need to subtract current time
-                // as was the case in the original formulation.
-                System.err.println(curTask.getCurrentReward());
-                double curRi = (valueOfBounty(curTask) * probabilityDoTask(curTask)) / (expectedTimeToComplete(curTask));
-                if (curRi > maxR) {
-                    maxR = curRi;
-                    bestTaskIndex = i;
                 }
 
-            }
-            
-            //notify the bondsman of my task choice if changed.
-            myCurTask = (Task) tasks.objs[bestTaskIndex];
-            world.bondsman.doingTask(id, myCurTask.getID());
-            
+            } else if (count < maxCount) {
+                int bestTaskIndex = 0;
+                double maxR = 0;
 
-            hasTaskItem = gotoTaskPosition(myCurTask);
-            if (hasTaskItem) {
-                myCurTask.setAvailable(false);
+                Bag tasks = world.bondsman.getAvailableTasks();
+
+                for(int i = 0; i < tasks.numObjs; i++) {
+                    Task curTask = (Task) tasks.objs[i];
+                    // note that the expectedTimeToComplete is based off of the current
+                    // time so don't need to subtract current time
+                    // as was the case in the original formulation.
+                    System.err.println(curTask.getCurrentReward());
+                    double curRi = (valueOfBounty(curTask) * probabilityDoTask(curTask)) / (expectedTimeToComplete(curTask));
+                    if (curRi > maxR) {
+                        maxR = curRi;
+                        bestTaskIndex = i;
+                    }
+
+                }
+
+                //notify the bondsman of my task choice if changed.
+                Task newTask = (Task) tasks.objs[bestTaskIndex];
+                if (myCurTask != null && newTask.getID() == myCurTask.getID()) {
+                    count++;
+                }else {
+                    count = 0;
+                }
                 
+                myCurTask = newTask;
+                world.bondsman.doingTask(id, myCurTask.getID());
+                hasTaskItem = gotoTaskPosition(myCurTask);
+                if (hasTaskItem) {
+                    myCurTask.setAvailable(false);
+                }
+            }
+            else {
+                hasTaskItem = gotoTaskPosition(myCurTask);
+                if (hasTaskItem) {
+                    myCurTask.setAvailable(false);
+                }
             }
         } else if (hasTaskItem == true) {
             
             if(gotoGoalPostion(myCurTask)) {
                 // if I reached the goal then I will set my current task to null
                 // and notify the bondsman
+                count = 0;
                 hasTaskItem = false;
                 world.bondsman.doingTask(id, -1);
                 world.bondsman.finishTask(myCurTask);
