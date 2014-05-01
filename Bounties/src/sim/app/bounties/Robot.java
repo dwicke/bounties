@@ -193,8 +193,12 @@ public class Robot implements Steppable, IRobot {
             curTask = (Task) availTasks.objs[bestTaskIndex];
             curGoal = curTask.getGoal();
             System.err.println("prev " + prevTask + " curTask " + curTask);
+            System.err.println("REWARD: " + reward);
+            //reward = curTask.getCurrentReward();
+            if(reward>0)
+                reward = 1;
             myQtable.update(prevTask.getID(), 0, reward, curTask.getID());
-            reward = curTask.getCurrentReward();
+            reward = 1;//prevTask.getCurrentReward();;
             threshold += (threshold < 3) ? max : 0;// maybe?
        // }
         

@@ -111,15 +111,13 @@ public class GreedyBot implements Steppable, IRobot {
         final Bounties af = (Bounties) state;
         bondsman = af.bondsman; // set the bondsman
         world = (Bounties) state;// set the state of the world
-        Bag tasks = world.bondsman.getAvailableTasks();
-        if(myCurTask!=null && myCurTask.getIsAvailable() == false){
-            decideTask();
-        }
-        if(!decided){
-            decideTask();
-        }
-        if(tasks.numObjs==0) return; // don't bother caculating task stuff if there are no available tasks
+     
         
+        if((myCurTask==null || !decided || (myCurTask!=null && myCurTask.getIsAvailable() == false)) && !hasTaskItem){
+            decideTask();
+        }
+
+                
         if (hasTaskItem == false && myCurTask!=null) {
             System.err.println("has task item is false");
             hasTaskItem = gotoTaskPosition(myCurTask);
@@ -132,10 +130,10 @@ public class GreedyBot implements Steppable, IRobot {
             if(gotoGoalPostion(myCurTask)) {
                 // if I reached the goal then I will set my current task to null
                 // and notify the bondsman
-                count = 0;
-                hasTaskItem = false;
+                
                 world.bondsman.doingTask(id, -1);
                 world.bondsman.finishTask(myCurTask);
+                hasTaskItem = false;
                 decided = false;
             }
             
@@ -164,9 +162,9 @@ public class GreedyBot implements Steppable, IRobot {
                             public int compare(Object o1, Object o2) 
                             {
                                 if(((Task)o1).getCurrentReward() < ((Task)o2).getCurrentReward())
-                                    return -1;
-                                else if(((Task)o1).getCurrentReward() > ((Task)o2).getCurrentReward())
                                     return 1;
+                                else if(((Task)o1).getCurrentReward() > ((Task)o2).getCurrentReward())
+                                    return -1;
                                 
                                  return 0;
                             }

@@ -134,11 +134,11 @@ public class Bounties extends SimState {
             tasksGrid.setObjectLocation(tasksLocs.objs[i], curTask.getLocation());
         }
         
-        robots = new GreedyBot[numRobots];
+        robots = new Robot[numRobots];
         robotgrid = new SparseGrid2D(GRID_WIDTH, GRID_HEIGHT);
         for (int x = 0; x < numRobots; x++) {
             //Robot bot = new Robot();
-            GreedyBot bot = new GreedyBot();
+            Robot bot = new Robot();
             robots[x] = bot;
             bot.setId(x);
             int xloc = random.nextInt(GRID_WIDTH);

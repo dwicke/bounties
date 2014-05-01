@@ -31,7 +31,7 @@ public class Task implements Real, Fixed2D{
     private Goal goal;
     private Color availableColor = Color.RED;// may want to change color if we have different types of tasks
     private Color notAvailableColor = Color.WHITE;
-    
+    private int requiredRobots = 1;
 
     public void setGoal(Goal goal) {
         this.goal = goal;
@@ -40,7 +40,12 @@ public class Task implements Real, Fixed2D{
     public Goal getGoal() {
         return goal;
     }
-    
+    public int getRequiredRobots(){
+        return requiredRobots;
+    }
+    public void setRequiredRobots(int required){
+        requiredRobots = required;
+    }
     public boolean isDone(){
         return done;
     }
