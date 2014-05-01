@@ -21,14 +21,38 @@ public class Bounties extends SimState {
 
     
     
-   
+    public double[] rollingAverage = new double[1000];
+    int avgCount = 0;
     public Bondsman bondsman;
     public int numRobots = 8;
+    
     public IRobot robots[];// index into this array corresponds to its id
     
     int numTasks = 20;
     int numGoals = 1;    
-
+    double averageTicks = 0;
+    public double getAverageTicks(){
+        Bag tasks = bondsman.getTasks();
+        if(tasks==null) return -1;
+        double sum =0;
+        for(int i = 0; i< tasks.objs.length; i++){
+            if(tasks.objs[i] !=null){ // shouldnt really be null normally.....
+                sum+=((Task)tasks.objs[i]).getCurrentReward();
+            }
+        }
+       
+        sum/=tasks.objs.length;
+        rollingAverage[avgCount] = sum;
+        avgCount++;
+        if(avgCount == rollingAverage.length) avgCount= 0;
+        sum = 0;
+        for(int i = 0; i<rollingAverage.length; i++){
+            sum+=rollingAverage[i];
+        }
+        sum/=rollingAverage.length;
+        return sum;
+//getTasks
+    }
     public IRobot[] getRobots() {
         return robots;
     }
@@ -42,7 +66,16 @@ public class Bounties extends SimState {
             numRobots = val;
         }
     }
+    public int getAvgCount() {
+        return rollingAverage.length;
+    }
 
+    public void setAvgCount(int val) {
+        if (val > 0) {
+            rollingAverage = new double[val];
+            
+        }
+    }
     public void setNumGoals(int numGoals) {
         if (numGoals > 0)
             this.numGoals = numGoals;
@@ -101,11 +134,11 @@ public class Bounties extends SimState {
             tasksGrid.setObjectLocation(tasksLocs.objs[i], curTask.getLocation());
         }
         
-        robots = new JumpshipRobot[numRobots];
+        robots = new GreedyBot[numRobots];
         robotgrid = new SparseGrid2D(GRID_WIDTH, GRID_HEIGHT);
         for (int x = 0; x < numRobots; x++) {
             //Robot bot = new Robot();
-            JumpshipRobot bot = new JumpshipRobot();
+            GreedyBot bot = new GreedyBot();
             robots[x] = bot;
             bot.setId(x);
             int xloc = random.nextInt(GRID_WIDTH);

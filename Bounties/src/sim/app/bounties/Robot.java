@@ -76,7 +76,12 @@ public class Robot implements Steppable, IRobot {
     public int getTaskID() {
         return (curTask != null) ? curTask.getID() : -1;
     }
-    
+     public int getCurrentTaskID(){
+        if( curTask==null)
+            return -1;
+        return curTask.getID();
+           
+    }
   
 //TODO: initialize Q-table
 //update reward when task is done/failed
@@ -136,7 +141,7 @@ public class Robot implements Steppable, IRobot {
             if (!curTask.getIsAvailable()) {
                 prevTask = curTask;
                 curTask = null;
-                reward *= -1; // bad don't go after this 
+                reward *= 0; // bad don't go after this 
             } else if (gotoTaskPosition(state, curTask)) {
                 hasTaskItem = true;
                 curTask.setAvailable(false);// i am taking it!
@@ -147,7 +152,7 @@ public class Robot implements Steppable, IRobot {
                  
                  // pick one randomly no. do the closest one.
                  if (bondsman.getAvailableTasks().numObjs > 0) {
-                    myQtable = new QTable(bondsman.getTotalNumTasks(), 1, .7, .2);// focus on current reward
+                    myQtable = new QTable(bondsman.getTotalNumTasks(), 1, .7, .1);// focus on current reward
                     curTask = (Task) bondsman.getAvailableTasks().objs[state.random.nextInt(bondsman.getAvailableTasks().numObjs)];
                     curGoal = curTask.getGoal();
                     reward = curTask.getCurrentReward();
@@ -165,12 +170,14 @@ public class Robot implements Steppable, IRobot {
         
         Bag availTasks = bondsman.getAvailableTasks();
         int bestTaskIndex = 0;
-        double max = ( (Task) availTasks.objs[bestTaskIndex]).getCurrentReward() +
-                   myQtable.getQValue(((Task)availTasks.objs[bestTaskIndex]).getID(),0);
+        System.err.println(.1+ myQtable.getNormalQValue(((Task)availTasks.objs[bestTaskIndex]).getID(),0));
+        double max = (.1+ myQtable.getNormalQValue(((Task)availTasks.objs[bestTaskIndex]).getID(),0))*
+                ( ((Task) availTasks.objs[bestTaskIndex]).getCurrentReward() );
+                  
         for (int i = 1; i < availTasks.numObjs; i++) {
             
-            double cur = myQtable.getQValue(((Task)availTasks.objs[i]).getID(),0) + 
-                    ( (Task) availTasks.objs[bestTaskIndex]).getCurrentReward();
+            double cur =(.1+ myQtable.getNormalQValue(((Task)availTasks.objs[i]).getID(),0))*
+                ( ((Task) availTasks.objs[i]).getCurrentReward() );
             //System.err.println("agent id " + id+ " Cur q-val:  " + cur);
             if (cur > max) {
                 bestTaskIndex = i;
@@ -180,7 +187,7 @@ public class Robot implements Steppable, IRobot {
         
         System.err.println("Robot id " + id + " max Q:" + max + " val " + ( (Task) availTasks.objs[bestTaskIndex]).getCurrentReward());
         // must set the goal and task if above threshold
-        if (max >= threshold) {
+       // if (max >= threshold) {
             // update the q-table now that we are transitioning
             
             curTask = (Task) availTasks.objs[bestTaskIndex];
@@ -189,7 +196,7 @@ public class Robot implements Steppable, IRobot {
             myQtable.update(prevTask.getID(), 0, reward, curTask.getID());
             reward = curTask.getCurrentReward();
             threshold += (threshold < 3) ? max : 0;// maybe?
-        }
+       // }
         
     }
     

@@ -53,4 +53,19 @@ public class QTable implements java.io.Serializable {
         }
         return best;
     }
+    public double getNormalQValue(int state, int action) {
+        //return qtable[state][action];
+        double sum = 0;
+        for (int i = 0; i < qtable.length; i++) {
+            sum+=qtable[i][action];
+        }
+        if(sum==0)
+               return 1;
+        if(qtable[state][action]/sum <0){
+            System.err.println("you fail");
+            System.exit(0);
+        }
+        return qtable[state][action]/sum;
+    }
 }
+

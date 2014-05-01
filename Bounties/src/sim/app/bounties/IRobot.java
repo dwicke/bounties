@@ -17,4 +17,5 @@ public interface IRobot {
     public Color getHasTaskColor();
     public Color getNoTaskColor();
     public void setId(int id);
+    public int getCurrentTaskID();
 }

@@ -11,13 +11,13 @@ import sim.engine.SimState;
 import sim.engine.Steppable;
 import sim.util.Bag;
 import sim.util.Int2D;
-
+import java.util.Comparator;
 /**
  * This robot has the ability to jump ship after some timestep t of trying to do
  * a task.
  * @author drew
  */
-public class JumpshipRobot implements Steppable, IRobot {
+public class GreedyBot implements Steppable, IRobot {
 
     Bounties world;
     double expectedTimeOfOthersToComplete[][];// [#agent][#bounties]
@@ -28,8 +28,9 @@ public class JumpshipRobot implements Steppable, IRobot {
     int id;
     double epsilon = .01;
     int count = 0;
+    boolean decided = false;
     int maxCount = 20;
-    
+    Bondsman bondsman;
     public void setId(int id) {
         this.id = id;
     }
@@ -107,71 +108,27 @@ public class JumpshipRobot implements Steppable, IRobot {
     
     @Override
     public void step(SimState state) {
-        
+        final Bounties af = (Bounties) state;
+        bondsman = af.bondsman; // set the bondsman
         world = (Bounties) state;// set the state of the world
         Bag tasks = world.bondsman.getAvailableTasks();
+        if(myCurTask!=null && myCurTask.getIsAvailable() == false){
+            decideTask();
+        }
+        if(!decided){
+            decideTask();
+        }
         if(tasks.numObjs==0) return; // don't bother caculating task stuff if there are no available tasks
         
-        if (hasTaskItem == false) {
-            // make a probability of moving toward a random task
-            if (state.random.nextDouble() < epsilon) {
-                
-                Task randTask = (Task)tasks.objs[state.random.nextInt(tasks.numObjs)];
-                hasTaskItem = gotoTaskPosition(randTask);
-                if (hasTaskItem) {
-                    myCurTask = randTask;
-                    myCurTask.setAvailable(false);
-
-                }
-
-            } else if (count < maxCount) {
-                int bestTaskIndex = 0;
-                double maxR = 0;       
-             
-                for(int i = 0; i < tasks.numObjs; i++) {
-                    Task curTask = (Task) tasks.objs[i];
-                    // note that the expectedTimeToComplete is based off of the current
-                    // time so don't need to subtract current time
-                    // as was the case in the original formulation.
-                    System.err.println(curTask.getCurrentReward());
-                    double curRi = (valueOfBounty(curTask) * probabilityDoTask(curTask));// / (expectedTimeToComplete(curTask));
-                    if(curTask!= myCurTask){
-                        curRi *=.50;
-                    }
-                    if (curRi > maxR) {
-                        maxR = curRi;
-                        bestTaskIndex = i;
-                    }
-                }
-                        
-                //notify the bondsman of my task choice if changed.
-                Task newTask = (Task) tasks.objs[bestTaskIndex];
-                System.err.println(newTask);
-                if (newTask !=null && myCurTask != null && newTask.getID() == myCurTask.getID()) {
-                    count++;
-                   
-                }else {
-                    count = 0;
-                     if(id==0){
-                         System.err.println("i still changed once");
-                     }
-                }
-                
-                myCurTask = newTask;
-                world.bondsman.doingTask(id, myCurTask.getID());
-                hasTaskItem = gotoTaskPosition(myCurTask);
-                if (hasTaskItem) {
-                    myCurTask.setAvailable(false);
-                }
+        if (hasTaskItem == false && myCurTask!=null) {
+            System.err.println("has task item is false");
+            hasTaskItem = gotoTaskPosition(myCurTask);
+            if (hasTaskItem) {
+                myCurTask.setAvailable(false);
             }
-            else {
-                hasTaskItem = gotoTaskPosition(myCurTask);
-                if (hasTaskItem) {
-                    myCurTask.setAvailable(false);
-                }
-            }
-        } else if (hasTaskItem == true) {
             
+        } else if (hasTaskItem == true && myCurTask!=null) {
+             System.err.println("has task item is true");
             if(gotoGoalPostion(myCurTask)) {
                 // if I reached the goal then I will set my current task to null
                 // and notify the bondsman
@@ -179,6 +136,7 @@ public class JumpshipRobot implements Steppable, IRobot {
                 hasTaskItem = false;
                 world.bondsman.doingTask(id, -1);
                 world.bondsman.finishTask(myCurTask);
+                decided = false;
             }
             
             
@@ -197,5 +155,26 @@ public class JumpshipRobot implements Steppable, IRobot {
     public boolean getHasTaskItem() {
         return hasTaskItem;
     }
-    
+     public void decideTask(){
+        //sort the tasks, 
+        //find the rank of task which matches my id
+        Bag temp = bondsman.getAvailableTasks();
+        temp.sort(new Comparator() 
+                           {
+                            public int compare(Object o1, Object o2) 
+                            {
+                                if(((Task)o1).getCurrentReward() < ((Task)o2).getCurrentReward())
+                                    return -1;
+                                else if(((Task)o1).getCurrentReward() > ((Task)o2).getCurrentReward())
+                                    return 1;
+                                
+                                 return 0;
+                            }
+                           }    
+                    );
+        if(id<temp.objs.length)
+            myCurTask = (Task)temp.objs[id];
+        
+        
+    }
 }

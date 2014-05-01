@@ -23,7 +23,7 @@ public class Bondsman implements Steppable {
     private Bag tasks = new Bag();
     private Bag goals = new Bag();
     private int whosDoingWhatTaskID[];
-    private int numTasks = 5;
+    private int numTasks = 50;
     private int numGoals = 1;
     private Bounties bounties;
     
@@ -56,6 +56,7 @@ public class Bondsman implements Steppable {
         for (int i = 0; i < numTasks; i++) {
             Task t = new Task();
             t.setID(i);
+            t.setCurrentReward(1);
             t.setLoc(new Int2D(rand.nextInt(field.x), rand.nextInt(field.y)));
             t.setGoal((Goal)goals.objs[rand.nextInt(goals.numObjs)]);
             tasks.add(t);
