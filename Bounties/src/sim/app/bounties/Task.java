@@ -33,7 +33,7 @@ public class Task implements Real, Fixed2D{
     private Color availableColor = Color.RED;// may want to change color if we have different types of tasks
     private Color notAvailableColor = Color.WHITE;
     private int requiredRobots = 1;
-    private Bag presentRobots;
+    private Bag presentRobots = new Bag();
     
     public void setGoal(Goal goal) {
         this.goal = goal;
@@ -63,6 +63,14 @@ public class Task implements Real, Fixed2D{
         presentRobots.add(a);
         
     }
+    public void subtractRobot(IRobot a){
+        if(presentRobots.remove((Object)a))
+            return;
+        
+    }
+    public boolean isEnoughRobots(){
+        return presentRobots.objs.length >= requiredRobots;
+    }
     public boolean isDone(){
         return done;
     }
@@ -81,7 +89,7 @@ public class Task implements Real, Fixed2D{
         currentReward = reward;
     }
     public void incrementCurrentReward(){
-        currentReward+=1;
+        currentReward+=requiredRobots;
     }
     public int getCurrentReward(){
         return currentReward;

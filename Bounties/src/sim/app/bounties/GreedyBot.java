@@ -121,16 +121,18 @@ public class GreedyBot implements Steppable, IRobot {
         if (hasTaskItem == false && myCurTask!=null) {
             System.err.println("has task item is false");
             hasTaskItem = gotoTaskPosition(myCurTask);
-            if (hasTaskItem) {
-                myCurTask.setAvailable(false);
+            if(hasTaskItem){// if i'm here, add myself to list of robots waiting
+                myCurTask.addRobot(this);
+                if(myCurTask.isEnoughRobots()){ //if everybody is here task is no longer available, and we're coming home
+                    myCurTask.setAvailable(false);
+                }
             }
             
         } else if (hasTaskItem == true && myCurTask!=null) {
              System.err.println("has task item is true");
-            if(gotoGoalPostion(myCurTask)) {
+            if(myCurTask.isEnoughRobots() && gotoGoalPostion(myCurTask)) {
                 // if I reached the goal then I will set my current task to null
                 // and notify the bondsman
-                
                 world.bondsman.doingTask(id, -1);
                 world.bondsman.finishTask(myCurTask);
                 hasTaskItem = false;
