@@ -7,6 +7,7 @@ import sim.field.grid.SparseGrid2D;
 import sim.portrayal.DrawInfo2D;
 import sim.portrayal.Fixed2D;
 import sim.portrayal.simple.OvalPortrayal2D;
+import sim.util.Bag;
 import sim.util.Double2D;
 import sim.util.Int2D;
 
@@ -32,7 +33,8 @@ public class Task implements Real, Fixed2D{
     private Color availableColor = Color.RED;// may want to change color if we have different types of tasks
     private Color notAvailableColor = Color.WHITE;
     private int requiredRobots = 1;
-
+    private Bag presentRobots;
+    
     public void setGoal(Goal goal) {
         this.goal = goal;
     }
@@ -45,6 +47,21 @@ public class Task implements Real, Fixed2D{
     }
     public void setRequiredRobots(int required){
         requiredRobots = required;
+    }
+    /**
+     * kind of inefficient..... order n in number of required robots. if larger
+     * sizes then could use hash... or change how all irobots claim they are present
+     * 
+     * Check to see if robot has already claimed he is at the task.
+     * @param a  is a robot
+     * 
+     * 
+     */
+    public void addRobot(IRobot a){
+        if(presentRobots.contains((Object)a))
+            return;
+        presentRobots.add(a);
+        
     }
     public boolean isDone(){
         return done;
