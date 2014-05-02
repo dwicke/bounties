@@ -61,12 +61,9 @@ public class Task implements Real, Fixed2D{
         if(presentRobots.contains((Object)a))
             return;
         presentRobots.add(a);
-        
     }
     public void subtractRobot(IRobot a){
-        if(presentRobots.remove((Object)a))
-            return;
-        
+        presentRobots.remove((Object)a);
     }
     public boolean isEnoughRobots(){
         return presentRobots.objs.length >= requiredRobots;
@@ -109,7 +106,9 @@ public class Task implements Real, Fixed2D{
 
     
     
-    
+    public int getNumRobotsDoingTask() {
+        return presentRobots.numObjs;
+    }
 
     void resetReward() {
         currentReward = 0;

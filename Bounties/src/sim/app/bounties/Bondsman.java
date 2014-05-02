@@ -59,7 +59,7 @@ public class Bondsman implements Steppable {
             t.setCurrentReward(1);
             t.setLoc(new Int2D(rand.nextInt(field.x), rand.nextInt(field.y)));
             t.setGoal((Goal)goals.objs[rand.nextInt(goals.numObjs)]);
-            t.setRequiredRobots(rand.nextInt(3)+1);
+            t.setRequiredRobots(rand.nextInt(8)+1);
             tasks.add(t);
             
         }
@@ -153,7 +153,7 @@ public class Bondsman implements Steppable {
     Bag whoseDoingTask(Task b) {
         Bag robots = new Bag();
         // only jumpship robots use this.
-        JumpshipRobot[] allRobots = (JumpshipRobot[]) bounties.getRobots();
+        IRobot[] allRobots = (IRobot[]) bounties.getRobots();
         for (int i = 0; i < bounties.numRobots; i++) {
             if (whosDoingWhatTaskID[i] == b.getID()){
                 robots.add(allRobots[i]);

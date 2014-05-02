@@ -129,6 +129,7 @@ public class Robot implements Steppable, IRobot {
         
         
         if(hasTaskItem){// if I have it goto the goal
+            
             if(gotoGoalPosition(state, curGoal)) {
                 // then we should tell the bondsman that we have done that task
                 bondsman.finishTask(curTask);
@@ -137,6 +138,7 @@ public class Robot implements Steppable, IRobot {
                 curTask = null; // set to null since not doing anytihng
                 
             }
+            
         }else if (curTask != null) {
             if (!curTask.getIsAvailable()) {
                 prevTask = curTask;
@@ -166,11 +168,10 @@ public class Robot implements Steppable, IRobot {
     }
     public void decideTask(){
         //consult q table
-        //myQTable.getBestAction(0);
         
         Bag availTasks = bondsman.getAvailableTasks();
         int bestTaskIndex = 0;
-        System.err.println(.1+ myQtable.getNormalQValue(((Task)availTasks.objs[bestTaskIndex]).getID(),0));
+
         double max = (.1+ myQtable.getNormalQValue(((Task)availTasks.objs[bestTaskIndex]).getID(),0))*
                 ( ((Task) availTasks.objs[bestTaskIndex]).getCurrentReward() );
                   
@@ -185,22 +186,13 @@ public class Robot implements Steppable, IRobot {
             }
         }
         
-        System.err.println("Robot id " + id + " max Q:" + max + " val " + ( (Task) availTasks.objs[bestTaskIndex]).getCurrentReward());
-        // must set the goal and task if above threshold
-       // if (max >= threshold) {
-            // update the q-table now that we are transitioning
-            
-            curTask = (Task) availTasks.objs[bestTaskIndex];
-            curGoal = curTask.getGoal();
-            System.err.println("prev " + prevTask + " curTask " + curTask);
-            System.err.println("REWARD: " + reward);
-            //reward = curTask.getCurrentReward();
-            if(reward>0)
-                reward = 1;
-            myQtable.update(prevTask.getID(), 0, reward, curTask.getID());
-            reward = 1;//prevTask.getCurrentReward();;
-            threshold += (threshold < 3) ? max : 0;// maybe?
-       // }
+        
+        curTask = (Task) availTasks.objs[bestTaskIndex];
+        curGoal = curTask.getGoal();
+        if(reward>0)
+            reward = 1;
+        myQtable.update(prevTask.getID(), 0, reward, curTask.getID());
+        reward = 1;
         
     }
     
