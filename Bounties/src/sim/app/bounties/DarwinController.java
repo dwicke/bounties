@@ -25,7 +25,7 @@ import sim.util.Int2D;
 public class DarwinController implements IController{
 
     
-    
+    IRobot me;
     static Darwins[] available = new Darwins[4];
         {
         available[0] = Darwins.FIFTY;
@@ -54,7 +54,7 @@ public class DarwinController implements IController{
             int y = (int) (((DarwinParser)darwin.getParser()).getPoseY() + 20);
             
             Bounties af = (Bounties) state;
-            ((Bounties) state).robotgrid.setObjectLocation(this, x, y);
+            ((Bounties) state).robotgrid.setObjectLocation(me, x, y);
                     
             gotoPosition(state, null);
             darwin.sendCommand(Motions.getGotoPose(position.getRealTargetLocation().x, position.getRealTargetLocation().y, 0));
@@ -73,13 +73,18 @@ public class DarwinController implements IController{
             int y = (int) (((DarwinParser)darwin.getParser()).getPoseY() + 20);
             
             Bounties af = (Bounties) state;
-            ((Bounties) state).robotgrid.setObjectLocation(this, x, y);
+            ((Bounties) state).robotgrid.setObjectLocation(me, x, y);
             darwin.sendCommand(Motions.getGotoPose(position.getRealTargetLocation().x, position.getRealTargetLocation().y, 0));
             if (((DarwinParser)darwin.getParser()).getReady() == 1) {
                 return true;
             }
         }
         return false;
+    }
+
+    @Override
+    public void setMyRobot(IRobot robot) {
+        me = robot;
     }
     
 }

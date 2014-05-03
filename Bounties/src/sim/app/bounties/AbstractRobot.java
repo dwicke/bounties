@@ -16,6 +16,7 @@ import sim.util.Int2D;
  */
 public class AbstractRobot implements IRobot {
 
+    boolean realRobot = false;
     boolean hasTaskItem = false;
     int id;
     IController control;
@@ -53,14 +54,32 @@ public class AbstractRobot implements IRobot {
     public boolean gotoGoalPosition(final SimState state, Real position) {
         if (control == null) {
             // make the new controller
+            if (realRobot) {
+                control = new DarwinController(id);
+            }
+            else {
+                control = new VirtualController();
+            }
+            control.setMyRobot(this);
         }
+        
         return control.gotoGoalPosition(state, position);
     }
 
     public boolean gotoTaskPosition(final SimState state, Real position) {
         if (control == null) {
             // make the new controller
+            if (realRobot) {
+                control = new DarwinController(id);
+            }
+            else {
+                control = new VirtualController();
+            }
+            
+            control.setMyRobot(this);
         }
+        //System.err.println("I'm going to task: " + position.getLocation().toCoordinates());
+        
         return control.gotoTaskPosition(state, position);
     }
 

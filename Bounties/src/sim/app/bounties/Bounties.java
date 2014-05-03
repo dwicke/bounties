@@ -32,25 +32,28 @@ public class Bounties extends SimState {
     int numGoals = 1;    
     double averageTicks = 0;
     public double getAverageTicks(){
-        Bag tasks = bondsman.getTasks();
-        if(tasks==null) return -1;
-        double sum =0;
-        for(int i = 0; i< tasks.objs.length; i++){
-            if(tasks.objs[i] !=null){ // shouldnt really be null normally.....
-                sum+=((Task)tasks.objs[i]).getCurrentReward();
+        if (bondsman != null) {
+            Bag tasks = bondsman.getTasks();
+            if(tasks==null) return -1;
+            double sum =0;
+            for(int i = 0; i< tasks.objs.length; i++){
+                if(tasks.objs[i] !=null){ // shouldnt really be null normally.....
+                    sum+=((Task)tasks.objs[i]).getCurrentReward();
+                }
             }
+
+            sum/=tasks.objs.length;
+            rollingAverage[avgCount] = sum;
+            avgCount++;
+            if(avgCount == rollingAverage.length) avgCount= 0;
+            sum = 0;
+            for(int i = 0; i<rollingAverage.length; i++){
+                sum+=rollingAverage[i];
+            }
+            sum/=rollingAverage.length;
+            return sum;
         }
-       
-        sum/=tasks.objs.length;
-        rollingAverage[avgCount] = sum;
-        avgCount++;
-        if(avgCount == rollingAverage.length) avgCount= 0;
-        sum = 0;
-        for(int i = 0; i<rollingAverage.length; i++){
-            sum+=rollingAverage[i];
-        }
-        sum/=rollingAverage.length;
-        return sum;
+        return 0;
 //getTasks
     }
     public IRobot[] getRobots() {

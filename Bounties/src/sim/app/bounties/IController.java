@@ -19,4 +19,5 @@ public interface IController {
     public boolean gotoPosition(final SimState state, Int2D position);
     public boolean gotoGoalPosition(final SimState state, Real position);
     public boolean gotoTaskPosition(final SimState state, Real position);
+    public void setMyRobot(IRobot robot);
 }
