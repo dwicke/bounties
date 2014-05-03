@@ -1,9 +1,6 @@
 package sim.app.bounties;
 
 
-import sim.app.bounties.Bounties;
-import sim.app.bounties.IController;
-import sim.app.bounties.robot.behaviors.CommandMotions;
 import sim.app.bounties.robot.darwin.agent.Darwin;
 import sim.app.bounties.robot.darwin.agent.Darwins;
 import sim.app.bounties.robot.darwin.agent.Real;
@@ -11,12 +8,6 @@ import sim.app.bounties.robot.darwin.behaviors.Motions;
 import sim.app.bounties.robot.darwin.comm.DarwinParser;
 import sim.engine.SimState;
 import sim.util.Int2D;
-
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
 
 /**
  *
@@ -53,7 +44,6 @@ public class DarwinController implements IController{
             int x = (int) (((DarwinParser)darwin.getParser()).getPoseX() + 30);
             int y = (int) (((DarwinParser)darwin.getParser()).getPoseY() + 20);
             
-            Bounties af = (Bounties) state;
             ((Bounties) state).robotgrid.setObjectLocation(me, x, y);
                     
             gotoPosition(state, null);

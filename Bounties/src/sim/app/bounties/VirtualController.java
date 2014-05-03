@@ -17,6 +17,7 @@ public class VirtualController implements IController {
 
     IRobot me;
     
+    @Override
     public void setMyRobot(IRobot robot) {
         me = robot;
     }

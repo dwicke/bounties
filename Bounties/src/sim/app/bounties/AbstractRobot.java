@@ -20,6 +20,7 @@ public class AbstractRobot implements IRobot {
     boolean hasTaskItem = false;
     int id;
     IController control;
+    IController realControl;
     Task curTask;
 
     public void setId(int id) {
@@ -94,6 +95,28 @@ public class AbstractRobot implements IRobot {
         }
         return curTask.getID();
 
+    }
+
+    @Override
+    public boolean getIsRealRobot() {
+        return realRobot;
+    }
+
+    @Override
+    public void setIsRealRobot(boolean isReal) {
+        if (isReal != realRobot) {
+            if (isReal && realControl != null) {
+                control = realControl;// don't reinit it.
+            } else if (!isReal) {
+                realControl = control;
+                control = new VirtualController();
+            } else {// isReal = true and we have never been real and 
+                realRobot = isReal;
+                control = new DarwinController(id);
+                realControl = control;
+            }
+            control.setMyRobot(this);
+        }
     }
 
 }

@@ -8,8 +8,6 @@ package sim.app.bounties;
 import sim.engine.*;
 import static sim.engine.SimState.doLoop;
 import sim.field.grid.*;
-import sim.portrayal.Portrayal2D;
-import sim.portrayal.simple.MovablePortrayal2D;
 import sim.util.*;
 
 public class Bounties extends SimState {
@@ -137,10 +135,10 @@ public class Bounties extends SimState {
             tasksGrid.setObjectLocation(tasksLocs.objs[i], curTask.getLocation());
         }
         
-        robots = new Robot[numRobots];
+        robots = new GreedyBot[numRobots];
         robotgrid = new SparseGrid2D(GRID_WIDTH, GRID_HEIGHT);
         for (int x = 0; x < numRobots; x++) {
-            Robot bot = new Robot();
+            GreedyBot bot = new GreedyBot();
             //JointTaskQRobot bot = new JointTaskQRobot();
             robots[x] = bot;
             bot.setId(x);
