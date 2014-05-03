@@ -26,7 +26,6 @@ public class Robot implements Steppable, IRobot {
     Goal curGoal;
     double reward = 0;// what i will get by completing current task
     double totalReward = 0;
-    double threshold = 0;
     int id;
     
     // make a q-table for each task? and the states are values of the bounty

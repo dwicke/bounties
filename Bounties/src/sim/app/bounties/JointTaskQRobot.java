@@ -17,16 +17,15 @@ import sim.util.Int2D;
  *
  * @author drew
  */
-public class JointTaskQRobot implements Steppable, IRobot {
+public class JointTaskQRobot extends AbstractRobot implements Steppable  {
 
     private static final long serialVersionUID = 1;
-    boolean hasTaskItem = false;
-    Task curTask;
+    
     Task prevTask;
     Goal curGoal;
     double reward = 0;// what i will get by completing current task
     double totalReward = 0;
-    int id;
+    
     boolean atTask = false;
     boolean enoughBots = false;
     boolean needNewTask = false;
@@ -40,59 +39,19 @@ public class JointTaskQRobot implements Steppable, IRobot {
     int y;
 
     Bondsman bondsman;
-    private Color noTaskColor = Color.black;
-    private Color hasTaskColor = Color.red;
-
-    public Color getHasTaskColor() {
-        return hasTaskColor;
-    }
-
-    public Color getNoTaskColor() {
-        return noTaskColor;
-    }
-
-    /**
-     * Is true if the robot is at the location of the task and there are enough
-     * robots to perform the task.
-     *
-     * @return
-     */
-    public boolean getHasTaskItem() {
-        return hasTaskItem;
-    }
-
-    public void setHasTaskItem(boolean val) {
-        hasTaskItem = val;
-    }
+    
 
     public Bondsman getBondsman() {
         return bondsman;
     }
 
-    public void setId(int id) {
-        this.id = id;
-    }
-
-    public int getId() {
-        return id;
-    }
+    
 
     public int getGoalID() {
         return (curGoal != null) ? curGoal.id : -1;
     }
 
-    public int getTaskID() {
-        return (curTask != null) ? curTask.getID() : -1;
-    }
-
-    @Override
-    public int getCurrentTaskID() {
-        if (curTask == null) {
-            return -1;
-        }
-        return curTask.getID();
-
-    }
+    
 
 //TODO: initialize Q-table
 //update reward when task is done/failed
@@ -101,38 +60,7 @@ public class JointTaskQRobot implements Steppable, IRobot {
 
     }
 
-    public boolean gotoPosition(final SimState state, Int2D position) { // exeucute task we're on if we have one
-        final Bounties af = (Bounties) state;
-
-        Int2D location = af.robotgrid.getObjectLocation(this);
-        int x = location.x;
-        int y = location.y;
-
-        //System.err.println("X loc " + x + " y loc:" + y + " goal x and y: " + position.toCoordinates());
-        // really simple first get inline with the x
-        if (position.x != x) {
-            int unit = (position.x - x) / Math.abs(position.x - x);
-            af.robotgrid.setObjectLocation(this, new Int2D(x + unit, y));
-            int newX = x + unit;
-            return (position.x == newX) && y == position.y;
-        }
-        // then in y
-        if (position.y != y) {
-            int unit = (y - position.y) / Math.abs(y - position.y);
-            af.robotgrid.setObjectLocation(this, new Int2D(x, y - unit));
-            int newY = y - unit;
-            return (position.x == x) && (newY == position.y);
-        }
-        return true;// we are there already
-    }
-
-    public boolean gotoGoalPosition(final SimState state, Real position) {
-        return gotoPosition(state, position.getLocation());
-    }
-
-    public boolean gotoTaskPosition(final SimState state, Real position) {
-        return gotoPosition(state, position.getLocation());
-    }
+ 
 
     /**
      * SO the idea with the joint task robot is that it will be able to do tasks
@@ -234,60 +162,6 @@ public class JointTaskQRobot implements Steppable, IRobot {
             
         }
 
-        /*
-         if (hasTaskItem) {// if I have it goto the goal
-         System.err.println("has task item is true, enough?: " + curTask.isEnoughRobots());
-            
-         if (curTask.isEnoughRobots() && gotoGoalPosition(state, curGoal)) {
-         // then we should tell the bondsman that we have done that task
-         System.err.println("taking myself off the list");
-         System.exit(0);
-         bondsman.finishTask(curTask);
-         hasTaskItem = false;
-         System.err.println(id  + ": set task to false in done going to position");
-         curTask.subtractRobot(this);
-         prevTask = curTask; // set previous task to the one I finished
-         curTask = null; // set to null since not doing anytihng
-
-         } else {
-         if(decideTask()){
-         hasTaskItem = false;
-         System.err.println(id  + ":set task to false in else");
-         curTask.subtractRobot(this);
-         }
-         }
-         } else if (curTask != null) {
-         System.err.println(id  + ":hasTask is false");
-         if (!curTask.getIsAvailable()) {
-         prevTask = curTask;
-         curTask = null;
-         reward *= 0; // bad don't go after this 
-         } else if (gotoTaskPosition(state, curTask)) {
-         curTask.addRobot(this);
-         hasTaskItem = true;
-         System.err.println(id  + ":set task to true");
-         if (curTask.isEnoughRobots()) {
-         curTask.setAvailable(false);// WE am taking it!
-         }
-         }
-
-         } else {
-         if (myQtable == null) {
-
-         // pick one randomly no. do the closest one.
-         if (bondsman.getAvailableTasks().numObjs > 0) {
-         myQtable = new QTable(bondsman.getTotalNumTasks(), 1, .7, .1);// focus on current reward
-         curTask = (Task) bondsman.getAvailableTasks().objs[state.random.nextInt(bondsman.getAvailableTasks().numObjs)];
-         curGoal = curTask.getGoal();
-         reward = curTask.getCurrentReward();
-         }
-         return;
-         }
-         if (bondsman.getAvailableTasks().numObjs > 0) {
-         decideTask();// don't pick a task if none available.
-         qUpdate();//reward on qtable updated
-         }
-         }*/
     }
 
     /**
