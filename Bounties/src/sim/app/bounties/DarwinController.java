@@ -55,9 +55,13 @@ public class DarwinController implements IController{
        return false;
     }
 
+    boolean isReady = false;
+    boolean sentApproach = false;
     @Override
     public boolean gotoTaskPosition(SimState state, Real position) {
         if (prevTaskPos == null || !prevTaskPos.getLocation().equals(position.getLocation())) {
+            isReady = false; // must reset since must be going to a new location
+            sentApproach = false; // must reset since we must be going to a new location
             prevTaskPos = position;
             int x = (int) (((DarwinParser)darwin.getParser()).getPoseX() + 30);
             int y = (int) (((DarwinParser)darwin.getParser()).getPoseY() + 20);
@@ -66,9 +70,46 @@ public class DarwinController implements IController{
             ((Bounties) state).robotgrid.setObjectLocation(me, x, y);
             darwin.sendCommand(Motions.getGotoPose(position.getRealTargetLocation().x, position.getRealTargetLocation().y, 0));
             if (((DarwinParser)darwin.getParser()).getReady() == 1) {
-                return true;
+                isReady = true;
+                return false;// don't want to be done until I have kicked
+            } else {
+                isReady = false;
             }
         }
+        
+        // we have to locate the ball
+        if (isReady == true && sentApproach == false) {
+            darwin.sendCommand(Motions.MOVE_THETA);
+            int x = (int) (((DarwinParser)darwin.getParser()).getPoseX() + 30);
+            int y = (int) (((DarwinParser)darwin.getParser()).getPoseY() + 20);
+            
+            Bounties af = (Bounties) state;
+            ((Bounties) state).robotgrid.setObjectLocation(me, x, y);
+            if (((DarwinParser)darwin.getParser()).detectBall() == 1) {
+                
+                darwin.sendCommand(Motions.APPROACH_BALL); // immediately approach ball before I loose it.
+                sentApproach = true;
+                isReady = false;
+                return false;
+            }
+        }
+        
+        
+        if (sentApproach) {
+            if (((DarwinParser)darwin.getParser()).doneApproach() == 1) {
+                darwin.sendCommand(Motions.KICK_BALL);
+                int x = (int) (((DarwinParser)darwin.getParser()).getPoseX() + 30);
+                int y = (int) (((DarwinParser)darwin.getParser()).getPoseY() + 20);
+
+                Bounties af = (Bounties) state;
+                ((Bounties) state).robotgrid.setObjectLocation(me, x, y);
+                sentApproach = false;
+                isReady = false;
+                return true; // finished gototask now that we have kicked
+            }
+        }
+        
+        
         return false;
     }
 
