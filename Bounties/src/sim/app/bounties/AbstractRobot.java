@@ -18,6 +18,7 @@ public class AbstractRobot implements IRobot {
 
     boolean hasTaskItem = false;
     int id;
+    IController control;
     Task curTask;
 
     public void setId(int id) {
@@ -48,37 +49,19 @@ public class AbstractRobot implements IRobot {
         return hasTaskItem;
     }
 
-    public boolean gotoPosition(final SimState state, Int2D position) { // exeucute task we're on if we have one
-        final Bounties af = (Bounties) state;
-
-        Int2D location = af.robotgrid.getObjectLocation(this);
-        int x = location.x;
-        int y = location.y;
-
-        //System.err.println("X loc " + x + " y loc:" + y + " goal x and y: " + position.toCoordinates());
-        // really simple first get inline with the x
-        if (position.x != x) {
-            int unit = (position.x - x) / Math.abs(position.x - x);
-            af.robotgrid.setObjectLocation(this, new Int2D(x + unit, y));
-            int newX = x + unit;
-            return (position.x == newX) && y == position.y;
-        }
-        // then in y
-        if (position.y != y) {
-            int unit = (y - position.y) / Math.abs(y - position.y);
-            af.robotgrid.setObjectLocation(this, new Int2D(x, y - unit));
-            int newY = y - unit;
-            return (position.x == x) && (newY == position.y);
-        }
-        return true;// we are there already
-    }
 
     public boolean gotoGoalPosition(final SimState state, Real position) {
-        return gotoPosition(state, position.getLocation());
+        if (control == null) {
+            // make the new controller
+        }
+        return control.gotoGoalPosition(state, position);
     }
 
     public boolean gotoTaskPosition(final SimState state, Real position) {
-        return gotoPosition(state, position.getLocation());
+        if (control == null) {
+            // make the new controller
+        }
+        return control.gotoTaskPosition(state, position);
     }
 
     public void setHasTaskItem(boolean val) {
