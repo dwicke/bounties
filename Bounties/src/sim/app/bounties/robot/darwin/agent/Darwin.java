@@ -86,4 +86,12 @@ public class Darwin implements Robot{
         return myParser;
         }
     
+    public boolean isConnected() {
+        return comm.isConnected();
+    }
+    
+    public void disconnect() {
+        //...
+    }
+    
     }

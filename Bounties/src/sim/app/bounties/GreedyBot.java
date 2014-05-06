@@ -17,23 +17,16 @@ import java.util.Comparator;
  * a task.
  * @author drew
  */
-public class GreedyBot implements Steppable, IRobot {
+public class GreedyBot extends AbstractRobot implements Steppable {
 
     Bounties world;
     double expectedTimeOfOthersToComplete[][];// [#agent][#bounties]
-    Task myCurTask;
-    boolean hasTaskItem = false;
-    private Color noTaskColor = Color.black;
-    private Color hasTaskColor = Color.red;
-    int id;
     double epsilon = .01;
     int count = 0;
     boolean decided = false;
     int maxCount = 20;
     Bondsman bondsman;
-    public void setId(int id) {
-        this.id = id;
-    }
+    
     
     public double expectedTimeToComplete(Task b) {
         
@@ -68,43 +61,8 @@ public class GreedyBot implements Steppable, IRobot {
         return b.getCurrentReward();
     }
     
-    public boolean gotoTaskPosition(Task b) {
-        return gotoPosition(b.getLocation());
-    }   
+   
     
-    public boolean gotoGoalPostion(Task b) {
-        return gotoPosition(b.getGoal().getLocation());
-    }
-    public int getCurrentTaskID(){
-        if( myCurTask==null)
-            return -1;
-        return myCurTask.getID();
-           
-    }
-    public boolean gotoPosition(Int2D position)
-    {
-        
-        Int2D location = world.robotgrid.getObjectLocation(this);
-        int x = location.x;
-        int y = location.y;
-        
-        //System.err.println("X loc " + x + " y loc:" + y + " goal x and y: " + position.toCoordinates());
-        // really simple first get inline with the x
-        if (position.x != x) {
-            int unit = (position.x - x) / Math.abs(position.x - x);
-            world.robotgrid.setObjectLocation(this, new Int2D(x + unit, y));
-            int newX = x + unit;
-            return (position.x == newX) && y == position.y;
-        }
-        // then in y
-        if (position.y != y) {
-            int unit = (y - position.y) / Math.abs(y - position.y);
-            world.robotgrid.setObjectLocation(this, new Int2D(x, y - unit));
-            int newY = y - unit;
-            return (position.x == x) && (newY == position.y);
-        }
-        return true;// we are there already
-    }    
     
     @Override
     public void step(SimState state) {
@@ -113,28 +71,28 @@ public class GreedyBot implements Steppable, IRobot {
         world = (Bounties) state;// set the state of the world
      
         
-        if((myCurTask==null || !decided || (myCurTask!=null && myCurTask.getIsAvailable() == false)) && !hasTaskItem){
+        if((curTask==null || !decided || (curTask!=null && curTask.getIsAvailable() == false)) && !hasTaskItem){
             decideTask();
         }
 
                 
-        if (hasTaskItem == false && myCurTask!=null) {
+        if (hasTaskItem == false && curTask!=null) {
             System.err.println("has task item is false");
-            hasTaskItem = gotoTaskPosition(myCurTask);
+            hasTaskItem = gotoTaskPosition(world, curTask);
             if(hasTaskItem){// if i'm here, add myself to list of robots waiting
-                myCurTask.addRobot(this);
-                if(myCurTask.isEnoughRobots()){ //if everybody is here task is no longer available, and we're coming home
-                    myCurTask.setAvailable(false);
+                curTask.addRobot(this);
+                if(curTask.isEnoughRobots()){ //if everybody is here task is no longer available, and we're coming home
+                    curTask.setAvailable(false);
                 }
             }
             
-        } else if (hasTaskItem == true && myCurTask!=null) {
+        } else if (hasTaskItem == true && curTask!=null) {
              System.err.println("has task item is true");
-            if(myCurTask.isEnoughRobots() && gotoGoalPostion(myCurTask)) {
+            if(curTask.isEnoughRobots() && gotoGoalPosition(world, curTask)) {
                 // if I reached the goal then I will set my current task to null
                 // and notify the bondsman
                 world.bondsman.doingTask(id, -1);
-                world.bondsman.finishTask(myCurTask);
+                world.bondsman.finishTask(curTask);
                 hasTaskItem = false;
                 decided = false;
             }
@@ -144,17 +102,7 @@ public class GreedyBot implements Steppable, IRobot {
         
     }
 
-    public Color getHasTaskColor() {
-        return hasTaskColor;
-    }
-
-    public Color getNoTaskColor() {
-        return noTaskColor;
-    }
     
-    public boolean getHasTaskItem() {
-        return hasTaskItem;
-    }
      public void decideTask(){
         //sort the tasks, 
         //find the rank of task which matches my id
@@ -173,7 +121,7 @@ public class GreedyBot implements Steppable, IRobot {
                            }    
                     );
         if(id<temp.objs.length)
-            myCurTask = (Task)temp.objs[id];
+            curTask = (Task)temp.objs[id];
         
         
     }

@@ -64,7 +64,10 @@ public class DarwinParser extends DefaultParser {
         //System.err.println("PoseX " + getPoseX());
         //System.err.println("Current Distance to ball: "+ getDistanceToBall() + " ball x y" + getBallX() + " " + getBallY());
         //System.err.println("Current Distance To ball: " + getDistanceToBall() + "  Ball lost: " + getBallLost());
-        System.err.println("ID =  "  + getPlayerID() + " Yelled Fail! " + getYelledFail() +  " Done Front Aproach: " + doneApproach() + " Kicked = " + getKicked() + " Ready = " + getReady() + "  Distance to ball: " + getDistanceToBall()+ "  Ball lost: " + getBallLost());
+        
+        
+        
+        //System.err.println("ID =  "  + getPlayerID() + " Yelled Fail! " + getYelledFail() +  " Done Front Aproach: " + doneApproach() + " Kicked = " + getKicked() + " Ready = " + getReady() + "  Distance to ball: " + getDistanceToBall()+ "  Ball lost: " + getBallLost());
         //getBallLost();
         }
 
@@ -249,6 +252,10 @@ public class DarwinParser extends DefaultParser {
                 }
             }
         }
+
+    public boolean hasData() {
+        return feature != null;
+    }
     
     
     

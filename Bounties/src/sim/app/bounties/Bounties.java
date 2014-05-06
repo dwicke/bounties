@@ -8,8 +8,6 @@ package sim.app.bounties;
 import sim.engine.*;
 import static sim.engine.SimState.doLoop;
 import sim.field.grid.*;
-import sim.portrayal.Portrayal2D;
-import sim.portrayal.simple.MovablePortrayal2D;
 import sim.util.*;
 
 public class Bounties extends SimState {
@@ -24,33 +22,36 @@ public class Bounties extends SimState {
     public double[] rollingAverage = new double[1000];
     int avgCount = 0;
     public Bondsman bondsman;
-    public int numRobots = 8;
+    public int numRobots = 2;
     
     public IRobot robots[];// index into this array corresponds to its id
     
-    int numTasks = 20;
+    int numTasks = 2;
     int numGoals = 1;    
     double averageTicks = 0;
     public double getAverageTicks(){
-        Bag tasks = bondsman.getTasks();
-        if(tasks==null) return -1;
-        double sum =0;
-        for(int i = 0; i< tasks.objs.length; i++){
-            if(tasks.objs[i] !=null){ // shouldnt really be null normally.....
-                sum+=((Task)tasks.objs[i]).getCurrentReward();
+        if (bondsman != null) {
+            Bag tasks = bondsman.getTasks();
+            if(tasks==null) return -1;
+            double sum =0;
+            for(int i = 0; i< tasks.objs.length; i++){
+                if(tasks.objs[i] !=null){ // shouldnt really be null normally.....
+                    sum+=((Task)tasks.objs[i]).getCurrentReward();
+                }
             }
+
+            sum/=tasks.objs.length;
+            rollingAverage[avgCount] = sum;
+            avgCount++;
+            if(avgCount == rollingAverage.length) avgCount= 0;
+            sum = 0;
+            for(int i = 0; i<rollingAverage.length; i++){
+                sum+=rollingAverage[i];
+            }
+            sum/=rollingAverage.length;
+            return sum;
         }
-       
-        sum/=tasks.objs.length;
-        rollingAverage[avgCount] = sum;
-        avgCount++;
-        if(avgCount == rollingAverage.length) avgCount= 0;
-        sum = 0;
-        for(int i = 0; i<rollingAverage.length; i++){
-            sum+=rollingAverage[i];
-        }
-        sum/=rollingAverage.length;
-        return sum;
+        return 0;
 //getTasks
     }
     public IRobot[] getRobots() {
@@ -134,10 +135,10 @@ public class Bounties extends SimState {
             tasksGrid.setObjectLocation(tasksLocs.objs[i], curTask.getLocation());
         }
         
-        robots = new JointTaskQRobot[numRobots];
+        robots = new IRobot[numRobots];
         robotgrid = new SparseGrid2D(GRID_WIDTH, GRID_HEIGHT);
         for (int x = 0; x < numRobots; x++) {
-            //Robot bot = new Robot();
+            //GreedyBot bot = new GreedyBot();
             JointTaskQRobot bot = new JointTaskQRobot();
             robots[x] = bot;
             bot.setId(x);

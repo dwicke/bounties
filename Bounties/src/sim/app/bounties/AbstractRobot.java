@@ -16,8 +16,11 @@ import sim.util.Int2D;
  */
 public class AbstractRobot implements IRobot {
 
+    boolean realRobot = false;
     boolean hasTaskItem = false;
     int id;
+    IController control;
+    IController realControl;
     Task curTask;
 
     public void setId(int id) {
@@ -48,37 +51,37 @@ public class AbstractRobot implements IRobot {
         return hasTaskItem;
     }
 
-    public boolean gotoPosition(final SimState state, Int2D position) { // exeucute task we're on if we have one
-        final Bounties af = (Bounties) state;
-
-        Int2D location = af.robotgrid.getObjectLocation(this);
-        int x = location.x;
-        int y = location.y;
-
-        //System.err.println("X loc " + x + " y loc:" + y + " goal x and y: " + position.toCoordinates());
-        // really simple first get inline with the x
-        if (position.x != x) {
-            int unit = (position.x - x) / Math.abs(position.x - x);
-            af.robotgrid.setObjectLocation(this, new Int2D(x + unit, y));
-            int newX = x + unit;
-            return (position.x == newX) && y == position.y;
-        }
-        // then in y
-        if (position.y != y) {
-            int unit = (y - position.y) / Math.abs(y - position.y);
-            af.robotgrid.setObjectLocation(this, new Int2D(x, y - unit));
-            int newY = y - unit;
-            return (position.x == x) && (newY == position.y);
-        }
-        return true;// we are there already
-    }
 
     public boolean gotoGoalPosition(final SimState state, Real position) {
-        return gotoPosition(state, position.getLocation());
+        if (control == null) {
+            // make the new controller
+            if (realRobot) {
+                control = new DarwinController(id);
+            }
+            else {
+                control = new VirtualController();
+            }
+            control.setMyRobot(this);
+        }
+        
+        return control.gotoGoalPosition(state, position);
     }
 
     public boolean gotoTaskPosition(final SimState state, Real position) {
-        return gotoPosition(state, position.getLocation());
+        if (control == null) {
+            // make the new controller
+            if (realRobot) {
+                control = new DarwinController(id);
+            }
+            else {
+                control = new VirtualController();
+            }
+            
+            control.setMyRobot(this);
+        }
+        //System.err.println("I'm going to task: " + position.getLocation().toCoordinates());
+        
+        return control.gotoTaskPosition(state, position);
     }
 
     public void setHasTaskItem(boolean val) {
@@ -92,6 +95,28 @@ public class AbstractRobot implements IRobot {
         }
         return curTask.getID();
 
+    }
+
+    @Override
+    public boolean getIsRealRobot() {
+        return realRobot;
+    }
+
+    @Override
+    public void setIsRealRobot(boolean isReal) {
+        if (isReal != realRobot) {
+            if (isReal && realControl != null) {
+                control = realControl;// don't reinit it.
+            } else if (!isReal) {
+                realControl = control;
+                control = new VirtualController();
+            } else {// isReal = true and we have never been real and 
+                control = new DarwinController(id);
+                realControl = control;
+            }
+            realRobot = isReal;
+            control.setMyRobot(this);
+        }
     }
 
 }

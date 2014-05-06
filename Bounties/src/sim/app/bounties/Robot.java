@@ -17,17 +17,15 @@ import sim.util.Int2D;
  *
  * @author drew
  */
-public class Robot implements Steppable, IRobot {
+public class Robot extends AbstractRobot implements Steppable {
 
     private static final long serialVersionUID = 1;
-    boolean hasTaskItem = false;
-    Task curTask;
+    
     Task prevTask;
     Goal curGoal;
     double reward = 0;// what i will get by completing current task
     double totalReward = 0;
-    int id;
-    
+
     // make a q-table for each task? and the states are values of the bounty
     // we would use the dual q-learning again where we are learning the thresholds
     // for the decision maker and
@@ -38,36 +36,12 @@ public class Robot implements Steppable, IRobot {
     int y;
 
     Bondsman bondsman;
-    private Color noTaskColor = Color.black;
-    private Color hasTaskColor = Color.red;
-
-    public Color getHasTaskColor() {
-        return hasTaskColor;
-    }
-
-    public Color getNoTaskColor() {
-        return noTaskColor;
-    }
-    
-    public boolean getHasTaskItem() {
-        return hasTaskItem;
-    }
-
-    public void setHasTaskItem(boolean val) {
-        hasTaskItem = val;
-    }
 
     public Bondsman getBondsman() {
         return bondsman;
     }
 
-    public void setId(int id) {
-        this.id = id;
-    }
-
-    public int getId() {
-        return id;
-    }
+    
     public int getGoalID() {
         return (curGoal != null) ? curGoal.id : -1;
     }
@@ -75,13 +49,7 @@ public class Robot implements Steppable, IRobot {
     public int getTaskID() {
         return (curTask != null) ? curTask.getID() : -1;
     }
-     public int getCurrentTaskID(){
-        if( curTask==null)
-            return -1;
-        return curTask.getID();
-           
-    }
-  
+   
 //TODO: initialize Q-table
 //update reward when task is done/failed
 //consult the qtable for a decision
@@ -89,39 +57,6 @@ public class Robot implements Steppable, IRobot {
        
     }
 
-    public boolean gotoPosition(final SimState state, Int2D position) { // exeucute task we're on if we have one
-        final Bounties af = (Bounties) state;
-        
-        Int2D location = af.robotgrid.getObjectLocation(this);
-        int x = location.x;
-        int y = location.y;
-        
-        //System.err.println("X loc " + x + " y loc:" + y + " goal x and y: " + position.toCoordinates());
-        // really simple first get inline with the x
-        if (position.x != x) {
-            int unit = (position.x - x) / Math.abs(position.x - x);
-            af.robotgrid.setObjectLocation(this, new Int2D(x + unit, y));
-            int newX = x + unit;
-            return (position.x == newX) && y == position.y;
-        }
-        // then in y
-        if (position.y != y) {
-            int unit = (y - position.y) / Math.abs(y - position.y);
-            af.robotgrid.setObjectLocation(this, new Int2D(x, y - unit));
-            int newY = y - unit;
-            return (position.x == x) && (newY == position.y);
-        }
-        return true;// we are there already
-    }
-    
-    public boolean gotoGoalPosition(final SimState state, Real position) {
-        return gotoPosition(state, position.getLocation());
-    }
-
-    public boolean gotoTaskPosition(final SimState state, Real position) {
-        return gotoPosition(state, position.getLocation());
-    }
-    
     public void step(final SimState state) {
         final Bounties af = (Bounties) state;
         bondsman = af.bondsman; // set the bondsman
