@@ -111,10 +111,10 @@ public class AbstractRobot implements IRobot {
                 realControl = control;
                 control = new VirtualController();
             } else {// isReal = true and we have never been real and 
-                realRobot = isReal;
                 control = new DarwinController(id);
                 realControl = control;
             }
+            realRobot = isReal;
             control.setMyRobot(this);
         }
     }

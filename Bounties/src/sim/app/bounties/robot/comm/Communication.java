@@ -104,6 +104,11 @@ public abstract class Communication implements Runnable{
         shouldStop = true;
     }
     
+    
+    public boolean isConnected() {
+        return connected;
+    }
+    
     /**
      * Write the string to the socket
      * @param value 

@@ -17,18 +17,21 @@ public class DarwinController implements IController{
 
     
     IRobot me;
+    int id;
     static Darwins[] available = new Darwins[4];
         {
-        available[0] = Darwins.FIFTY;
-        available[1] = Darwins.FIFTYONE;
-        available[2] = Darwins.FIFTYTWO;
-        available[3] = Darwins.FIFTYTHREE;
+        available[1] = Darwins.FIFTYTWO;
+        available[0] = Darwins.FIFTYTHREE;
+        available[2] = Darwins.FIFTYONE;
+        available[3] = Darwins.FIFTY;
+        
         }
         
     Darwin darwin;
     Real prevTaskPos, prevGoalPos;
     public DarwinController(int id) {
         darwin = available[id].build();
+        this.id = id;
     }
     
     
@@ -41,47 +44,68 @@ public class DarwinController implements IController{
     public boolean gotoGoalPosition(SimState state, Real position) {
         if (prevGoalPos == null || !prevGoalPos.getLocation().equals(position.getLocation())) {
             prevGoalPos = position;
-            int x = (int) (((DarwinParser)darwin.getParser()).getPoseX() + 30);
-            int y = (int) (((DarwinParser)darwin.getParser()).getPoseY() + 20);
+            int x = (int) (((DarwinParser)darwin.getParser()).getPoseX() * 10 + 30);
+            int y = (int) (((DarwinParser)darwin.getParser()).getPoseY() * 10 + 20);
             
             ((Bounties) state).robotgrid.setObjectLocation(me, x, y);
                     
             gotoPosition(state, null);
             darwin.sendCommand(Motions.getGotoPose(position.getRealTargetLocation().x, position.getRealTargetLocation().y, 0));
-            if (((DarwinParser)darwin.getParser()).getReady() == 1) {
-                return true;
-            }
+            prevTaskPos = null; // reset;
         }
-       return false;
+        // return true if i have reached the goal location else false.
+       return ((DarwinParser)darwin.getParser()).getReady() == 1 || 
+               (Math.abs(((DarwinParser)darwin.getParser()).getPoseX() - position.getRealTargetLocation().x) <= .2 &&
+               Math.abs(((DarwinParser)darwin.getParser()).getPoseY() - position.getRealTargetLocation().y) <= .2 );
     }
 
     boolean isReady = false;
     boolean sentApproach = false;
     @Override
     public boolean gotoTaskPosition(SimState state, Real position) {
+        if (darwin.isConnected() && ((DarwinParser)darwin.getParser()).hasData()) {
+            int x = (int) (((DarwinParser)darwin.getParser()).getPoseX() * 10 + 30);
+            int y = (int) (((DarwinParser)darwin.getParser()).getPoseY() * 10 + 20);
+
+            Bounties af = (Bounties) state;
+            af.robotgrid.setObjectLocation(me, x, y);
+            System.err.println("ID" + id + "Darwin loc = " + x + " "  + y + " from robot: " + ((DarwinParser)darwin.getParser()).getPoseX() + " " + ((DarwinParser)darwin.getParser()).getPoseY() + " Target loc:" + position.getRealTargetLocation().toCoordinates()
+                    + " isReady = " + isReady + " SentApproach="+ sentApproach + 
+                    " Darwin Ready to kick: " + ((DarwinParser)darwin.getParser()).doneApproach());
+
+        }
+        else {
+            System.err.println("Connection: " + darwin.isConnected() + "  has data: " + ((DarwinParser)darwin.getParser()).hasData());
+        }
+        
         if (prevTaskPos == null || !prevTaskPos.getLocation().equals(position.getLocation())) {
             isReady = false; // must reset since must be going to a new location
             sentApproach = false; // must reset since we must be going to a new location
+            prevGoalPos = null; // reset that the goal.
             prevTaskPos = position;
-            int x = (int) (((DarwinParser)darwin.getParser()).getPoseX() + 30);
-            int y = (int) (((DarwinParser)darwin.getParser()).getPoseY() + 20);
+            int x = (int) (((DarwinParser)darwin.getParser()).getPoseX() * 10 + 30);
+            int y = (int) (((DarwinParser)darwin.getParser()).getPoseY() * 10 + 20);
             
             Bounties af = (Bounties) state;
             ((Bounties) state).robotgrid.setObjectLocation(me, x, y);
+            // only want to send the command once but must check it multiple times.
             darwin.sendCommand(Motions.getGotoPose(position.getRealTargetLocation().x, position.getRealTargetLocation().y, 0));
-            if (((DarwinParser)darwin.getParser()).getReady() == 1) {
+            
+        }
+        
+        if (isReady == false && sentApproach == false && 
+                ( ((DarwinParser)darwin.getParser()).getReady() == 1 || 
+                (Math.abs(((DarwinParser)darwin.getParser()).getPoseX() - position.getRealTargetLocation().x) <= .2 &&
+                Math.abs(((DarwinParser)darwin.getParser()).getPoseY() - position.getRealTargetLocation().y) <= .2 ))) {
                 isReady = true;
                 return false;// don't want to be done until I have kicked
-            } else {
-                isReady = false;
-            }
-        }
+        } 
         
         // we have to locate the ball
         if (isReady == true && sentApproach == false) {
             darwin.sendCommand(Motions.MOVE_THETA);
-            int x = (int) (((DarwinParser)darwin.getParser()).getPoseX() + 30);
-            int y = (int) (((DarwinParser)darwin.getParser()).getPoseY() + 20);
+            int x = (int) (((DarwinParser)darwin.getParser()).getPoseX() * 10 + 30);
+            int y = (int) (((DarwinParser)darwin.getParser()).getPoseY() * 10 + 20);
             
             Bounties af = (Bounties) state;
             ((Bounties) state).robotgrid.setObjectLocation(me, x, y);
@@ -98,8 +122,11 @@ public class DarwinController implements IController{
         if (sentApproach) {
             if (((DarwinParser)darwin.getParser()).doneApproach() == 1) {
                 darwin.sendCommand(Motions.KICK_BALL);
-                int x = (int) (((DarwinParser)darwin.getParser()).getPoseX() + 30);
-                int y = (int) (((DarwinParser)darwin.getParser()).getPoseY() + 20);
+                System.err.println("Darwin ID = " + id + " Sent kick.");
+                darwin.sendCommand(Motions.STOP);
+                System.err.println("Darwin ID = " + id + " Sent Stop.");
+                int x = (int) (((DarwinParser)darwin.getParser()).getPoseX() * 10 + 30);
+                int y = (int) (((DarwinParser)darwin.getParser()).getPoseY() * 10 + 20);
 
                 Bounties af = (Bounties) state;
                 ((Bounties) state).robotgrid.setObjectLocation(me, x, y);
@@ -107,6 +134,10 @@ public class DarwinController implements IController{
                 isReady = false;
                 return true; // finished gototask now that we have kicked
             }
+            // make more robust so that if afters so  long of trying to approach the ball
+            // check if it can actually see it and if not rotate and then gotoball
+            // then approach then kick...
+            
         }
         
         

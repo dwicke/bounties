@@ -22,11 +22,11 @@ public class Bounties extends SimState {
     public double[] rollingAverage = new double[1000];
     int avgCount = 0;
     public Bondsman bondsman;
-    public int numRobots = 8;
+    public int numRobots = 2;
     
     public IRobot robots[];// index into this array corresponds to its id
     
-    int numTasks = 20;
+    int numTasks = 2;
     int numGoals = 1;    
     double averageTicks = 0;
     public double getAverageTicks(){
@@ -135,11 +135,11 @@ public class Bounties extends SimState {
             tasksGrid.setObjectLocation(tasksLocs.objs[i], curTask.getLocation());
         }
         
-        robots = new GreedyBot[numRobots];
+        robots = new IRobot[numRobots];
         robotgrid = new SparseGrid2D(GRID_WIDTH, GRID_HEIGHT);
         for (int x = 0; x < numRobots; x++) {
-            GreedyBot bot = new GreedyBot();
-            //JointTaskQRobot bot = new JointTaskQRobot();
+            //GreedyBot bot = new GreedyBot();
+            JointTaskQRobot bot = new JointTaskQRobot();
             robots[x] = bot;
             bot.setId(x);
             int xloc = random.nextInt(GRID_WIDTH);
