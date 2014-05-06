@@ -111,7 +111,7 @@ public class Task implements Real, Fixed2D{
     }
 
     void resetReward() {
-        currentReward = 0;
+        currentReward = 100;
     }
 
     public Double2D getRealTargetLocation()
