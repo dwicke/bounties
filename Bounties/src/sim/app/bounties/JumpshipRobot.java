@@ -69,6 +69,7 @@ public class JumpshipRobot extends AbstractRobot implements Steppable {
         if (hasTaskItem == true) {
             
             //System.err.println(curTask);
+            //if(curTask!=null)
             if(gotoGoalPosition(world, curTask.getGoal())) {
                 // if I reached the goal then I will set my current task to null
                 // and notify the bondsman
@@ -148,7 +149,7 @@ public class JumpshipRobot extends AbstractRobot implements Steppable {
                 hasTaskItem = gotoTaskPosition(world,curTask);
                 if (hasTaskItem) {
                     curTask.setAvailable(false);
-                    curTask = null;
+                    //curTask = null;
                 }
             }
         } 

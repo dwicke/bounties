@@ -187,13 +187,13 @@ public class FullJumpShipQLearnerRobot extends AbstractRobot implements Steppabl
         int bestTaskIndex = 0;
         System.err.println("avail: " + availTasks);
         System.err.println("qtable: " + myQtable);
-        System.err.println(  myQtable.getQValue(curTask.getID(), ((Task) availTasks.objs[bestTaskIndex]).getID()));
-        double max = ( myQtable.getQValue(curTask.getID(), ((Task) availTasks.objs[bestTaskIndex]).getID()))
+        System.err.println( .3+ myQtable.getQValue(curTask.getID(), ((Task) availTasks.objs[bestTaskIndex]).getID()));
+        double max = ( .3+myQtable.getQValue(curTask.getID(), ((Task) availTasks.objs[bestTaskIndex]).getID()))
                 * (((Task) availTasks.objs[bestTaskIndex]).getCurrentReward());
 
         for (int i = 1; i < availTasks.numObjs; i++) {
 
-            double cur = ( myQtable.getQValue( curTask.getID(), ((Task) availTasks.objs[i]).getID()))
+            double cur = (.3+ myQtable.getQValue( curTask.getID(), ((Task) availTasks.objs[i]).getID()))
                     * (((Task) availTasks.objs[i]).getCurrentReward());
             //System.err.println("agent id " + id+ " Cur q-val:  " + cur);
             if (cur > max) {
@@ -221,7 +221,7 @@ public class FullJumpShipQLearnerRobot extends AbstractRobot implements Steppabl
         if (reward > 0) {//completeness goal....
             reward = 1;
         }
-
+        if(prevTask!=null && curTask!=null)
         myQtable.update(prevTask.getID(), curTask.getID(), reward, curTask.getID());
         reward = 1;//curTask.getCurrentReward();//truReward
     }
