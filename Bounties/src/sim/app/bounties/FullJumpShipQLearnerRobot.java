@@ -26,6 +26,7 @@ public class FullJumpShipQLearnerRobot extends AbstractRobot implements Steppabl
     boolean atTask = false;
     boolean enoughBots = false;
     boolean needNewTask = false;
+    double epsilon = .3;
 
     // make a q-table for each task? and the states are values of the bounty
     // we would use the dual q-learning again where we are learning the thresholds
@@ -80,7 +81,7 @@ public class FullJumpShipQLearnerRobot extends AbstractRobot implements Steppabl
 
             // pick one randomly
             if (bondsman.getAvailableTasks().numObjs > 0) {
-                myQtable = new QTable(bondsman.getTotalNumTasks(), bondsman.getTotalNumTasks(), .7, .1, state.random);// focus on current reward
+                myQtable = new QTable(bondsman.getTotalNumTasks(), bondsman.getTotalNumTasks(), .7, .9, state.random);// focus on current reward
                 curTask = (Task) bondsman.getAvailableTasks().objs[state.random.nextInt(bondsman.getAvailableTasks().numObjs)];
                 curGoal = curTask.getGoal();
                 reward = curTask.getCurrentReward();
@@ -187,13 +188,13 @@ public class FullJumpShipQLearnerRobot extends AbstractRobot implements Steppabl
         int bestTaskIndex = 0;
         System.err.println("avail: " + availTasks);
         System.err.println("qtable: " + myQtable);
-        System.err.println(  myQtable.getQValue(curTask.getID(), ((Task) availTasks.objs[bestTaskIndex]).getID()));
-        double max = ( myQtable.getQValue(curTask.getID(), ((Task) availTasks.objs[bestTaskIndex]).getID()))
+        System.err.println( epsilon * myQtable.getQValue(curTask.getID(), ((Task) availTasks.objs[bestTaskIndex]).getID()));
+        double max = (epsilon * myQtable.getQValue(curTask.getID(), ((Task) availTasks.objs[bestTaskIndex]).getID()))
                 * (((Task) availTasks.objs[bestTaskIndex]).getCurrentReward());
 
         for (int i = 1; i < availTasks.numObjs; i++) {
 
-            double cur = ( myQtable.getQValue( curTask.getID(), ((Task) availTasks.objs[i]).getID()))
+            double cur = (epsilon * myQtable.getQValue( curTask.getID(), ((Task) availTasks.objs[i]).getID()))
                     * (((Task) availTasks.objs[i]).getCurrentReward());
             //System.err.println("agent id " + id+ " Cur q-val:  " + cur);
             if (cur > max) {
@@ -218,12 +219,13 @@ public class FullJumpShipQLearnerRobot extends AbstractRobot implements Steppabl
     }
 
     public void qUpdate() {
+        /*
         if (reward > 0) {//completeness goal....
             reward = 1;
-        }
-
-        myQtable.update(prevTask.getID(), curTask.getID(), reward, curTask.getID());
-        reward = 1;//curTask.getCurrentReward();//truReward
+        }*/
+        if (prevTask != null)
+            myQtable.update(prevTask.getID(), curTask.getID(), reward, curTask.getID());
+        reward = curTask.getCurrentReward();//truReward
     }
 
 }
