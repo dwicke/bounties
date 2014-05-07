@@ -69,7 +69,7 @@ public class JumpshipRobot extends AbstractRobot implements Steppable {
         
         if (hasTaskItem == false) {
             // make a probability of moving toward a random task
-            if (state.random.nextDouble() < epsilon) {
+            /*if (state.random.nextDouble() < epsilon) {
                 
                 Task randTask = (Task)tasks.objs[state.random.nextInt(tasks.numObjs)];
                 hasTaskItem = gotoTaskPosition(world, randTask);
@@ -79,19 +79,19 @@ public class JumpshipRobot extends AbstractRobot implements Steppable {
 
                 }
 
-            } else if (count < maxCount) {
+            } else*/ if (count < maxCount) {
                 int bestTaskIndex = 0;
                 double maxR = 0;       
-             
+                
                 for(int i = 0; i < tasks.numObjs; i++) {
                     Task iTask = (Task) tasks.objs[i];
                     // note that the expectedTimeToComplete is based off of the current
                     // time so don't need to subtract current time
                     // as was the case in the original formulation.
-                    System.err.println(iTask.getCurrentReward());
-                    double curRi = (valueOfBounty(iTask) * probabilityDoTask(iTask));// / (expectedTimeToComplete(curTask));
+                    System.err.println("Robot " + id + " task id " + iTask.getID() + " curReward " + iTask.getCurrentReward() + " probDoTask = " + probabilityDoTask(iTask) + " expected time to compelted=" + expectedTimeToComplete(iTask));
+                    double curRi = (valueOfBounty(iTask) * probabilityDoTask(iTask)) / (expectedTimeToComplete(iTask));
                     if(iTask!= curTask){
-                        curRi *=.50;
+                        curRi *=.50;// decrease the rate of things not my current task
                     }
                     if (curRi > maxR) {
                         maxR = curRi;
