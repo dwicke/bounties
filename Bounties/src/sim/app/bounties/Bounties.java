@@ -140,7 +140,7 @@ public class Bounties extends SimState {
         for (int x = 0; x < numRobots; x++) {
             //GreedyBot bot = new GreedyBot();
 
-            FullQLearnerRobot bot = new FullQLearnerRobot();
+            FullJumpShipQLearnerRobot bot = new FullJumpShipQLearnerRobot();
             robots[x] = bot;
             bot.setId(x);
             int xloc = random.nextInt(GRID_WIDTH);
