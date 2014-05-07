@@ -139,7 +139,7 @@ public class Bounties extends SimState {
         robotgrid = new SparseGrid2D(GRID_WIDTH, GRID_HEIGHT);
         for (int x = 0; x < numRobots; x++) {
             //GreedyBot bot = new GreedyBot();
-            FullQLearnerRobot bot = new FullQLearnerRobot();
+            JumpshipRobot bot = new JumpshipRobot();
             robots[x] = bot;
             bot.setId(x);
             int xloc = random.nextInt(GRID_WIDTH);

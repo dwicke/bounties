@@ -46,7 +46,7 @@ public class JumpshipRobot extends AbstractRobot implements Steppable {
         for (int i = 0; i < otherRobots.numObjs; i++) {
             double othersTime = ((JumpshipRobot) otherRobots.objs[i]).expectedTimeToComplete(b);
             // if my time is greater to do it than others then I don't want to do it so prob = 0
-            // if same time then set to prob 1/2
+            // if same time then multiply  prob 1/2
             // if my time is less than their's then make prob *=1
             prob *= (othersTime < myExpectedTime) ? 0 : ((othersTime > myExpectedTime) ? 1 : 0.5);
         }
@@ -66,8 +66,21 @@ public class JumpshipRobot extends AbstractRobot implements Steppable {
         world = (Bounties) state;// set the state of the world
         Bag tasks = world.bondsman.getAvailableTasks();
         if(tasks.numObjs==0) return; // don't bother caculating task stuff if there are no available tasks
-        
-        if (hasTaskItem == false) {
+        if (hasTaskItem == true) {
+            
+            //System.err.println(curTask);
+            if(gotoGoalPosition(world, curTask.getGoal())) {
+                // if I reached the goal then I will set my current task to null
+                // and notify the bondsman
+                count = 0;
+                System.err.println("FINISHED LOL");
+                hasTaskItem = false;
+                world.bondsman.doingTask(id, -1);
+                world.bondsman.finishTask(curTask);
+            }
+            
+            
+        }else if (hasTaskItem == false) {
             // make a probability of moving toward a random task
             if (state.random.nextDouble() < epsilon) {
                 
@@ -89,9 +102,9 @@ public class JumpshipRobot extends AbstractRobot implements Steppable {
                     // time so don't need to subtract current time
                     // as was the case in the original formulation.
                     System.err.println(iTask.getCurrentReward());
-                    double curRi = (valueOfBounty(iTask) * probabilityDoTask(iTask));// / (expectedTimeToComplete(curTask));
-                    if(iTask!= curTask){
-                        curRi *=.50;
+                    double curRi = (valueOfBounty(iTask) * probabilityDoTask(iTask));// / (expectedTimeToComplete(iTask));
+                   if(iTask!= curTask){
+                        curRi *=.5;
                     }
                     if (curRi > maxR) {
                         maxR = curRi;
@@ -125,19 +138,7 @@ public class JumpshipRobot extends AbstractRobot implements Steppable {
                     curTask.setAvailable(false);
                 }
             }
-        } else if (hasTaskItem == true) {
-            
-            if(gotoGoalPosition(world, curTask)) {
-                // if I reached the goal then I will set my current task to null
-                // and notify the bondsman
-                count = 0;
-                hasTaskItem = false;
-                world.bondsman.doingTask(id, -1);
-                world.bondsman.finishTask(curTask);
-            }
-            
-            
-        }
+        } 
         
     }
 
