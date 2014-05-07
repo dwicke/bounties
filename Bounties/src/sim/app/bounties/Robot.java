@@ -88,7 +88,7 @@ public class Robot extends AbstractRobot implements Steppable {
                  
                  // pick one randomly no. do the closest one.
                  if (bondsman.getAvailableTasks().numObjs > 0) {
-                    myQtable = new QTable(bondsman.getTotalNumTasks(), 1, .7, .1);// focus on current reward
+                    myQtable = new QTable(bondsman.getTotalNumTasks(), 1, .7, .1, state.random);// focus on current reward
                     curTask = (Task) bondsman.getAvailableTasks().objs[state.random.nextInt(bondsman.getAvailableTasks().numObjs)];
                     curGoal = curTask.getGoal();
                     reward = curTask.getCurrentReward();

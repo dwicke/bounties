@@ -1,5 +1,7 @@
 package sim.app.bounties;
 
+import ec.util.MersenneTwisterFast;
+
 
 /**
  * Very straight forward implementation of q-learning.
@@ -13,11 +15,16 @@ public class QTable implements java.io.Serializable {
     private double V[];
     private double alpha, oneMinusAlpha;
     private double beta;
-    public QTable(int numStates, int numActions, double learningRate, double discountBeta) {
+    public QTable(int numStates, int numActions, double learningRate, double discountBeta, MersenneTwisterFast rand) {
         this.numActions = numActions;
         this.numStates = numStates;
         alpha = learningRate;
         qtable = new double[numStates][numActions];
+        for (int i = 0; i < numStates; i++) {
+            for (int j = 0; j < numActions; j++) {
+                qtable[i][j] = rand.nextDouble(false, true);
+            }
+        }
         V = new double[numStates];
         beta = discountBeta;
     }
@@ -39,6 +46,7 @@ public class QTable implements java.io.Serializable {
     }
     
     public double getQValue(int state, int action) {
+        System.err.println("Q_" + state + " = " + qtable[state][action]);
         return qtable[state][action];
     }
     
@@ -58,6 +66,7 @@ public class QTable implements java.io.Serializable {
         double sum = 0;
         for (int i = 0; i < qtable.length; i++) {
             sum+=qtable[i][action];
+            System.err.println("Q_" + i + " = " + qtable[i][action]);
         }
         if(sum==0)
                return 1;
@@ -66,6 +75,18 @@ public class QTable implements java.io.Serializable {
             System.exit(0);
         }
         return qtable[state][action]/sum;
+    }
+
+    void printTable() {
+        
+        for (int i = 0; i < qtable.length; i++) {
+            StringBuilder build = new StringBuilder();
+            build.append("state ").append(i).append(" vals: ");
+            for (int j = 0; j < qtable[i].length; j++) {
+                build.append(qtable[i][j]).append(" ");
+            }
+            System.err.println(build.toString());
+        }
     }
 }
 
