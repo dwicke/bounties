@@ -229,6 +229,7 @@ public class JointTaskQRobot extends AbstractRobot implements Steppable  {
             reward = 1;
         }
 
+        
         myQtable.update(prevTask.getID(), 0, reward, curTask.getID());
         reward = 1;//curTask.getCurrentReward();//truReward
     }
