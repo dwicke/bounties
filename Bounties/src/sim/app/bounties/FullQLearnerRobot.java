@@ -175,12 +175,10 @@ public class FullQLearnerRobot extends AbstractRobot implements Steppable {
             }
             
             
-            // now we want to update our curent task
-            
-            
-            
         }
         
+            
+        // now we want to update our curent task
         prevTask = curTask;
         curTask = (Task) availTasks.objs[bestTaskIndex];
         curGoal = curTask.getGoal();
@@ -190,52 +188,6 @@ public class FullQLearnerRobot extends AbstractRobot implements Steppable {
         finishedTask = false;
         hadToSwitch = false;
         
-        /*
-        if (hadToSwitch) {
-            
-            
-            max = myQtable.getQValue(prevTask.getID(), 0) *
-                ((double) ((Task) availTasks.objs[bestTaskIndex]).getCurrentReward() );
-            
-            
-            for (int i = 1; i < availTasks.numObjs; i++) {
-            
-                double cur =(myQtable.getQValue(prevTask.getID(),((Task)availTasks.objs[i]).getID())) *
-                    ( ((Task) availTasks.objs[i]).getCurrentReward() );
-                //System.err.println("agent id " + id+ " Cur q-val:  " + cur);
-                if (cur > max) {
-                    bestTaskIndex = i;
-                    max = cur;
-                }
-            }
-        
-        } else {
-            
-            max = myQtable.getQValue(curTask.getID(), 0) *
-                ((double) ((Task) availTasks.objs[bestTaskIndex]).getCurrentReward() );
-            
-            
-            for (int i = 1; i < availTasks.numObjs; i++) {
-            
-            double cur =(myQtable.getQValue(curTask.getID(),((Task)availTasks.objs[i]).getID())) *
-                ( ((Task) availTasks.objs[i]).getCurrentReward() );
-            //System.err.println("agent id " + id+ " Cur q-val:  " + cur);
-            if (cur > max) {
-                bestTaskIndex = i;
-                max = cur;
-            }
-        }
-        
-        }
-                  
-      
-        curTask = (Task) availTasks.objs[bestTaskIndex];
-        curGoal = curTask.getGoal();
-        if(reward>0)
-            reward = 1;
-        myQtable.update(prevTask.getID(), curTask.getID(), reward, curTask.getID());
-        reward = 1;
-        */
     }
     
     

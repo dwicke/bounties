@@ -14,7 +14,7 @@ import sim.util.Bag;
  *
  * @author drew
  */
-public class FullJumpShipQLearnerRobot extends AbstractRobot implements Steppable {
+public class FullJumpShipQLearnerRobot extends AbstractRobot implements Steppable  {
 
     private static final long serialVersionUID = 1;
     
@@ -22,190 +22,195 @@ public class FullJumpShipQLearnerRobot extends AbstractRobot implements Steppabl
     Goal curGoal;
     double reward = 0;// what i will get by completing current task
     double totalReward = 0;
-    boolean hadToSwitch = false;
-    boolean finishedTask = false;
-    boolean noUpdate = false;
+    
+    boolean atTask = false;
+    boolean enoughBots = false;
+    boolean needNewTask = false;
+
     // make a q-table for each task? and the states are values of the bounty
     // we would use the dual q-learning again where we are learning the thresholds
     // for the decision maker and
-    
     // I guess just make it 5 states and one action take it
     QTable myQtable;
     int x;
     int y;
 
     Bondsman bondsman;
+    
 
     public Bondsman getBondsman() {
         return bondsman;
     }
 
     
+
     public int getGoalID() {
         return (curGoal != null) ? curGoal.id : -1;
     }
+
     
-    public int getTaskID() {
-        return (curTask != null) ? curTask.getID() : -1;
-    }
-   
+
 //TODO: initialize Q-table
 //update reward when task is done/failed
 //consult the qtable for a decision
     public FullJumpShipQLearnerRobot() {
-       
+
     }
 
+ 
+
+    /**
+     * SO the idea with the joint task robot is that it will be able to do tasks
+     * that require multiple robots to perform. So, each task says how many
+     * robots it takes to perform it. SO, once all the required robots are
+     * waiting at the task location they all can proceed jointly to the goal
+     * location. However, if their are not enough robots at the task location
+     * the robot can choose to change the task they are working on. This allows
+     * the system to avoid deadlock.
+     *
+     * @param state the current Bounty simstate
+     */
     public void step(final SimState state) {
         final Bounties af = (Bounties) state;
         bondsman = af.bondsman; // set the bondsman
-        //System.err.println("Robot id=" + id + " curTask = " + ((curTask != null) ? curTask.getID() : "null"));
-        
-        if(hasTaskItem){// if I have it goto the goal
-            
-            if(gotoGoalPosition(state, curGoal)) {
-                // then we should tell the bondsman that we have done that task
-                bondsman.finishTask(curTask);
-                hasTaskItem = false;
-                finishedTask = true;
 
-                //prevTask = curTask; // set previous task to the one I finished
-                //curTask = null; // set to null since not doing anytihng
-                System.err.println("Made it to the goal!");
-            }
-            
-        }else if (curTask != null && hadToSwitch == false && finishedTask == false) {
-            
+        // init the q-table
+        if (myQtable == null) {
+
+            // pick one randomly
             if (bondsman.getAvailableTasks().numObjs > 0) {
-                Task beforeSwitchCur = curTask;
-                Task beforeSwitchPrev = prevTask;
-                double oldR = reward;
-                reward = 0; // we are switching so don't get any reward
-                noUpdate = true;
-                decideTask();// don't pick a task if none available.
-                noUpdate = false;
-                if (curTask == beforeSwitchCur) {
-                    // didn't change so I have to put the prev back
-                    prevTask = beforeSwitchPrev;
-                    reward = oldR;
-                }
-                // otherwise i did change and I want to keep it
+                myQtable = new QTable(bondsman.getTotalNumTasks(), bondsman.getTotalNumTasks(), .7, .1, state.random);// focus on current reward
+                curTask = (Task) bondsman.getAvailableTasks().objs[state.random.nextInt(bondsman.getAvailableTasks().numObjs)];
+                curGoal = curTask.getGoal();
+                reward = curTask.getCurrentReward();
             }
-            
-            if (!curTask.getIsAvailable()) {
-                //prevTask = curTask;
-                //curTask = null;
-                hadToSwitch = true;
-                reward *= 0; // bad don't go after this 
-                
-            } else if (gotoTaskPosition(state, curTask)) {
-                hasTaskItem = true;
-                curTask.setAvailable(false);// i am taking it!
-            } 
-            
-        }else{ // so I just finished a task, I have to switch tasks or I have never done a task
-            
-            if (myQtable == null) {// never had a task
-                 
-                 
-                 if (bondsman.getAvailableTasks().numObjs > 0) {
-                    myQtable = new QTable(bondsman.getTotalNumTasks(), bondsman.getTotalNumTasks(), .7, .1, state.random);// focus on current reward
-                    // random since initially qtable is all zero
-                    curTask = (Task) bondsman.getAvailableTasks().objs[state.random.nextInt(bondsman.getAvailableTasks().numObjs)];
-                    System.err.println("curTask in building q-table = " + curTask);
-                    curGoal = curTask.getGoal();
-                    reward = curTask.getCurrentReward();
-                 } 
-                 return;
-            }
-            // so I have to a new task
-            if (bondsman.getAvailableTasks().numObjs > 0)
-                decideTask();// don't pick a task if none available.
+            return;
         }
         
+        if (needNewTask) {
+            if (bondsman.getAvailableTasks().numObjs > 0) {
+                if (!decideTask()) {
+                    prevTask = curTask;
+                    System.err.println("Same Task");
+                }
+                needNewTask = false;
+                qUpdate();
+                System.err.println("Got a new Task");
+            } else {
+                return;// no new tasks so don't update yet.
+            }
+        }
+
+        if (getHasTaskItem()) {
+            // since we have the item and we have enough robots to do it then go
+            // to the goal.
+            atTask = false;
+            if (gotoGoalPosition(state, curGoal)) {
+                // if I made it to the goal location
+                setHasTaskItem(false);
+                curTask.subtractRobot(this);
+
+                if (curTask.getNumRobotsDoingTask() == 0) {
+                    //i'm the last one to make it to the goal
+                    bondsman.finishTask(curTask);
+                    System.err.println("Made it to done!");
+                }
+                needNewTask = true;
+
+            }
+
+        }/* else if (atTask == false && !curTask.isEnoughRobots()) {
+            // we don't have a task with enough people yet
+
+            // anytime up until the point at which we are included in the list
+            // of robots that will move the task 
+            if (gotoTaskPosition(state, curTask)) {
+                // we made it to the task position
+                atTask = true;
+                curTask.addRobot(this);
+                if (curTask.isEnoughRobots()) {
+                    enoughBots = true;
+                }
+            }
+
+        }*/ else if (atTask == true && curTask.isEnoughRobots()) {
+            // we are at the task and there are enough robots
+            setHasTaskItem(true);
+            curTask.setAvailable(false);
+            enoughBots = true;
+        } else if (atTask == false || (atTask == true && !curTask.isEnoughRobots())) {
+            
+            System.err.println("Num Robots: " + curTask.isEnoughRobots() + " atTask="+ atTask);
+            if (bondsman.getAvailableTasks().numObjs > 0) {
+                if (decideTask()) {// we have changed if true
+                    prevTask.subtractRobot(this);
+                    atTask = false;
+                }
+            }
+            
+            if (gotoTaskPosition(state, curTask)) {
+                // we made it to the task position
+                atTask = true;
+                curTask.addRobot(this);
+                if (curTask.isEnoughRobots()) {
+                    enoughBots = true;
+                }
+            }
+            
+        }
+
     }
-    public void decideTask(){
+
+    /**
+     * decides task that we will take at a given tick
+     *
+     * @return only if we changed the task do we return true
+     */
+    public boolean decideTask() {
         //consult q table
-        
+        //myQTable.getBestAction(0);
+
         Bag availTasks = bondsman.getAvailableTasks();
         int bestTaskIndex = 0;
+        System.err.println("avail: " + availTasks);
+        System.err.println("qtable: " + myQtable);
+        System.err.println(  myQtable.getQValue(((Task) availTasks.objs[bestTaskIndex]).getID(), 0));
+        double max = ( myQtable.getQValue(((Task) availTasks.objs[bestTaskIndex]).getID(), 0))
+                * (((Task) availTasks.objs[bestTaskIndex]).getCurrentReward());
 
-        //System.err.println("Curtask = " + curTask);
-        double max;
-        // if I had to switch tasks mid way getting to a task because someone else
-        // got to it before I did I want to 
-        // the
-        System.err.println("Robot " + id + " had to switch = " + hadToSwitch + " finished? = " + finishedTask);
-        myQtable.printTable();
-        
-        // if prevTask is null then I can't update the qtable because I haven't
-        // changed states yet.  Our initial state is chose and we only perform
-        // an action when we change from our initial state to a new one
-        if (prevTask == null) {
-            // select a new task set prevTask to curTask and set curTask to the new task
-            max = myQtable.getQValue(curTask.getID(), ((Task)availTasks.objs[0]).getID()) *
-                ((double) ((Task) availTasks.objs[bestTaskIndex]).getCurrentReward() );
-            System.err.println("robot " + id + " index " + ((Task)availTasks.objs[0]).getID() + " cur " + max);
-            
-            for (int i = 1; i < availTasks.numObjs; i++) {
-            
-                double cur =(myQtable.getQValue(curTask.getID(),((Task)availTasks.objs[i]).getID())) *
-                    ( ((Task) availTasks.objs[i]).getCurrentReward() );
-                //System.err.println("agent id " + id+ " Cur q-val:  " + cur);
-                if (cur > max) {
-                    bestTaskIndex = i;
-                    max = cur;
-                }
+        for (int i = 1; i < availTasks.numObjs; i++) {
+
+            double cur = ( myQtable.getQValue(((Task) availTasks.objs[i]).getID(), 0))
+                    * (((Task) availTasks.objs[i]).getCurrentReward());
+            //System.err.println("agent id " + id+ " Cur q-val:  " + cur);
+            if (cur > max) {
+                bestTaskIndex = i;
+                max = cur;
             }
-            
-        } else {
-            
-            if(reward>0)
-                reward = 1;
-            // since we have performed an action we can now update the q-table
-            // so we were doing prevTask and then we chose to do the action that brought us to the new state
-            // of curTask and we got the reward "reward" for doing curTask action.
-            if (!noUpdate)
-                myQtable.update(prevTask.getID(), curTask.getID(), reward, curTask.getID());
-            
-            reward = 1;
-            
-            max = myQtable.getQValue(curTask.getID(), ((Task)availTasks.objs[0]).getID()) *
-                ((double) ((Task) availTasks.objs[bestTaskIndex]).getCurrentReward() );
-            
-            System.err.println("robot " + id + " index " + ((Task)availTasks.objs[0]).getID() + " cur " + max);
-            for (int i = 1; i < availTasks.numObjs; i++) {
-            
-                double cur =(myQtable.getQValue(curTask.getID(),((Task)availTasks.objs[i]).getID())) *
-                    ( ((Task) availTasks.objs[i]).getCurrentReward() );
-                System.err.println("robot " + id + " index " + i + " cur " + cur);
-                //System.err.println("agent id " + id+ " Cur q-val:  " + cur);
-                if (cur > max) {
-                    bestTaskIndex = i;
-                    max = cur;
-                }
-            }
-            
-            
-            // now we want to update our curent task
-            
-            
-            
         }
-        
+
+        System.err.println("Robot id " + id + " max Q:" + max + " val " + ((Task) availTasks.objs[bestTaskIndex]).getCurrentReward());
+
+        if (curTask == (Task) availTasks.objs[bestTaskIndex]) {
+            return false;
+        }
+
         prevTask = curTask;
         curTask = (Task) availTasks.objs[bestTaskIndex];
         curGoal = curTask.getGoal();
-        
-        
-        
-        finishedTask = false;
-        hadToSwitch = false;
-        
-        
-    }
-    
-    
+        System.err.println("prev " + prevTask + " curTask " + curTask);
+        System.err.println("REWARD: " + reward);
+        return true;
 
-    
+    }
+
+    public void qUpdate() {
+        if (reward > 0) {//completeness goal....
+            reward = 1;
+        }
+
+        myQtable.update(prevTask.getID(), 0, reward, curTask.getID());
+        reward = 1;//curTask.getCurrentReward();//truReward
+    }
+
 }
