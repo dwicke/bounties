@@ -22,6 +22,7 @@ public class FullQLearnerRobot extends AbstractRobot implements Steppable {
     Goal curGoal;
     double reward = 0;// what i will get by completing current task
     double totalReward = 0;
+    double epsilon  = 5;
     boolean hadToSwitch = false;
     boolean finishedTask = false;
     // make a q-table for each task? and the states are values of the bounty
@@ -131,13 +132,13 @@ public class FullQLearnerRobot extends AbstractRobot implements Steppable {
         // an action when we change from our initial state to a new one
         if (prevTask == null) {
             // select a new task set prevTask to curTask and set curTask to the new task
-            max = myQtable.getQValue(curTask.getID(), ((Task)availTasks.objs[0]).getID()) *
+            max = (epsilon + myQtable.getQValue(curTask.getID(), ((Task)availTasks.objs[0]).getID())) *
                 ((double) ((Task) availTasks.objs[bestTaskIndex]).getCurrentReward() );
             System.err.println("robot " + id + " index " + ((Task)availTasks.objs[0]).getID() + " cur " + max);
             
             for (int i = 1; i < availTasks.numObjs; i++) {
             
-                double cur =(myQtable.getQValue(curTask.getID(),((Task)availTasks.objs[i]).getID())) *
+                double cur =(epsilon + myQtable.getQValue(curTask.getID(),((Task)availTasks.objs[i]).getID())) *
                     ( ((Task) availTasks.objs[i]).getCurrentReward() );
                 //System.err.println("agent id " + id+ " Cur q-val:  " + cur);
                 if (cur > max) {
@@ -158,13 +159,13 @@ public class FullQLearnerRobot extends AbstractRobot implements Steppable {
             
             reward = 1;
             
-            max = myQtable.getQValue(curTask.getID(), ((Task)availTasks.objs[0]).getID()) *
+            max = (epsilon + myQtable.getQValue(curTask.getID(), ((Task)availTasks.objs[0]).getID())) *
                 ((double) ((Task) availTasks.objs[bestTaskIndex]).getCurrentReward() );
             
             System.err.println("robot " + id + " index " + ((Task)availTasks.objs[0]).getID() + " cur " + max);
             for (int i = 1; i < availTasks.numObjs; i++) {
             
-                double cur =(myQtable.getQValue(curTask.getID(),((Task)availTasks.objs[i]).getID())) *
+                double cur =(epsilon + myQtable.getQValue(curTask.getID(),((Task)availTasks.objs[i]).getID())) *
                     ( ((Task) availTasks.objs[i]).getCurrentReward() );
                 System.err.println("robot " + id + " index " + i + " cur " + cur);
                 //System.err.println("agent id " + id+ " Cur q-val:  " + cur);
