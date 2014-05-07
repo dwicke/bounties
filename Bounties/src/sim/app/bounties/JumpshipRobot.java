@@ -136,6 +136,7 @@ public class JumpshipRobot extends AbstractRobot implements Steppable {
                 hasTaskItem = gotoTaskPosition(world,curTask);
                 if (hasTaskItem) {
                     curTask.setAvailable(false);
+                    curTask = null;
                 }
             }
         } 

@@ -36,6 +36,7 @@ public class FullJumpShipQLearnerRobot extends AbstractRobot implements Steppabl
     int y;
 
     Bondsman bondsman;
+    private Task prevprevTask; // used when jumping ship to be able to update
     
 
     public Bondsman getBondsman() {
@@ -144,6 +145,18 @@ public class FullJumpShipQLearnerRobot extends AbstractRobot implements Steppabl
             if (bondsman.getAvailableTasks().numObjs > 0) {
                 if (decideTask()) {// we have changed if true
                     prevTask.subtractRobot(this);
+                    // AAAHHHHHH this is realllllly bad
+                    // quickest way to get the tasks back to the way they were
+                    // so I can update the reward correctly without changing 
+                    // decide task too much.
+                    Task prevTemp = prevTask;
+                    prevTask = prevprevTask;
+                    Task curTemp = curTask;
+                    curTask = prevTemp;
+                    reward = 0;
+                    qUpdate();
+                    prevTask = prevTemp;
+                    curTask = curTemp;
                     atTask = false;
                 }
             }
@@ -194,7 +207,7 @@ public class FullJumpShipQLearnerRobot extends AbstractRobot implements Steppabl
         if (curTask == (Task) availTasks.objs[bestTaskIndex]) {
             return false;
         }
-
+        prevprevTask = prevTask;
         prevTask = curTask;
         curTask = (Task) availTasks.objs[bestTaskIndex];
         curGoal = curTask.getGoal();
