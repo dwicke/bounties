@@ -67,6 +67,7 @@ public class QTable implements java.io.Serializable {
         for (int i = 0; i < qtable.length; i++) {
             sum+=qtable[i][action];
             System.err.println("Q_" + i + " = " + qtable[i][action]);
+
         }
         if(sum==0)
                return 1;
