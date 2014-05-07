@@ -14,7 +14,10 @@ import sim.util.Bag;
 import sim.util.Int2D;
 
 /**
- *
+ * This robot can change tasks anytime other than when it is taking a task to the
+ * goal location.  Add back in the commented out if statement to force it to make it
+ * to the task location before being able to jumpship.  This robot can also do 
+ * joint tasks.
  * @author drew
  */
 public class JointTaskQRobot extends AbstractRobot implements Steppable  {
@@ -122,7 +125,7 @@ public class JointTaskQRobot extends AbstractRobot implements Steppable  {
 
             }
 
-        } else if (atTask == false && !curTask.isEnoughRobots()) {
+        } /*else if (atTask == false && !curTask.isEnoughRobots()) {
             // we don't have a task with enough people yet
 
             // anytime up until the point at which we are included in the list
@@ -136,7 +139,7 @@ public class JointTaskQRobot extends AbstractRobot implements Steppable  {
                 }
             }
 
-        } else if (atTask == true && curTask.isEnoughRobots()) {
+        } */else if (atTask == true && curTask.isEnoughRobots()) {
             // we are at the task and there are enough robots
             setHasTaskItem(true);
             curTask.setAvailable(false);

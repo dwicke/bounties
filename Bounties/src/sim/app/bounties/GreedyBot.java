@@ -88,7 +88,7 @@ public class GreedyBot extends AbstractRobot implements Steppable {
             
         } else if (hasTaskItem == true && curTask!=null) {
              System.err.println("has task item is true");
-            if(curTask.isEnoughRobots() && gotoGoalPosition(world, curTask)) {
+            if(curTask.isEnoughRobots() && gotoGoalPosition(world, curTask.getGoal())) {
                 // if I reached the goal then I will set my current task to null
                 // and notify the bondsman
                 world.bondsman.doingTask(id, -1);
