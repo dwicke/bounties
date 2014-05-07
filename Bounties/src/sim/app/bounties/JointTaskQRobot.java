@@ -28,7 +28,7 @@ public class JointTaskQRobot extends AbstractRobot implements Steppable  {
     Goal curGoal;
     double reward = 0;// what i will get by completing current task
     double totalReward = 0;
-    double epsilon = .05;
+    double epsilon = .3;
     boolean atTask = false;
     boolean enoughBots = false;
     boolean needNewTask = false;
@@ -194,13 +194,13 @@ public class JointTaskQRobot extends AbstractRobot implements Steppable  {
         int bestTaskIndex = 0;
         System.err.println("avail: " + availTasks);
         System.err.println("qtable: " + myQtable);
-        System.err.println( epsilon+ myQtable.getNormalQValue(((Task) availTasks.objs[bestTaskIndex]).getID(), 0));
-        double max = (epsilon+  myQtable.getNormalQValue(((Task) availTasks.objs[bestTaskIndex]).getID(), 0))
+        System.err.println( epsilon+ myQtable.getQValue(((Task) availTasks.objs[bestTaskIndex]).getID(), 0));
+        double max = (epsilon+  myQtable.getQValue(((Task) availTasks.objs[bestTaskIndex]).getID(), 0))
                 * (((Task) availTasks.objs[bestTaskIndex]).getCurrentReward());
 
         for (int i = 1; i < availTasks.numObjs; i++) {
 
-            double cur = (epsilon +  myQtable.getNormalQValue(((Task) availTasks.objs[i]).getID(), 0))
+            double cur = (epsilon +  myQtable.getQValue(((Task) availTasks.objs[i]).getID(), 0))
                     * (((Task) availTasks.objs[i]).getCurrentReward());
             //System.err.println("agent id " + id+ " Cur q-val:  " + cur);
             if (cur > max) {
@@ -226,10 +226,9 @@ public class JointTaskQRobot extends AbstractRobot implements Steppable  {
 
     public void qUpdate() {
         if (reward > 0) {//completeness goal....
-            reward = 1;
+           reward = 1;
         }
-
-        
+        if(prevTask!=null && curTask!=null)
         myQtable.update(prevTask.getID(), 0, reward, curTask.getID());
         reward = 1;//curTask.getCurrentReward();//truReward
     }

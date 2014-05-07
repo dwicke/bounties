@@ -26,7 +26,7 @@ public class FullJumpShipQLearnerRobot extends AbstractRobot implements Steppabl
     boolean atTask = false;
     boolean enoughBots = false;
     boolean needNewTask = false;
-    double epsilon = .3;
+    double epsilon = .1 ;
 
     // make a q-table for each task? and the states are values of the bounty
     // we would use the dual q-learning again where we are learning the thresholds
@@ -219,13 +219,13 @@ public class FullJumpShipQLearnerRobot extends AbstractRobot implements Steppabl
     }
 
     public void qUpdate() {
-        /*
+        
         if (reward > 0) {//completeness goal....
             reward = 1;
-        }*/
+        }
         if (prevTask != null)
             myQtable.update(prevTask.getID(), curTask.getID(), reward, curTask.getID());
-        reward = curTask.getCurrentReward();//truReward
+        reward = 1;//curTask.getCurrentReward();//truReward
     }
 
 }
