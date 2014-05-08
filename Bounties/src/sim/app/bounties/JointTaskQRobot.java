@@ -28,7 +28,7 @@ public class JointTaskQRobot extends AbstractRobot implements Steppable  {
     Goal curGoal;
     double reward = 0;// what i will get by completing current task
     double totalReward = 0;
-    double epsilon = .3;
+    double epsilon = .0;
     boolean atTask = false;
     boolean enoughBots = false;
     boolean needNewTask = false;
