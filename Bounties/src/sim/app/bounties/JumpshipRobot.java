@@ -51,7 +51,7 @@ public class JumpshipRobot extends AbstractRobot implements Steppable {
             prob *= (othersTime < myExpectedTime) ? 0 : ((othersTime > myExpectedTime) ? 1 : 0.5);
         }
         
-        return prob * prob;
+        return prob;
     }
     
     public double valueOfBounty(Task b) {
@@ -106,7 +106,7 @@ public class JumpshipRobot extends AbstractRobot implements Steppable {
                     // time so don't need to subtract current time
                     // as was the case in the original formulation.
                     System.err.println("Robot " + id + " task id " + iTask.getID() + " curReward " + iTask.getCurrentReward() + " probDoTask = " + probabilityDoTask(iTask) + " expected time to compelted=" + expectedTimeToComplete(iTask));
-                    double curRi = ((valueOfBounty(iTask)) * probabilityDoTask(iTask)) / (expectedTimeToComplete(iTask));
+                    double curRi = ((valueOfBounty(iTask)) * probabilityDoTask(iTask)); /// (expectedTimeToComplete(iTask));
                     double curRiWithTime = curRi / (expectedTimeToComplete(iTask));
                     if(iTask!= curTask && curTask!=null){
                         curRi *=.2;// decrease the rate of things not my current task
