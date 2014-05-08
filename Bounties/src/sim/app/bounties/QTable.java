@@ -34,6 +34,17 @@ public class QTable implements java.io.Serializable {
         oneMinusAlpha = 1 - alpha;
     }
     
+    public void updateQ(int state, int action, double reward, int nextState) {
+        qtable[state][action] = oneMinusAlpha * qtable[state][action] + alpha * ( reward + beta * V[nextState]);
+        // find max q-value for the state
+        double max = qtable[state][action];
+        for (int i = 0; i < numActions; i++) {
+            if (max < qtable[state][i])
+                max = qtable[state][i];
+        }
+        V[state] = max;
+    }
+    
     public void update(int state, int action, double reward, int nextState) {
         qtable[state][action] = oneMinusAlpha * qtable[state][action] + alpha * ( reward /*+ beta * V[nextState]*/);
         // find max q-value for the state
@@ -44,6 +55,9 @@ public class QTable implements java.io.Serializable {
         }
         V[state] = max;
     }
+    
+    
+    
     
     public double getQValue(int state, int action) {
         System.err.println("Q_" + state + " = " + qtable[state][action]);

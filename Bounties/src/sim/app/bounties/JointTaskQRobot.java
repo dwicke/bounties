@@ -196,12 +196,12 @@ public class JointTaskQRobot extends AbstractRobot implements Steppable  {
         System.err.println("qtable: " + myQtable);
         System.err.println( epsilon+ myQtable.getQValue(((Task) availTasks.objs[bestTaskIndex]).getID(), 0));
         double max = (epsilon+  myQtable.getQValue(((Task) availTasks.objs[bestTaskIndex]).getID(), 0))
-                * (((Task) availTasks.objs[bestTaskIndex]).getCurrentReward());
+                * Math.sqrt(((Task) availTasks.objs[bestTaskIndex]).getCurrentReward());
 
         for (int i = 1; i < availTasks.numObjs; i++) {
 
             double cur = (epsilon +  myQtable.getQValue(((Task) availTasks.objs[i]).getID(), 0))
-                    * (((Task) availTasks.objs[i]).getCurrentReward());
+                    * Math.sqrt(((Task) availTasks.objs[i]).getCurrentReward());
             //System.err.println("agent id " + id+ " Cur q-val:  " + cur);
             if (cur > max) {
                 bestTaskIndex = i;
@@ -229,7 +229,7 @@ public class JointTaskQRobot extends AbstractRobot implements Steppable  {
            reward = 1;
         }
         if(prevTask!=null && curTask!=null)
-        myQtable.update(prevTask.getID(), 0, reward, curTask.getID());
+        myQtable.updateQ(prevTask.getID(), 0, reward, curTask.getID());
         reward = 1;//curTask.getCurrentReward();//truReward
     }
 
