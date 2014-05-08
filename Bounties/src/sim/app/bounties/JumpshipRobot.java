@@ -51,7 +51,7 @@ public class JumpshipRobot extends AbstractRobot implements Steppable {
             prob *= (othersTime < myExpectedTime) ? 0 : ((othersTime > myExpectedTime) ? 1 : 0.5);
         }
         
-        return prob;
+        return prob * prob;
     }
     
     public double valueOfBounty(Task b) {
@@ -65,7 +65,7 @@ public class JumpshipRobot extends AbstractRobot implements Steppable {
         
         world = (Bounties) state;// set the state of the world
         Bag tasks = world.bondsman.getAvailableTasks();
-        if(tasks.numObjs==0) return; // don't bother caculating task stuff if there are no available tasks
+        
         if (hasTaskItem == true) {
             
             //System.err.println(curTask);
@@ -83,6 +83,7 @@ public class JumpshipRobot extends AbstractRobot implements Steppable {
             
             
         }else if (hasTaskItem == false) {
+            if(tasks.numObjs==0) return; // don't bother caculating task stuff if there are no available tasks
             // make a probability of moving toward a random task
             /*if (state.random.nextDouble() < epsilon) {
                 
