@@ -18,7 +18,7 @@ public class Bounties extends SimState {
     public static final int GRID_WIDTH = 60;
 
     
-    
+    public double[] robotTabsCols;
     public double[] rollingAverage = new double[1000];
     int avgCount = 0;
     public Bondsman bondsman;
@@ -107,6 +107,21 @@ public class Bounties extends SimState {
     public Bounties(long seed) {
         super(seed);
     }
+    
+    
+    public double[] getRobotTabsCols() {
+        // loop over the tasks and then the robots
+        robotTabsCols = new double[numTasks];
+        if (robots != null) {
+            for (int i = 0; i < getNumTasks(); i++) {
+                robotTabsCols[i] = 0;
+                for (int j = 0; j < getNumRobots(); j++) {
+                    robotTabsCols[i] += ((JointTaskQRobot)robots[j]).myQtable.getQValue(i, 0);
+                }
+            }
+        }
+        return robotTabsCols;
+    }
 
     public void start() {
         super.start();  // clear out the schedule
@@ -134,6 +149,10 @@ public class Bounties extends SimState {
             Task curTask = ((Task)(tasksLocs.objs[i]));
             tasksGrid.setObjectLocation(tasksLocs.objs[i], curTask.getLocation());
         }
+        
+        
+        robotTabsCols = new double[numTasks];
+        
         
         robots = new IRobot[numRobots];
         robotgrid = new SparseGrid2D(GRID_WIDTH, GRID_HEIGHT);
