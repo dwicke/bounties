@@ -66,7 +66,7 @@ public class Task implements Real, Fixed2D{
         presentRobots.remove((Object)a);
     }
     public boolean isEnoughRobots(){
-        return presentRobots.objs.length >= requiredRobots;
+        return presentRobots.numObjs == requiredRobots;
     }
     public boolean isDone(){
         return done;

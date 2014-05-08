@@ -32,7 +32,7 @@ public class JumpshipRobot extends AbstractRobot implements Steppable {
         Int2D myLoc = world.robotgrid.getObjectLocation(this);
         Int2D taskLoc = b.getLocation();
         Int2D goalLoc = b.getGoal().getLocation();
-        return myLoc.manhattanDistance(taskLoc); //+  taskLoc.manhattanDistance(goalLoc);
+        return myLoc.manhattanDistance(taskLoc);//+  taskLoc.manhattanDistance(goalLoc);
     }
     
     
@@ -105,11 +105,11 @@ public class JumpshipRobot extends AbstractRobot implements Steppable {
                     // time so don't need to subtract current time
                     // as was the case in the original formulation.
                     System.err.println("Robot " + id + " task id " + iTask.getID() + " curReward " + iTask.getCurrentReward() + " probDoTask = " + probabilityDoTask(iTask) + " expected time to compelted=" + expectedTimeToComplete(iTask));
-                    double curRi = (valueOfBounty(iTask) * probabilityDoTask(iTask));// / (expectedTimeToComplete(iTask));
+                    double curRi = ((valueOfBounty(iTask)) * probabilityDoTask(iTask)) / (expectedTimeToComplete(iTask));
                     double curRiWithTime = curRi / (expectedTimeToComplete(iTask));
                     if(iTask!= curTask && curTask!=null){
-                        curRi *=0;// decrease the rate of things not my current task
-                        curRiWithTime *=0;
+                        curRi *=.2;// decrease the rate of things not my current task
+                        curRiWithTime *=.2;
                     }
                     if (curRi > maxR) {
                         maxR = curRi;

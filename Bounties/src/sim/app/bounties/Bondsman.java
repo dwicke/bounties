@@ -120,6 +120,7 @@ public class Bondsman implements Steppable {
         
         
         // reopen finished tasks (to be more realistic need a time a number of tics before add back in)
+        //((Bounties)state).getRobotTabsCols();
         makeAvailable();
         incrementBounty();// increment the bounties
         

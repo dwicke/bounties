@@ -19,6 +19,7 @@ public class Bounties extends SimState {
 
     
     public double[] robotTabsCols;
+    public double[] prevRobotTabsCols; // for debugging, see if to many people are getting reward
     public double[] rollingAverage = new double[1000];
     int avgCount = 0;
     public Bondsman bondsman;
@@ -108,23 +109,44 @@ public class Bounties extends SimState {
         super(seed);
     }
     
-    
+    //debug thing again
+    boolean firstTimeThrough = true;
     public double[] getRobotTabsCols() {
         // loop over the tasks and then the robots
         robotTabsCols = new double[numTasks];
+        
+        boolean debugFail = false;
         if (robots != null) {
+            System.err.printf("sums: ");
             for (int i = 0; i < getNumTasks(); i++) {
+               
                 robotTabsCols[i] = 0;
                 for (int j = 0; j < getNumRobots(); j++) {
                     robotTabsCols[i] += ((JointTaskQRobot)robots[j]).myQtable.getQValue(i, 0);
                 }
+                if(!firstTimeThrough)
+                if(prevRobotTabsCols[i]-robotTabsCols[i] < -1){
+                    debugFail = true;
+                }
+                System.err.printf("%.02f ",robotTabsCols[i]);
+                prevRobotTabsCols[i] = robotTabsCols[i];
             }
+            firstTimeThrough = false;
+        }
+        
+        System.err.println();
+        if(debugFail){
+            //System.exit(0);
         }
         return robotTabsCols;
     }
 
     public void start() {
         super.start();  // clear out the schedule
+        
+        //debug 
+        prevRobotTabsCols = new double[numTasks];
+        //debug
         bondsman = new Bondsman(numGoals, numTasks);
         bondsman.setWorld(this);
         
@@ -159,7 +181,7 @@ public class Bounties extends SimState {
         for (int x = 0; x < numRobots; x++) {
             //GreedyBot bot = new GreedyBot();
 
-            JointTaskQRobot bot = new JointTaskQRobot();//139 //131
+            JumpshipRobot bot = new JumpshipRobot();//139 //131
             robots[x] = bot;
             bot.setId(x);
             int xloc = random.nextInt(GRID_WIDTH);
