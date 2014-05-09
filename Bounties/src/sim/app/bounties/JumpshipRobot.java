@@ -65,7 +65,7 @@ public class JumpshipRobot extends AbstractRobot implements Steppable {
         
         world = (Bounties) state;// set the state of the world
         Bag tasks = world.bondsman.getAvailableTasks();
-        if(tasks.numObjs==0) return; // don't bother caculating task stuff if there are no available tasks
+        
         if (hasTaskItem == true) {
             
             //System.err.println(curTask);
@@ -83,6 +83,7 @@ public class JumpshipRobot extends AbstractRobot implements Steppable {
             
             
         }else if (hasTaskItem == false) {
+            if(tasks.numObjs==0) return; // don't bother caculating task stuff if there are no available tasks
             // make a probability of moving toward a random task
             /*if (state.random.nextDouble() < epsilon) {
                 
@@ -105,7 +106,7 @@ public class JumpshipRobot extends AbstractRobot implements Steppable {
                     // time so don't need to subtract current time
                     // as was the case in the original formulation.
                     System.err.println("Robot " + id + " task id " + iTask.getID() + " curReward " + iTask.getCurrentReward() + " probDoTask = " + probabilityDoTask(iTask) + " expected time to compelted=" + expectedTimeToComplete(iTask));
-                    double curRi = ((valueOfBounty(iTask)) * probabilityDoTask(iTask)) / (expectedTimeToComplete(iTask));
+                    double curRi = ((valueOfBounty(iTask)) * probabilityDoTask(iTask)); /// (expectedTimeToComplete(iTask));
                     double curRiWithTime = curRi / (expectedTimeToComplete(iTask));
                     if(iTask!= curTask && curTask!=null){
                         curRi *=.2;// decrease the rate of things not my current task
