@@ -12,6 +12,7 @@ import java.awt.*;
 import javax.swing.*;
 import sim.portrayal.SimplePortrayal2D;
 import sim.portrayal.simple.AdjustablePortrayal2D;
+import sim.portrayal.simple.LabelledPortrayal2D;
 import sim.portrayal.simple.MovablePortrayal2D;
 import sim.portrayal.simple.OrientedPortrayal2D;
 import sim.portrayal.simple.TrailedPortrayal2D;
@@ -81,8 +82,9 @@ public class BountiesWithUI extends GUIState {
 
         robotPortrayal.setField(bounties.robotgrid);
         for(int i = 0; i < bounties.robotgrid.allObjects.numObjs; i++) {
+            IRobot ir = (IRobot) bounties.robotgrid.allObjects.objs[i];
             robotPortrayal.setPortrayalForObject(bounties.robotgrid.allObjects.objs[i], 
-                    new MovablePortrayal2D(new RobotPortrayal((IRobot)bounties.robotgrid.allObjects.objs[i])));
+                    new MovablePortrayal2D(new LabelledPortrayal2D(new RobotPortrayal(ir), "id: " + ir.getId())));
         }
         // reschedule the displayer
         display.reset();

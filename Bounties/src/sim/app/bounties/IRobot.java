@@ -17,6 +17,7 @@ public interface IRobot {
     public Color getHasTaskColor();
     public Color getNoTaskColor();
     public void setId(int id);
+    public int getId();
     public int getCurrentTaskID();
     public boolean getIsRealRobot();
     public void setIsRealRobot(boolean isReal);
