@@ -81,7 +81,7 @@ public class FullJumpShipQLearnerRobot extends AbstractRobot implements Steppabl
 
             // pick one randomly
             if (bondsman.getAvailableTasks().numObjs > 0) {
-                myQtable = new QTable(bondsman.getTotalNumTasks(), bondsman.getTotalNumTasks(), .9, .1, state.random);// focus on current reward
+                myQtable = new QTable(bondsman.getTotalNumTasks(), bondsman.getTotalNumTasks(), .1, .1, state.random);// focus on current reward
                 curTask = (Task) bondsman.getAvailableTasks().objs[state.random.nextInt(bondsman.getAvailableTasks().numObjs)];
                 curGoal = curTask.getGoal();
                 reward = curTask.getCurrentReward();
@@ -165,7 +165,9 @@ public class FullJumpShipQLearnerRobot extends AbstractRobot implements Steppabl
             if (gotoTaskPosition(state, curTask)) {
                 // we made it to the task position
                 atTask = true;
-                curTask.addRobot(this);
+                if(!curTask.isEnoughRobots())
+                    curTask.addRobot(this);
+                
                 if (curTask.isEnoughRobots()) {
                     enoughBots = true;
                 }
@@ -220,12 +222,12 @@ public class FullJumpShipQLearnerRobot extends AbstractRobot implements Steppabl
 
     public void qUpdate() {
         
-   /*     if (reward > 0) {//completeness goal....
+        if (reward > 0) {//completeness goal....
             reward = 1;
-        }*/
+        }
         if (prevTask != null)
             myQtable.updateQ(prevTask.getID(), curTask.getID(), reward, curTask.getID());
-        reward = curTask.getCurrentReward();//truReward
+        reward = 1;//curTask.getCurrentReward();//truReward
     }
 
 }

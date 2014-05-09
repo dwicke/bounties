@@ -86,7 +86,7 @@ public class JointTaskQRobot extends AbstractRobot implements Steppable  {
 
             // pick one randomly
             if (bondsman.getAvailableTasks().numObjs > 0) {
-                myQtable = new QTable(bondsman.getTotalNumTasks(), 1, .9, .1, state.random);// focus on current reward
+                myQtable = new QTable(bondsman.getTotalNumTasks(), 1, .1, .1, state.random);// focus on current reward
                 curTask = (Task) bondsman.getAvailableTasks().objs[state.random.nextInt(bondsman.getAvailableTasks().numObjs)];
                 curGoal = curTask.getGoal();
                 reward = curTask.getCurrentReward();

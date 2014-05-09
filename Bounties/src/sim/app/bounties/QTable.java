@@ -18,7 +18,7 @@ public class QTable implements java.io.Serializable {
     public QTable(int numStates, int numActions, double learningRate, double discountBeta, MersenneTwisterFast rand) {
         this.numActions = numActions;
         this.numStates = numStates;
-        alpha = learningRate;
+        setAlpha(learningRate);
         qtable = new double[numStates][numActions];
         for (int i = 0; i < numStates; i++) {
             for (int j = 0; j < numActions; j++) {
@@ -37,7 +37,7 @@ public class QTable implements java.io.Serializable {
     public void updateQ(int state, int action, double reward, int nextState) {
        // if(reward ==1 )
           qtable[state][action] = oneMinusAlpha * qtable[state][action] + alpha * ( reward + beta * V[nextState]);
-       // else 
+       //else 
        //   qtable[state][action] = .3 * qtable[state][action];
 
         // find max q-value for the state
@@ -50,10 +50,15 @@ public class QTable implements java.io.Serializable {
     }
     
     public void update(int state, int action, double reward, int nextState) {
-       if(reward ==1 )
-        qtable[state][action] = oneMinusAlpha * qtable[state][action] + alpha * ( reward /*+ beta * V[nextState]*/);
-       else 
+      
+        System.err.println("BEFORE reward: " + reward + " qvalue: " + qtable[state][action]);
+        System.err.println("alpha: " + alpha + " one minus alpha: " + oneMinusAlpha);
+        if(reward ==1 )
+          qtable[state][action] = oneMinusAlpha * qtable[state][action] + alpha * ( (double)reward /*+ beta * V[nextState]*/);
+        else 
           qtable[state][action] = alpha * qtable[state][action];
+        System.err.println("AFTER reward: " + reward + " qvalue: " + qtable[state][action]);
+        printTable();
         // find max q-value for the state
         double max = qtable[state][action];
         for (int i = 0; i < numActions; i++) {
