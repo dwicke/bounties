@@ -87,9 +87,10 @@ public class JointTaskQRobot extends AbstractRobot implements Steppable  {
             // pick one randomly
             if (bondsman.getAvailableTasks().numObjs > 0) {
                 myQtable = new QTable(bondsman.getTotalNumTasks(), 1, .1, .1, state.random);// focus on current reward
-                curTask = (Task) bondsman.getAvailableTasks().objs[state.random.nextInt(bondsman.getAvailableTasks().numObjs)];
-                curGoal = curTask.getGoal();
-                reward = curTask.getCurrentReward();
+                decideTask();
+                //curTask = (Task) bondsman.getAvailableTasks().objs[state.random.nextInt(bondsman.getAvailableTasks().numObjs)];
+                //curGoal = curTask.getGoal();
+                reward = 1;//curTask.getCurrentReward();
             }
             return;
         }
@@ -101,6 +102,7 @@ public class JointTaskQRobot extends AbstractRobot implements Steppable  {
                     System.err.println("Same Task");
                 }
                 needNewTask = false;
+                reward = 1;
                 qUpdate();
                 System.err.println("Got a new Task");
             } else {
@@ -123,6 +125,7 @@ public class JointTaskQRobot extends AbstractRobot implements Steppable  {
                     System.err.println("Made it to done!");
                 }
                 needNewTask = true;
+                
 
             }
 
@@ -156,12 +159,15 @@ public class JointTaskQRobot extends AbstractRobot implements Steppable  {
                     // quickest way to get the tasks back to the way they were
                     // so I can update the reward correctly without changing 
                     // decide task too much.
+                    System.err.println("my id is: " + id);
                     Task prevTemp = prevTask;
-                    prevTask = prevprevTask;
+                   // prevTask = prevprevTask;
                     Task curTemp = curTask;
-                    curTask = prevTemp;
+                    //curTask = prevTemp;
                     reward = 0;
+                   // try{Thread.sleep(1000);}catch(Exception e){}
                     qUpdate();
+                    reward = 1;
                     prevTask = prevTemp;
                     curTask = curTemp;
                     atTask = false;
@@ -199,12 +205,12 @@ public class JointTaskQRobot extends AbstractRobot implements Steppable  {
         System.err.println( epsilon+ myQtable.getQValue(((Task) availTasks.objs[bestTaskIndex]).getID(), 0));
         double max = (epsilon+  myQtable.getQValue(((Task) availTasks.objs[bestTaskIndex]).getID(), 0))
                 * (((Task) availTasks.objs[bestTaskIndex]).getCurrentReward());
-
+//System.err.println("agent id " + id+ " Cur q-val:  " + max);
         for (int i = 1; i < availTasks.numObjs; i++) {
 
             double cur = (epsilon +  myQtable.getQValue(((Task) availTasks.objs[i]).getID(), 0))
                     * (((Task) availTasks.objs[i]).getCurrentReward());
-            //System.err.println("agent id " + id+ " Cur q-val:  " + cur);
+           // System.err.println("agent id " + id+ " Cur q-val:  " + cur);
             if (cur > max) {
                 bestTaskIndex = i;
                 max = cur;
@@ -212,10 +218,12 @@ public class JointTaskQRobot extends AbstractRobot implements Steppable  {
         }
 
         System.err.println("Robot id " + id + " max Q:" + max + " val " + ((Task) availTasks.objs[bestTaskIndex]).getCurrentReward());
-
-        if (curTask == (Task) availTasks.objs[bestTaskIndex]) {
+        if(curTask!=null)
+        if (curTask.getID() == ((Task)(availTasks.objs[bestTaskIndex])).getID()) {
             return false;
         }
+        double k = (epsilon+  myQtable.getQValue(((Task) availTasks.objs[bestTaskIndex]).getID(), 0))* (((Task) availTasks.objs[bestTaskIndex]).getCurrentReward());
+         System.err.println("NEW BEST TASK: " + k + " bounty " + ((Task) availTasks.objs[bestTaskIndex]).getCurrentReward() );
         prevprevTask = prevTask;
         prevTask = curTask;
         curTask = (Task) availTasks.objs[bestTaskIndex];
