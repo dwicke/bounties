@@ -5,6 +5,8 @@
  */
 package sim.app.bounties;
 
+
+import sim.display.Console;
 import sim.engine.*;
 import static sim.engine.SimState.doLoop;
 import sim.field.grid.*;
@@ -17,7 +19,7 @@ public class Bounties extends SimState {
     public static final int GRID_HEIGHT = 40;
     public static final int GRID_WIDTH = 60;
 
-    
+    public Console con;
     public double[] robotTabsCols;
     public double[] prevRobotTabsCols; // for debugging, see if to many people are getting reward
     public double[] rollingAverage = new double[1000];
@@ -30,6 +32,14 @@ public class Bounties extends SimState {
     int numTasks = 2;
     int numGoals = 1;    
     double averageTicks = 0;
+    
+    public void setConsole(Console con) {
+        this.con = con;
+    }
+    public Console getConsole() {
+        return con;
+    }
+    
     public double getAverageTicks(){
         if (bondsman != null) {
             Bag tasks = bondsman.getTasks();

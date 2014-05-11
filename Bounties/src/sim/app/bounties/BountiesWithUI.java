@@ -57,7 +57,9 @@ public class BountiesWithUI extends GUIState {
 
     public void setupPortrayals() {
         Bounties bounties = (Bounties) state;
-
+        //bounties.setConsole((Console)this.createController());
+        
+        
         // tell the portrayals what to portray and how to portray them
         goalsPortrayal.setField(bounties.goalsGrid);
         
