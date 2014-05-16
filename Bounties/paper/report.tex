@@ -32,7 +32,7 @@ Bounties
 \date{Technical Report $-705 - 991i$}
 
 \author{
-{\bf Drew WIcke}\\
+{\bf Drew Wicke}\\
 dwicke@gmu.edu
 \and 
 {\bf David Freelan}\\
@@ -42,23 +42,34 @@ dfreelan@gmu.edu
 \maketitle
 
 \begin{abstract}
-Auctions are a common mechanism for distributing tasks in a multi robot system.  Auctions rely on the bid of the robots to determine how to distribute tasks.  However, robots' sensors are noisy and therefore the bid may not reflect a true valuation and the task may not get done.  Removing the need for trust by using Bounties results in a competitive environment that leads to the successful completion of tasks.
+% do this at the end 
 \end{abstract}
 
 \section{Introduction}
+Auctions are a common mechanism for distributing tasks in a multi robot system.  Auctions rely on the bid of the robots to determine how to distribute tasks.  However, robots' sensors are noisy and therefore the bid may not reflect a true valuation and the task may not get done.  Removing the need for trust by using Bounties results in a competitive environment that leads to the successful completion of tasks.
 %The description of the problem
-Bounties are an alternative mechanism for getting multiple robots to do tasks.  Tasks are incentivized with a bounty.  Bounties are a time dependent utility for accomplishing a task.  They are 
+Bounties are an alternative mechanism for getting multiple robots to do tasks.  Tasks are incentivized with a bounty.  Bounties are a time dependent utility for accomplishing a task.  Each time step the bounty is incremented.  
+
 \section{Motivation}
-Robot sensor information is noisy especially localization data.  This limitation causes the system to not be ideal when dealing with multiple robots.  One popular method of distributing tasks to robots is through an auction.  This method involves the robots biding on tasks based on their sensor info.  The centralized auctioneer will then determine the winner based on submitted bids.  Usually the robot that has bid the most will get the task.  The problem with this is 
+Robot sensor information is noisy especially localization data.  This limitation causes the system to not be ideal when dealing with multiple robots.  One popular method of distributing tasks to robots is through an auction.  This method involves the robots biding on tasks based on their sensor info.  The centralized auctioneer will then determine the winner based on submitted bids.  Usually the robot that has bid the most will get the task.  The problem with this approach is that the 
 
 \section{How Accomplished}
-We accomplished this project 
+
+
+
 \section{Experiment}
-We experimented with bounties in simulation and demonstrate the system on two Darwin-OP humanoid robots.
+We experimented with bounties in simulation and demonstrate the system on two Darwin-OP humanoid robots.  To simulate the bounty system we created a MASON simulation.  
+
+The simulation consisted of a 60 tiles long by 40 wide.  
 \subsection{Jumpship Robot}
+The Jumpship robot is a greedy approach to picking the task to do.  The robot can also change tasks after starting to go after the task.  However, once the task is in progress it can not switch.
 \subsection{Q-Learner}
+We also tried using a standard q-learning algorithm.  The states were the different tasks and the actions were to change to doing one of the tasks.  Therefore the goal was to learn what a good sequence of tasks would be.
 \subsection{DDLearner}
+The DDLearner is a learning algorithm created with the goal to learn how to scale the bounties appropriately in order to identify the set of tasks to take.  Essentially to learn a role.  
 \section{Analysis and Discussion}
+
+We analyzed both convergence and 
 
 \section{Future Work}
 Tasks that require multiple robots and therefore cooperation within a competitive environment.  
