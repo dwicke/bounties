@@ -46,21 +46,42 @@ dfreelan@gmu.edu
 \end{abstract}
 
 \section{Introduction}
+
+Task allocation 
+
 Auctions are a common mechanism for distributing tasks in a multi robot system.  Auctions rely on the bid of the robots to determine how to distribute tasks.  However, robots' sensors are noisy and therefore the bid may not reflect a true valuation and the task may not get done.  Removing the need for trust by using Bounties results in a competitive environment that leads to the successful completion of tasks.
 %The description of the problem
-Bounties are an alternative mechanism for getting multiple robots to do tasks.  Tasks are incentivized with a bounty.  Bounties are a time dependent utility for accomplishing a task.  Each time step the bounty is incremented.  
+Bounties are an alternative mechanism for getting multiple robots to do tasks.  Tasks are incentivized with a bounty.  Bounties are a time dependent utility for accomplishing a task. 
+\section{Bounties}
+Bounties are a lazy task allocation method.  This method is similar in nature to real life bounty mechanisms.  We have a bondsman that manages and creates the tasks with associated bounty.  The bounty is defined to be a monotonically increasing with time value associated with completing the task that the bounty is associated with.  Bounty hunters are the entities, in our case robots, that undertake the tasks based on the bounty.
+
+The bounty mechanism works by following the following steps:
+
+\begin{enumerate}
+\item Bondsman announces to the the robots the list of available tasks and their current bounty
+\item Bounty hunters not in progress of completing a task decide which task to take by weighting their decision based on the current bounty
+\item Bounty hunters approaching a task and who have not started to complete the task may jump-ship and approach another task at that current bounty value
+\item Bounty hunters who have finished approaching the task and have started the task must finish the task % or expire trying (this might be something to put in the future work).
+\item If a Bounty hunter completes a task the Bondsman awards the bounty they agreed upon
+\end{enumerate}
+
+The Bounties mechanism does not make any assumptions about the type, number or location of tasks.  The mechanism also does not limit the number of bounty hunters needed to complete the task and through the use of a hierarchical task network as the mechanism for describing a task we can have complex subtasks.  The Bounty mechanism does not require the bondsman to know anything other than the post conditions for successful completion of the task.  By our definition of bounty hunter this mechanism does not place any bounds on the number or abilities of the robots.  This means that the 
+
+However, for the purposes of this paper we do make a number of limiting assumptions in order to focus on the ability of bounties to act as a task allocation mechanism.  We assume that the bondsman knows the location of the tasks, the robots are homogenous, 
 
 \section{Motivation}
-Robot sensor information is noisy especially localization data.  This limitation causes the system to not be ideal when dealing with multiple robots.  One popular method of distributing tasks to robots is through an auction.  This method involves the robots biding on tasks based on their sensor info.  The centralized auctioneer will then determine the winner based on submitted bids.  Usually the robot that has bid the most will get the task.  The problem with this approach is that the 
+Robot sensor information is noisy especially localization data.  This limitation causes the system to not be ideal when dealing with multiple robots.  One popular method of distributing tasks to robots is through an auction.  This method involves the robots biding on tasks based on their sensor info.  The centralized auctioneer will then determine the winner based on submitted bids.  Usually the robot that has bid the most will get the task.  The problem becomes a graph coloring problem  
 
-\section{How Accomplished}
+Besides 
+
+\section{How Accomplished}%experiment?
+
+We experimented with bounties in simulation and demonstrated the system on two Darwin-OP humanoid robots.  To simulate the bounty system we created a MASON simulation.  We created the simulation so that we can easily change between real robots and virtual robots.  In order for the simulation field to align to the actual field we made the simulation 60 tiles long by 40 wide where each tile is a decimeter. 
+
+We also demonstrated the system on two Darwin-OP humanoid robots.  We placed a Robocup regulation size ball midway between center and the goal on both sides of the field.  The robots were tasked to go to the ball and kick the ball into the goal and then to go to the center of the field.  The robots were not told which task they should be responsible for, the goal of the experiment was to show that the robots could learn their role in the simulation and then transfer that behavior to the robots.    
 
 
 
-\section{Experiment}
-We experimented with bounties in simulation and demonstrate the system on two Darwin-OP humanoid robots.  To simulate the bounty system we created a MASON simulation.  
-
-The simulation consisted of a 60 tiles long by 40 wide.  
 \subsection{Jumpship Robot}
 The Jumpship robot is a greedy approach to picking the task to do.  The robot can also change tasks after starting to go after the task.  However, once the task is in progress it can not switch.
 \subsection{Q-Learner}
