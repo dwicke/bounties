@@ -47,11 +47,25 @@ dfreelan@gmu.edu
 
 \section{Introduction}
 
-Task allocation 
+Task allocation is an integral part of coordinating the behaviors of multiple agents by simplifying the interactions between the agents.  It is also useful in bringing about cooperation between agents in order to accomplish cooperative tasks.  For the purposes of this paper we take similar definitions of task, activity and role from \cite{Krieger2000}.  Tasks define what needs to be accomplished, activities are tasks that are being completed, and role is the set of tasks that define the normal activity of an individual.
 
 Auctions are a common mechanism for distributing tasks in a multi robot system.  Auctions rely on the bid of the robots to determine how to distribute tasks.  However, robots' sensors are noisy and therefore the bid may not reflect a true valuation and the task may not get done.  Removing the need for trust by using Bounties results in a competitive environment that leads to the successful completion of tasks.
 %The description of the problem
-Bounties are an alternative mechanism for getting multiple robots to do tasks.  Tasks are incentivized with a bounty.  Bounties are a time dependent utility for accomplishing a task. 
+Bounties are an alternative mechanism for getting multiple robots to do tasks.  Tasks are incentivized with a bounty.  Bounties are a time dependent utility for accomplishing a task.  
+
+This paper will describe some previous work in the area of task allocation.  Then we will describe our Bounty task allocation mechanism and provide experimental evidence of there ability to allocate tasks.  During this we will argue for our new learning algorithm DDLearner which is made specifically for our Bounties mechanism.  We will also describe our results when implemented on real robots.  Finally we will propose future work to be completed.
+\section{Previous Work}
+There has been much focus on solving the task allocation problem because it is an important problem when more than one robot can do tasks.  
+
+One of the first to attempt multi-robot coordination through task allocation is in the work by Parker with both ALLIANCE and L-ALLIANCE \cite{Parker1998,Parker1995}.  These approaches created an entire robot architecture around the idea of distributing tasks.  They focused on the concept of mathematically defined motivations that allow the robots to select to perform particular tasks.  L-ALLIANCE extended this architecture to include learning behaviors. 
+
+Gerkey and Mataric created, MURDOCH, an auction mechanism for solving the task allocation problem and coordinating multi robot systems \cite{Gerkey2002c}.  They focused there mechanism on minimizing resource usage, task completion time and communication overhead.  This work is based off of contract net protocol \cite{Davis1983} and has been extended and studied greatly as a means of allocating tasks.
+
+Dahl explored using vacancy chains, as a method for allocating tasks.  \cite{Dahl2003}
+
+survey \cite{Gerkey2004}
+
+
 \section{Bounties}
 Bounties are a lazy task allocation method.  This method is similar in nature to real life bounty mechanisms.  We have a bondsman that manages and creates the tasks with associated bounty.  The bounty is defined to be a monotonically increasing with time value associated with completing the task that the bounty is associated with.  Bounty hunters are the entities, in our case robots, that undertake the tasks based on the bounty.
 
@@ -61,7 +75,7 @@ The bounty mechanism works by following the following steps:
 \item Bondsman announces to the the robots the list of available tasks and their current bounty
 \item Bounty hunters not in progress of completing a task decide which task to take by weighting their decision based on the current bounty
 \item Bounty hunters approaching a task and who have not started to complete the task may jump-ship and approach another task at that current bounty value
-\item Bounty hunters who have finished approaching the task and have started the task must finish the task % or expire trying (this might be something to put in the future work).
+\item Bounty hunters who have finished approaching the task notify the bondsman that the task should not be available to other bounty hunters (also once the robot has started the task it must finish the task before changing) % or expire trying (this might be something to put in the future work).
 \item If a Bounty hunter completes a task the Bondsman awards the bounty they agreed upon
 \end{enumerate}
 
@@ -74,24 +88,36 @@ Robot sensor information is noisy especially localization data.  This limitation
 
 Besides 
 
-\section{How Accomplished}%experiment?
-
-We experimented with bounties in simulation and demonstrated the system on two Darwin-OP humanoid robots.  To simulate the bounty system we created a MASON simulation.  We created the simulation so that we can easily change between real robots and virtual robots.  In order for the simulation field to align to the actual field we made the simulation 60 tiles long by 40 wide where each tile is a decimeter. 
-
-We also demonstrated the system on two Darwin-OP humanoid robots.  We placed a Robocup regulation size ball midway between center and the goal on both sides of the field.  The robots were tasked to go to the ball and kick the ball into the goal and then to go to the center of the field.  The robots were not told which task they should be responsible for, the goal of the experiment was to show that the robots could learn their role in the simulation and then transfer that behavior to the robots.    
-
-
-
-\subsection{Jumpship Robot}
+\section{Robot Behaviors}
+We created three different methods for picking tasks to do and determine a role.  The Jump-ship approach is a greedy approach with full information that followed a static protocol.  Q-learning which followed the standard Q-learning algorithm.  And our new approach DDLearner that was created specifically for bounties. 
+\subsection{Jump-ship Robot}
 The Jumpship robot is a greedy approach to picking the task to do.  The robot can also change tasks after starting to go after the task.  However, once the task is in progress it can not switch.
 \subsection{Q-Learner}
 We also tried using a standard q-learning algorithm.  The states were the different tasks and the actions were to change to doing one of the tasks.  Therefore the goal was to learn what a good sequence of tasks would be.
 \subsection{DDLearner}
 The DDLearner is a learning algorithm created with the goal to learn how to scale the bounties appropriately in order to identify the set of tasks to take.  Essentially to learn a role.  
+
+
+\section{Experimental Setup}
+
+We experimented with bounties in simulation and demonstrated the system on two Darwin-OP humanoid robots.  To simulate the bounty system we created a MASON simulation.  We created the simulation so that we can easily change between real robots and virtual robots.  In order for the simulation field to align to the actual field we made the simulation 60 tiles long by 40 wide where each tile is a decimeter. 
+
+\subsection{Experiment Tasks and Measures}
+We conducted four experiments to determine the convergence of the robots to a particular role.
+
+\subsection{2 Robots 10 Tasks}
+...
+
 \section{Analysis and Discussion}
 
 We analyzed both convergence and 
 
+\section{Robot Demonstration}
+We also demonstrated the system on two Darwin-OP humanoid robots.  We placed a Robocup regulation size ball midway between center and the goal on both sides of the field.  The robots were tasked to go to the ball and kick the ball into the goal and then to go to the center of the field.  The robots were not told which task they should be responsible for, the goal of the experiment was to show that the robots could learn their role in the simulation and then transfer that behavior to the robots.    
+
+
 \section{Future Work}
 Tasks that require multiple robots and therefore cooperation within a competitive environment.  
+\bibliographystyle{ecai2014}
+\bibliography{cs880}
 \end{document}
