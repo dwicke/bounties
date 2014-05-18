@@ -1,0 +1,16 @@
+\BOOKMARK [1][-]{section.1}{Introduction}{}% 1
+\BOOKMARK [1][-]{section.2}{Related Work}{}% 2
+\BOOKMARK [1][-]{section.3}{Bounties}{}% 3
+\BOOKMARK [1][-]{section.4}{Robot Behaviors}{}% 4
+\BOOKMARK [2][-]{subsection.4.1}{Jump-ship Robot}{section.4}% 5
+\BOOKMARK [2][-]{subsection.4.2}{Q-Learner}{section.4}% 6
+\BOOKMARK [2][-]{subsection.4.3}{DDLearner}{section.4}% 7
+\BOOKMARK [1][-]{section.5}{Experimental Setup}{}% 8
+\BOOKMARK [2][-]{subsection.5.1}{Experiment Tasks and Measures}{section.5}% 9
+\BOOKMARK [2][-]{subsection.5.2}{2 Robots 10 Tasks}{section.5}% 10
+\BOOKMARK [2][-]{subsection.5.3}{8 Robots 30 Tasks}{section.5}% 11
+\BOOKMARK [2][-]{subsection.5.4}{8 Robots 300 Tasks}{section.5}% 12
+\BOOKMARK [2][-]{subsection.5.5}{2 Robots 10 Tasks Configured}{section.5}% 13
+\BOOKMARK [1][-]{section.6}{Analysis and Discussion}{}% 14
+\BOOKMARK [1][-]{section.7}{Robot Demonstration}{}% 15
+\BOOKMARK [1][-]{section.8}{Future Work}{}% 16
