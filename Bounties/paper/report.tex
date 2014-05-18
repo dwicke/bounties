@@ -43,31 +43,37 @@ dfreelan@gmu.edu
 
 \begin{abstract}
 % do this at the end 
+
+This paper presents a mechanism for task allocation for groups of robots and a  The mechanism is based on bounties, a utility based motivation strategy common in human societies. We define task-allocation problems for which the bounty mechanism is suitable and demonstrate a greedy and reinforcement learning approaches can be used to solve the role allocation problem. Experiments in simulation show that our learning approach consistently does similar to the greedy approach.  Experiments on real robots show that the mechanism is also able to perform after learning is done offline.
 \end{abstract}
 
 \section{Introduction}
 
-Task allocation is an integral part of coordinating the behaviors of multiple agents by simplifying the interactions between the agents.  It is also useful in bringing about cooperation between agents in order to accomplish cooperative tasks.  For the purposes of this paper we take similar definitions of task, activity and role from \cite{Krieger2000}.  Tasks define what needs to be accomplished, activities are tasks that are being completed, and role is the set of tasks that define the normal activity of an individual.
+Task allocation is an integral part of coordinating the behaviors of multiple agents by simplifying the interactions between the agents.  It is also useful in bringing about cooperation between agents in order to accomplish cooperative tasks.  For the purposes of this paper we take similar definitions of task, activity and role from the often referenced definitions by Krieger and Billeter \cite{Krieger2000}.  Tasks define what needs to be accomplished, activities are tasks that are being completed, and role is the set of tasks that define the normal activity of an individual.
 
-Auctions are a common mechanism for distributing tasks in a multi robot system.  Auctions rely on the bid of the robots to determine how to distribute tasks.  However, robots' sensors are noisy and therefore the bid may not reflect a true valuation and the task may not get done.  Removing the need for trust by using Bounties results in a competitive environment that leads to the successful completion of tasks.
+There have been multiple methods proposed to solve the task allocation problem.  Greedy algorithms, optimization approaches and market/auctions.  
+
+Auctions are a popular mechanism for distributing tasks in a multi robot system.  Auctions rely on the bid of the robots to determine how to distribute tasks.  However, robots' sensors are noisy and therefore the bid may not reflect a true valuation and the task may not get done.  Removing the need for trust by using Bounties results in a competitive environment that leads to the successful completion of tasks.
 %The description of the problem
 Bounties are an alternative mechanism for getting multiple robots to do tasks.  Tasks are incentivized with a bounty.  Bounties are a time dependent utility for accomplishing a task.  
 
 This paper will describe some previous work in the area of task allocation.  Then we will describe our Bounty task allocation mechanism and provide experimental evidence of there ability to allocate tasks.  During this we will argue for our new learning algorithm DDLearner which is made specifically for our Bounties mechanism.  We will also describe our results when implemented on real robots.  Finally we will propose future work to be completed.
-\section{Previous Work}
+
+\section{Related Work}
 There has been much focus on solving the task allocation problem because it is an important problem when more than one robot can do tasks.  
 
 One of the first to attempt multi-robot coordination through task allocation is in the work by Parker with both ALLIANCE and L-ALLIANCE \cite{Parker1998,Parker1995}.  These approaches created an entire robot architecture around the idea of distributing tasks.  They focused on the concept of mathematically defined motivations that allow the robots to select to perform particular tasks.  L-ALLIANCE extended this architecture to include learning behaviors. 
 
-Gerkey and Mataric created, MURDOCH, an auction mechanism for solving the task allocation problem and coordinating multi robot systems \cite{Gerkey2002c}.  They focused there mechanism on minimizing resource usage, task completion time and communication overhead.  This work is based off of contract net protocol \cite{Davis1983} and has been extended and studied greatly as a means of allocating tasks.
+Gerkey and Mataric created, MURDOCH, an auction mechanism for solving the task allocation problem and coordinating multi robot systems \cite{Gerkey2002c}.  They focused there mechanism on minimizing resource usage, task completion time and communication overhead.  This work is based off of the contract net protocol \cite{Davis1983}.  MURDOCH has since been extended and studied greatly as a means of allocating tasks.
 
-Dahl explored using vacancy chains, as a method for allocating tasks.  \cite{Dahl2003}
+Dahl took a different approach and used vacancy chains, as a method for allocating tasks \cite{Dahl2003}.  In order to use vacancy chains to solve the task allocation problem the tasks needed to be 
 
-survey \cite{Gerkey2004}
-
+An excellent survey on the task allocation problem by Gerkey \cite{Gerkey2004} defines three major axes for the problem, including the type of task, type of robot and the information available to determine the assignment.  Another aspect of the paper is role allocation.  Role allocation is the problem of  Campbell provides an detailed overview of the problem and well thought out open problems in the area \cite{Campbell2010}.
 
 \section{Bounties}
-Bounties are a lazy task allocation method.  This method is similar in nature to real life bounty mechanisms.  We have a bondsman that manages and creates the tasks with associated bounty.  The bounty is defined to be a monotonically increasing with time value associated with completing the task that the bounty is associated with.  Bounty hunters are the entities, in our case robots, that undertake the tasks based on the bounty.
+Robot sensor information is noisy especially localization data.  This limitation causes the system to not be ideal when dealing with multiple robots.  One popular method of distributing tasks to robots is through an auction.  This method involves the robots biding on tasks based on their sensor info.  The centralized auctioneer will then determine the winner based on submitted bids.  Usually the robot that has bid the most will get the task.  Therefore, the assignment of the task may result in the robot failing to accomplish the task due to its inability to accurately predict its success.  Then either the auctioneer has to re-auction the task or take the loss.  This can be an unacceptable outcome in scenarios where the task must be completed.
+
+Bounties are a lazy task allocation method that avoids the problem of trusting bidders with the market/auction approach.  This method is similar in nature to real life bounty mechanisms.  We have a bondsman that manages and creates the tasks with associated bounty.  The bounty is defined to be a monotonically increasing with time value associated with completing the task that the bounty is associated with.  Bounty hunters are the entities, in our case robots, that undertake the tasks based on the bounty.
 
 The bounty mechanism works by following the following steps:
 
@@ -83,13 +89,8 @@ The Bounties mechanism does not make any assumptions about the type, number or l
 
 However, for the purposes of this paper we do make a number of limiting assumptions in order to focus on the ability of bounties to act as a task allocation mechanism.  We assume that the bondsman knows the location of the tasks, the robots are homogenous, 
 
-\section{Motivation}
-Robot sensor information is noisy especially localization data.  This limitation causes the system to not be ideal when dealing with multiple robots.  One popular method of distributing tasks to robots is through an auction.  This method involves the robots biding on tasks based on their sensor info.  The centralized auctioneer will then determine the winner based on submitted bids.  Usually the robot that has bid the most will get the task.  The problem becomes a graph coloring problem  
-
-Besides 
-
 \section{Robot Behaviors}
-We created three different methods for picking tasks to do and determine a role.  The Jump-ship approach is a greedy approach with full information that followed a static protocol.  Q-learning which followed the standard Q-learning algorithm.  And our new approach DDLearner that was created specifically for bounties. 
+We created three different methods for picking tasks to solve the role allocation problem.  The Jump-ship approach is a greedy approach with full information that follows a static protocol.  Q-learning which follows the standard Q-learning algorithm.  And our new approach DDLearner that was created specifically for bounties. 
 \subsection{Jump-ship Robot}
 The Jumpship robot is a greedy approach to picking the task to do.  The robot can also change tasks after starting to go after the task.  However, once the task is in progress it can not switch.
 \subsection{Q-Learner}
@@ -100,13 +101,18 @@ The DDLearner is a learning algorithm created with the goal to learn how to scal
 
 \section{Experimental Setup}
 
-We experimented with bounties in simulation and demonstrated the system on two Darwin-OP humanoid robots.  To simulate the bounty system we created a MASON simulation.  We created the simulation so that we can easily change between real robots and virtual robots.  In order for the simulation field to align to the actual field we made the simulation 60 tiles long by 40 wide where each tile is a decimeter. 
+We experimented with bounties in simulation and demonstrated the system on two Darwin-OP humanoid robots.  To simulate the bounty system we created a MASON simulation.  We created the simulation so that we can easily change between real robots and virtual robots.  In order for the simulation field to align to the actual field we made the simulation 60 tiles long by 40 wide where each tile is a decimeter.  Our experiments were ST-SR-IA, Single Task, Single Robot, Instantaneous Assignment 
 
 \subsection{Experiment Tasks and Measures}
-We conducted four experiments to determine the convergence of the robots to a particular role.
+We conducted four experiments to determine the convergence of the robots to a particular role.  The experiment consisted of the agent traveling to the task location and then taking the item at the task location to the goal location.  The tasks, robots, and goal location are randomly placed on the field unless specified for the particular experiment.  The agents were given the coordinates of both the task location and the goal location and knew how to get to both locations.  The agents did not perform any collision detection and are able to occupy the same tile.  When moving to either the task or goal location the agents first travel along the x-axis and then along the y-axis.
 
 \subsection{2 Robots 10 Tasks}
-...
+
+\subsection{8 Robots 30 Tasks}
+
+\subsection{8 Robots 300 Tasks}
+
+\subsection{2 Robots 10 Tasks Configured}
 
 \section{Analysis and Discussion}
 
