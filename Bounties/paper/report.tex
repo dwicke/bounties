@@ -74,7 +74,7 @@ Dahl took a different approach and used vacancy chains as a method for allocatin
 
 An excellent survey on the task allocation problem by Gerkey \cite{Gerkey2004} defines three major axes for the problem, including the type of task, type of robot and the information available to determine the assignment.  In the experiment section we define our problem along these axes.  
 
-Another aspect of the paper is role allocation.  Role allocation is the problem of determining the set of tasks that the individuals will normally take on.  It is determined by the agent's learning mechanism in our experiments. Campbell provides an detailed overview of the problem, previous  work and well thought out open problems in the area \cite{Campbell2010}.
+Another aspect of the paper is role allocation.  Role allocation is the problem of determining the set of tasks that the individuals will normally take on.  It is determined by the agent's learning mechanism in our experiments. Campbell provides a detailed overview of the problem, previous  work and well thought out open problems in the area \cite{Campbell2010}.
 
 \section{Bounties}
 Robot sensor information is noisy especially localization data.  This limitation causes the system to not be ideal when dealing with multiple robots.  One popular method of distributing tasks to robots is through an auction.  This method involves the robots biding on tasks based on their sensor info.  The centralized auctioneer will then determine the winner based on submitted bids.  Usually the robot that has bid the most will get the task.  Therefore, the assignment of the task may result in the robot failing to accomplish the task due to its inability to accurately predict its success.  Then either the auctioneer has to re-auction the task or take the loss.  This can be an unacceptable outcome in scenarios where the task must be completed.
@@ -109,7 +109,7 @@ The DDLearner is a learning algorithm created with the goal to learn how to scal
 
 We experimented with bounties in simulation and demonstrated the system on two Darwin-OP humanoid robots.  To simulate the bounty system we created a MASON simulation \cite{Luke2003}.  We created the simulation so that we can easily change between real robots and virtual robots.  In order for the simulation field to align to the actual field we made the simulation 60 tiles long by 40 wide where each tile is a decimeter.  Our experiments are ST-SR-IA, Single Task, Single Robot, Instantaneous Assignment as defined by \cite{Gerkey2004}.  Meaning that the robot can complete at most a single task at a time, only a single robot is required to accomplish each task and that there is not future planning on who will do what task ahead of time.  This is also therefore in the computational complexity class of P \cite{Campbell2010, Gerkey2003}.
 
-%We also did experiments with ST-MR-IA in order to show that it still works.  I think this needs to be done because this type of problem is NP-Hard and will show how well bounties actually do.  I'd like to see the emergent coalitions from just our DDLearner and compare it to my Friend/Enemy Coalition learning algorithm and maybe use them both in conjunction with one another.
+%We also did experiments with ST-MR-IA in order to show that it still works.  I think this needs to be done because this type of problem is NP-Hard and will show how well bounties actually do.  I'd like to see the emergent coalitions from just our DDLearner and compare it to a Coalition learning algorithm.
 % On a side note this might be why our set plays were easier.  Because we are making a fundamentally multi-robot task into a single robot task by decomposing it for them.  
 % we should also change the communication protocol.  The bondsman should make the initial announcement including the function for determining the bounty based off of the current time step.  Then the robots will receive another broadcast to let them know who is doing the task.
 
@@ -117,6 +117,8 @@ We experimented with bounties in simulation and demonstrated the system on two D
 
 \subsection{Experiment Tasks and Measures}
 We conducted four experiments to determine the convergence of the robots to a particular role.  The experiment consisted of the agent traveling to the task location and then taking the item at the task location to the goal location.  The tasks, robots, and goal location are randomly placed on the field unless specified for the particular experiment.  The agents were given the coordinates of both the task location and the goal location and knew how to get to both locations.  The agents did not perform any collision detection and are able to occupy the same tile.  When moving to either the task or goal location the agents first travel along the x-axis and then along the y-axis.
+
+To measure the proficiency of the different methods, Jump-ship, Q-Learning and DDLearner, we looked at the average ticks.  Average ticks are defined to be the average bounty on the field at that time.  We chose this method as our measure because we wanted to see how fair to all the tasks the algorithms were and to illustrate the effectiveness of bounties at manipulating which tasks get done.  The graphs shown are a rolling average over 1000 time steps. 
 
 \subsection{2 Robots 10 Tasks}
 This experiment consisted of randomly placing 10 tasks, 1 goal location, and 2 robots on the field and then running the experiment for 20000 time steps.  
@@ -195,7 +197,11 @@ This experiment consisted of configuring the locations of 10 tasks and randomly 
 
 \section{Analysis and Discussion}
 
-We analyzed both convergence and fairness to the tasks as measured by average time the tasks were on the field.
+As the graphs show in each experiment the Jump-ship approach (the greedy approach) outperforms both DDLearner and the Q-Learning algorithms.  This is mainly because this algorithm has full knowledge of what everyone is doing and their measure of how good they are going to be at it every time step.  This approach is not a viable option to use when the number of tasks or number of robots increases as the communication overhead is too great.  As is seen in the case with 8 robots and 300 tasks the Jump-ship approach was not able to perform in a reasonable amount of time compared to the DDLearner or the Q-Learner.
+
+The Q-Learning approach based off of our limited experiments did not converge (except for the 300 task case where it did not perform as well as the DDLearner) and did not appear to be improving as time increased past 20,000 time steps.  This may be due to both the size of the q-table and the non-stationary environment.  In contrast, the DDLearner was able to converge and did relatively similar to the Jump-ship approach.  One benefit of the DDLearner approach is that it does not require the full information that the Jump-ship algorithm requires.  The only thing is that the space required grows linearly with the number of tasks.
+
+% Want to do this in the future...We analyzed both convergence and fairness to the tasks as measured by average time the tasks were on the field.
 
 \section{Robot Demonstration}
 We also demonstrated the system on two Darwin-OP humanoid robots.  We placed a Robocup regulation size ball midway between center and the goal on both sides of the field.  The robots were tasked to go to the ball and kick the ball into the goal and then to go to the center of the field.  The robots were not told which task they should be responsible for, the goal of the experiment was to show that the robots could learn their role in the simulation and then transfer that behavior to the robots.    
@@ -203,8 +209,7 @@ We also demonstrated the system on two Darwin-OP humanoid robots.  We placed a R
 We ran the simulation for 5000 time steps until the DDLearner robots converged to a set of roles where one robot took one task and the the other took the other task.  Then we switched the controller mechanism to move the Darwin-OPs and update the simulation with their location data.  The robots were able to successfully complete their separate tasks using the learned behaviors from the simulation.  A video of the demonstration can be found \url{http://youtu.be/LXiHaUqBWLI}.
 
 \section{Future Work}
-Tasks that require multiple robots and therefore cooperation within a competitive environment.  
-%Would it be interesting to be able to say that their are tasks that can only robots that have specific roles can carry out.  This would be from an engineering perspective.  Essentially we would 
+The future work will be focused on tasks that require multiple robots and therefore cooperation within a competitive environment.  We intended to carry out experiments in this ST-MR-IA environment to explore how the DDLearner and bounties work. This needs to be done because this type of problem is NP-Hard and will show how well bounties actually do.  We would study the emergent coalitions from just our DDLearner and compare it to a Coalition learning algorithm.  We would like to analyze both convergence and fairness to the tasks as measured by average time the tasks are on the field.
 
 \bibliographystyle{ecai2014}
 \bibliography{cs880}
