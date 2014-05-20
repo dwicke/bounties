@@ -2,7 +2,9 @@
 \usepackage{mathpazo}
 \usepackage{microtype}
 \usepackage[citecolor=Fuchsia,urlcolor=blue,linkcolor=Cerulean]{hyperref}
-
+\usepackage{graphicx}
+\usepackage{float}
+\graphicspath{ {images/} {images/dd/} {images/greedy/} {images/qlearning/} }
 
 \setlength\textwidth{7in} 
 \setlength\textheight{9.5in} 
@@ -117,17 +119,79 @@ We experimented with bounties in simulation and demonstrated the system on two D
 We conducted four experiments to determine the convergence of the robots to a particular role.  The experiment consisted of the agent traveling to the task location and then taking the item at the task location to the goal location.  The tasks, robots, and goal location are randomly placed on the field unless specified for the particular experiment.  The agents were given the coordinates of both the task location and the goal location and knew how to get to both locations.  The agents did not perform any collision detection and are able to occupy the same tile.  When moving to either the task or goal location the agents first travel along the x-axis and then along the y-axis.
 
 \subsection{2 Robots 10 Tasks}
-This experiment consisted of randomly placing 10 tasks, 1 goal location, and 2 robots on the field and then running the experiment for 20000 time steps.
+This experiment consisted of randomly placing 10 tasks, 1 goal location, and 2 robots on the field and then running the experiment for 20000 time steps.  
+% Greedy
+\begin{figure}[H]
+\includegraphics[width=8cm]{greedy2and10}
+\caption{Jump-ship approach}
+\end{figure}
+% Qlearning
+\begin{figure}[H]
+\includegraphics[width=8cm]{qlearning2and10}
+\caption{Q-Learning approach}
+\end{figure}
+% DD
+\begin{figure}[H]
+\includegraphics[width=8cm]{dd2and10}
+\caption{DDLearning approach}
+\end{figure}
 
 \subsection{8 Robots 30 Tasks}
 This experiment consisted of randomly placing 30 tasks, 1 goal location, and 8 robots on the field and then running the experiment for 20000 time steps.
 
+% Greedy
+\begin{figure}[H]
+\includegraphics[width=8cm]{greedy8and30}
+\caption{Jump-ship approach}
+\end{figure}
+% Qlearning
+\begin{figure}[H]
+\includegraphics[width=8cm]{qlearning8and30}
+\caption{Q-Learning approach}
+\end{figure}
+% DD
+\begin{figure}[H]
+\includegraphics[width=8cm]{dd8and30}
+\caption{DDLearning approach}
+\end{figure}
+
 \subsection{8 Robots 300 Tasks}
-This experiment consisted of randomly placing 300 tasks, 1 goal location, and 8 robots on the field and then running the experiment for 20000 time steps.
+This experiment consisted of randomly placing 300 tasks, 1 goal location, and 8 robots on the field and then running the experiment for 20000 time steps.  Due to the excessive computation time greedy approach was not used.
+
+% Qlearning
+\begin{figure}[H]
+\includegraphics[width=8cm]{qlearning8and300}
+\caption{Q-Learning approach}
+\end{figure}
+% DD
+\begin{figure}[H]
+\includegraphics[width=8cm]{dd8and300}
+\caption{DDLearning approach}
+\end{figure}
 
 \subsection{2 Robots 10 Tasks Configured}
 
 This experiment consisted of configuring the locations of 10 tasks and randomly placing 1 goal location, and 2 robots on the field and then running the experiment for 20000 time steps.  The tasks were configured in order to accentuate the bounty mechanism by placing half of the tasks far away from the goal and the other half around the goal.  This is similar to the \textit{forager-protector} scenario described in \cite{Campbell2010}, except with implied task based on distance.  Where their are two types of tasks one to protect the goal and the other to go forage.
+\begin{figure}[H]
+\includegraphics[width=8cm]{specialConfig}
+\caption{Configuration of field.  Red = task, Green = goal, Black = Robot}
+\end{figure}
+% Greedy
+\begin{figure}[H]
+\includegraphics[width=8cm]{specialgreedy2and10}
+\caption{Jump-ship approach}
+\end{figure}
+% Qlearning
+\begin{figure}[H]
+\includegraphics[width=8cm]{specialqlearning2and10}
+\caption{Q-Learning approach}
+\end{figure}
+% DD
+\begin{figure}[H]
+\includegraphics[width=8cm]{specialdd2and10}
+\caption{DDLearning approach}
+\end{figure}
+
 
 \section{Analysis and Discussion}
 
