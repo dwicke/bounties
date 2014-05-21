@@ -48,7 +48,7 @@ dfreelan@gmu.edu
 \begin{abstract}
 % do this at the end 
 
-This paper presents a mechanism for task allocation for groups of robots and a  The mechanism is based on bounties, a utility based motivation strategy common in human societies. We define task-allocation problems for which the bounty mechanism is suitable and demonstrate a greedy and reinforcement learning approaches can be used to solve the role allocation problem. Experiments in simulation show that our learning approach consistently does similar to the greedy approach.  Experiments on real robots show that the mechanism is also able to perform after learning is done offline.
+This paper presents a mechanism for task allocation for groups of robots. The mechanism is based on bounties, a utility based motivation strategy common in human societies. We define task-allocation problems for which the bounty mechanism is suitable and demonstrate a greedy and reinforcement learning approaches can be used to solve the role allocation problem. Experiments in simulation show that our learning approach consistently does similar to the greedy approach.  Experiments on real robots show that the mechanism is also able to perform after learning is done offline.
 \end{abstract}
 
 \section{Introduction}
@@ -68,7 +68,7 @@ There has been much focus on solving the task allocation problem because it is a
 
 One of the first to attempt multi-robot coordination through task allocation is in the work by Parker with both ALLIANCE and L-ALLIANCE \cite{Parker1998,Parker1995}.  These approaches created an entire robot architecture around the idea of distributing tasks.  They focused on the concept of mathematically defined motivations that allow the robots to select to perform particular tasks.  L-ALLIANCE extended this architecture to include learning behaviors. 
 
-Gerkey and Mataric created, MURDOCH, an auction mechanism for solving the task allocation problem and coordinating multi robot systems \cite{Gerkey2002c}.  They focused there mechanism on minimizing resource usage, task completion time and communication overhead.  This work is based off of the contract net protocol \cite{Davis1983}.  MURDOCH has since been extended and studied greatly as a means of allocating tasks.
+Gerkey and Mataric created, MURDOCH, an auction mechanism for solving the task allocation problem and coordinating multi robot systems \cite{Gerkey2002c}.  They focused their mechanism on minimizing resource usage, task completion time and communication overhead.  This work is based off of the contract net protocol \cite{Davis1983}.  MURDOCH has since been extended and studied greatly as a means of allocating tasks.
 
 Dahl took a different approach and used vacancy chains as a method for allocating tasks \cite{Dahl2003}.  In order to use vacancy chains to solve the task allocation problem the tasks need to have a value and can be repeated indefinitely.  
 
