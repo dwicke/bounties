@@ -61,7 +61,7 @@ Auctions are a popular mechanism for distributing tasks in a multi robot system.
 %The description of the problem
 Bounties are an alternative mechanism for getting multiple robots to do tasks.  Tasks are incentivized with a bounty.  Bounties are a time dependent utility for accomplishing a task.  
 
-This paper will describe some previous work in the area of task allocation.  Then we will describe our Bounty task allocation mechanism and provide experimental evidence of there ability to allocate tasks.  During this we will argue for our new learning algorithm DDLearner which is made specifically for our Bounties mechanism.  We will also describe our results when implemented on real robots.  Finally we will propose future work to be completed.
+This paper will describe some previous work in the area of task allocation.  Then we will describe our Bounty task allocation mechanism and provide experimental evidence of there ability to allocate tasks.  During this we will argue for our new learning algorithm DDLearner which is made specifically for our Bounties mechanism.  We will also describe our results when implemented on real robots.  Finally, we will propose future work to be completed.
 
 \section{Related Work}
 There has been much focus on solving the task allocation problem because it is an important problem when more than one robot can do tasks.  
@@ -93,12 +93,12 @@ The bounty mechanism works by following the following steps:
 
 The Bounties mechanism does not make any assumptions about the type, number or location of tasks.  The mechanism also does not limit the number of bounty hunters needed to complete the task and through the use of a hierarchical task network as the mechanism for describing a task we can have complex subtasks.  The Bounty mechanism does not require the bondsman to know anything other than the post conditions for successful completion of the task.  By our definition of bounty hunter this mechanism does not place any bounds on the number or abilities of the robots.  This means that the robots can be homogeneous or heterogeneous and that robots can be added and removed at any time.
 % Make this longer and move to an appropriate place...
-%However, for the purposes of this paper we do make a number of limiting assumptions in order to focus on the ability of bounties to act as a task allocation mechanism.  We assume that the bondsman knows the location of the tasks, the robots are homogenous, 
+However, for the purposes of this paper we do make a number of limiting assumptions in order to focus on the ability of bounties to act as a task allocation mechanism.  We assume that the bondsman knows the location of the tasks and they do not move.  We also assume that the robots are homogenous.
 
 \section{Robot Behaviors}
-We created three different methods for picking tasks to solve the role allocation problem.  The Jump-ship approach is a greedy approach with full information that follows a static protocol.  Q-learning which follows the standard Q-learning algorithm.  And our new approach DDLearner that was created specifically for bounties.  However, both Q-learning and the DDLearner approach define dynamic role.  Instead of adding a fixed amount of utility to stay in our current role as in \cite{Brusey2001} 
+We created three different methods for picking tasks to solve the role allocation problem.  The Jump-ship approach is a greedy approach with full information that follows a static protocol.  Q-learning which follows the standard Q-learning algorithm.  And our new approach DDLearner that was created specifically for bounties.  However, both Q-learning and the DDLearner approach define dynamic role.  
 \subsection{Jump-ship Robot}
-The Jumpship robot is a greedy approach to picking the task to do.  The robot can also change tasks after starting to go after the task.  However, once the task is in progress it can not switch.
+The Jumpship robot is a greedy approach to picking the task to do.  The robot can also change tasks after starting to go after the task.  However, once the task is in progress it can not switch.  Also, instead of adding a fixed amount of utility to stay in our current role as in \cite{Brusey2001} we penalize all the tasks that the robot is not currently doing in order for it to not oscillate.
 \subsection{Q-Learner}
 We also tried using a standard q-learning algorithm.  The states were the different tasks and the actions were to change to doing one of the tasks.  Therefore the goal was to learn what a good sequence of tasks would be.
 \subsection{DDLearner}
@@ -121,7 +121,7 @@ We conducted four experiments to determine the convergence of the robots to a pa
 To measure the proficiency of the different methods, Jump-ship, Q-Learning and DDLearner, we looked at the average ticks.  Average ticks are defined to be the average bounty on the field at that time.  We chose this method as our measure because we wanted to see how fair to all the tasks the algorithms were and to illustrate the effectiveness of bounties at manipulating which tasks get done.  The graphs shown are a rolling average over 1000 time steps. 
 
 \subsection{2 Robots 10 Tasks}
-This experiment consisted of randomly placing 10 tasks, 1 goal location, and 2 robots on the field and then running the experiment for 20000 time steps.  
+This experiment consisted of randomly placing 10 tasks, 1 goal location, and 2 robots on the field and then running the experiment for 20,000 time steps.  
 % Greedy
 \begin{figure}[H]
 \includegraphics[width=8cm]{greedy2and10}
@@ -139,7 +139,7 @@ This experiment consisted of randomly placing 10 tasks, 1 goal location, and 2 r
 \end{figure}
 
 \subsection{8 Robots 30 Tasks}
-This experiment consisted of randomly placing 30 tasks, 1 goal location, and 8 robots on the field and then running the experiment for 20000 time steps.
+This experiment consisted of randomly placing 30 tasks, 1 goal location, and 8 robots on the field and then running the experiment for 20,000 time steps.
 
 % Greedy
 \begin{figure}[H]
@@ -158,7 +158,7 @@ This experiment consisted of randomly placing 30 tasks, 1 goal location, and 8 r
 \end{figure}
 
 \subsection{8 Robots 300 Tasks}
-This experiment consisted of randomly placing 300 tasks, 1 goal location, and 8 robots on the field and then running the experiment for 20000 time steps.  Due to the excessive computation time greedy approach was not used.
+This experiment consisted of randomly placing 300 tasks, 1 goal location, and 8 robots on the field and then running the experiment for 20,000 time steps.  Due to the excessive computation time greedy approach was not used.
 
 % Qlearning
 \begin{figure}[H]
@@ -173,7 +173,7 @@ This experiment consisted of randomly placing 300 tasks, 1 goal location, and 8 
 
 \subsection{2 Robots 10 Tasks Configured}
 
-This experiment consisted of configuring the locations of 10 tasks and randomly placing 1 goal location, and 2 robots on the field and then running the experiment for 20000 time steps.  The tasks were configured in order to accentuate the bounty mechanism by placing half of the tasks far away from the goal and the other half around the goal.  This is similar to the \textit{forager-protector} scenario described in \cite{Campbell2010}, except with implied task based on distance.  Where their are two types of tasks one to protect the goal and the other to go forage.
+This experiment consisted of configuring the locations of 10 tasks and randomly placing 1 goal location, and 2 robots on the field and then running the experiment for 20,000 time steps.  The tasks were configured in order to accentuate the bounty mechanism by placing half of the tasks far away from the goal and the other half around the goal.  This is similar to the \textit{forager-protector} scenario described in \cite{Campbell2010}, except with ours the distance implies the type of task.  Where there are two types of tasks one to protect the goal (close) and the other to go forage (far from goal).
 \begin{figure}[H]
 \includegraphics[width=8cm]{specialConfig}
 \caption{Configuration of field.  Red = task, Green = goal, Black = Robot}
