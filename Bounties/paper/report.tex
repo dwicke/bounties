@@ -131,9 +131,17 @@ P_a^b = \Pi_{i \in a}
 We also tried using a standard q-learning algorithm.  The states were the different tasks and the actions were to change to doing one of the tasks.  Therefore the goal was to learn what a good sequence of tasks would be.
 \subsection{DDLearner}
 The DDLearner is a learning algorithm created with the goal to learn how to scale the bounties appropriately in order to identify the set of tasks to take.  Essentially to learn a role.  
+
+
 $S = \{s_1,s_2,s_3....s_n\}$
+
+
 $s \in S$
+
+
 $s^* = max_s\{R_s(B,DD(s))\}$
+
+
 $R_s=B*(DD(s)+\epsilon)$
 
 \[ DD(s) = 
@@ -145,7 +153,7 @@ $R_s=B*(DD(s)+\epsilon)$
 \]
 
 \begin{itemize}
-\item $S$ set of all tasks you can take
+\item $S$: set of all tasks which are available
 \item $s^*$:  best task to take, it is a function of the reward of a given task $s$
 \item $R_s$: the reward of taking task $s$. Multiplies the bounty by the sum $\epsilon$ and the learned function $DD(s)$
 \item $DD(s)$:  learned function. If you complete the task, you chose the first equation, which is essentially a Q-update, without looking at future reward calculation. Else, you actually learn at a differentiate, we chose $\alpha$ as an example, but the reality is that it can be perform well by replacing it with some different constant
@@ -153,6 +161,8 @@ $R_s=B*(DD(s)+\epsilon)$
 
 \end{itemize}
 The reasoning for a different learning vs unlearning rate, was to avoid robots from learning, or unlearning, at an even rate to other robots. Allowing them to learn at the same rate appeared to cause unwanted oscillation with multiple robots in the system. 
+
+Another important feature of this equations is the the reward function, specifically the $\epsilon$. $\epsilon$ is a necessary addition to make exploration of the field always possible. It is possible most of the agents could find a task not worthy of doing very often, however you never want that probability to go as low as zero, so an epsilon becomes necessary.
 \section{Experimental Setup}
 
 We experimented with bounties in simulation and demonstrated the system on two Darwin-OP humanoid robots.  To simulate the bounty system we created a MASON simulation \cite{Luke2003}.  We created the simulation so that we can easily change between real robots and virtual robots.  In order for the simulation field to align to the actual field we made the simulation 60 tiles long by 40 wide where each tile is a decimeter.  Our experiments are ST-SR-IA, Single Task, Single Robot, Instantaneous Assignment as defined by \cite{Gerkey2004}.  Meaning that the robot can complete at most a single task at a time, only a single robot is required to accomplish each task and that there is not future planning on who will do what task ahead of time.  This is also therefore in the computational complexity class of P \cite{Campbell2010, Gerkey2003}.
