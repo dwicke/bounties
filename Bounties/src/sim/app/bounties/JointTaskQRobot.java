@@ -28,7 +28,7 @@ public class JointTaskQRobot extends AbstractRobot implements Steppable  {
     Goal curGoal;
     double reward = 0;// what i will get by completing current task
     double totalReward = 0;
-    double epsilon = .1;
+    double epsilon = .01;
     boolean atTask = false;
     boolean enoughBots = false;
     boolean needNewTask = false;
@@ -86,7 +86,7 @@ public class JointTaskQRobot extends AbstractRobot implements Steppable  {
 
             // pick one randomly
             if (bondsman.getAvailableTasks().numObjs > 0) {
-                myQtable = new QTable(bondsman.getTotalNumTasks(), 1, .1, .1, state.random);// focus on current reward
+                myQtable = new QTable(bondsman.getTotalNumTasks(), 1, .9, .1, state.random);// focus on current reward
                 decideTask();
                 //curTask = (Task) bondsman.getAvailableTasks().objs[state.random.nextInt(bondsman.getAvailableTasks().numObjs)];
                 //curGoal = curTask.getGoal();
@@ -200,15 +200,15 @@ public class JointTaskQRobot extends AbstractRobot implements Steppable  {
 
         Bag availTasks = bondsman.getAvailableTasks();
         int bestTaskIndex = 0;
-        System.err.println("avail: " + availTasks);
-        System.err.println("qtable: " + myQtable);
-        System.err.println( epsilon+ myQtable.getQValue(((Task) availTasks.objs[bestTaskIndex]).getID(), 0));
-        double max = (epsilon+  myQtable.getQValue(((Task) availTasks.objs[bestTaskIndex]).getID(), 0))
+      //  System.err.println("avail: " + availTasks);
+      //  System.err.println("qtable: " + myQtable);
+      //  System.err.println( epsilon+ myQtable.getQValue(((Task) availTasks.objs[bestTaskIndex]).getID(), 0));
+        double max = (epsilon+  myQtable.getQValue(((Task) availTasks.objs[(bestTaskIndex+1)%availTasks.numObjs]).getID(), 0))
                 * (((Task) availTasks.objs[bestTaskIndex]).getCurrentReward());
 //System.err.println("agent id " + id+ " Cur q-val:  " + max);
         for (int i = 1; i < availTasks.numObjs; i++) {
 
-            double cur = (epsilon +  myQtable.getQValue(((Task) availTasks.objs[i]).getID(), 0))
+            double cur = (epsilon +  myQtable.getQValue(((Task) availTasks.objs[(i+1)%availTasks.numObjs]).getID(), 0))
                     * (((Task) availTasks.objs[i]).getCurrentReward());
            // System.err.println("agent id " + id+ " Cur q-val:  " + cur);
             if (cur > max) {
@@ -217,19 +217,19 @@ public class JointTaskQRobot extends AbstractRobot implements Steppable  {
             }
         }
 
-        System.err.println("Robot id " + id + " max Q:" + max + " val " + ((Task) availTasks.objs[bestTaskIndex]).getCurrentReward());
+        //System.err.println("Robot id " + id + " max Q:" + max + " val " + ((Task) availTasks.objs[bestTaskIndex]).getCurrentReward());
         if(curTask!=null)
         if (curTask.getID() == ((Task)(availTasks.objs[bestTaskIndex])).getID()) {
             return false;
         }
         double k = (epsilon+  myQtable.getQValue(((Task) availTasks.objs[bestTaskIndex]).getID(), 0))* (((Task) availTasks.objs[bestTaskIndex]).getCurrentReward());
-         System.err.println("NEW BEST TASK: " + k + " bounty " + ((Task) availTasks.objs[bestTaskIndex]).getCurrentReward() );
+         //System.err.println("NEW BEST TASK: " + k + " bounty " + ((Task) availTasks.objs[bestTaskIndex]).getCurrentReward() );
         prevprevTask = prevTask;
         prevTask = curTask;
         curTask = (Task) availTasks.objs[bestTaskIndex];
         curGoal = curTask.getGoal();
-        System.err.println("prev " + prevTask + " curTask " + curTask);
-        System.err.println("REWARD: " + reward);
+      //  System.err.println("prev " + prevTask + " curTask " + curTask);
+      //  System.err.println("REWARD: " + reward);
         return true;
 
     }

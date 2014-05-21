@@ -51,14 +51,19 @@ public class QTable implements java.io.Serializable {
     
     public void update(int state, int action, double reward, int nextState) {
       
-        System.err.println("BEFORE reward: " + reward + " qvalue: " + qtable[state][action]);
-        System.err.println("alpha: " + alpha + " one minus alpha: " + oneMinusAlpha);
-        if(reward ==1 )
+    //    System.err.println("BEFORE reward: " + reward + " qvalue: " + qtable[state][action]);
+    //    System.err.println("alpha: " + alpha + " one minus alpha: " + oneMinusAlpha);
+        
+     //   for (int i = 0; i < numActions; i++) {
+      //      if(qtable[state][i]>.93)
+      //       qtable[state][i] *= 1-(1/numActions);
+     //   }
+        //if(reward ==1 )
           qtable[state][action] = oneMinusAlpha * qtable[state][action] + alpha * ( (double)reward /*+ beta * V[nextState]*/);
-        else 
-          qtable[state][action] = alpha * qtable[state][action];
-        System.err.println("AFTER reward: " + reward + " qvalue: " + qtable[state][action]);
-        printTable();
+       // else 
+        //  qtable[state][action] = alpha * qtable[state][action];
+     //   System.err.println("AFTER reward: " + reward + " qvalue: " + qtable[state][action]);
+      //  printTable();
         // find max q-value for the state
         double max = qtable[state][action];
         for (int i = 0; i < numActions; i++) {

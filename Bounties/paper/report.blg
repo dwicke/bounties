@@ -1,0 +1,48 @@
+This is BibTeX, Version 0.99d (TeX Live 2013)
+Capacity: max_strings=35307, hash_size=35307, hash_prime=30011
+The top-level auxiliary file: report.aux
+The style file: ecai2014.bst
+Database file #1: cs880.bib
+Warning--there's a number but no volume in Parker1995
+You've used 11 entries,
+            2221 wiz_defined-function locations,
+            602 strings with 5775 characters,
+and the built_in function-call counts, 4125 in all, are:
+= -- 392
+> -- 140
+< -- 6
++ -- 55
+- -- 44
+* -- 350
+:= -- 596
+add.period$ -- 11
+call.type$ -- 11
+change.case$ -- 55
+chr.to.int$ -- 0
+cite$ -- 12
+duplicate$ -- 197
+empty$ -- 360
+format.name$ -- 44
+if$ -- 881
+int.to.chr$ -- 0
+int.to.str$ -- 11
+missing$ -- 11
+newline$ -- 36
+num.names$ -- 22
+pop$ -- 50
+preamble$ -- 1
+purify$ -- 44
+quote$ -- 0
+skip$ -- 148
+stack$ -- 0
+substring$ -- 351
+swap$ -- 86
+text.length$ -- 6
+text.prefix$ -- 0
+top$ -- 0
+type$ -- 44
+warning$ -- 1
+while$ -- 50
+width$ -- 13
+write$ -- 97
+(There was 1 warning)
