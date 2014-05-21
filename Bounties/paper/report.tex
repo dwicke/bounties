@@ -1,6 +1,7 @@
 \documentclass[twocolumn]{article}
 \usepackage{mathpazo}
 \usepackage{microtype}
+\usepackage{amsmath}
 \usepackage[citecolor=Fuchsia,urlcolor=blue,linkcolor=Cerulean]{hyperref}
 \usepackage{graphicx}
 \usepackage{float}
@@ -103,7 +104,6 @@ The Jumpship robot is a greedy approach to picking the task to do.  The robot ca
 We also tried using a standard q-learning algorithm.  The states were the different tasks and the actions were to change to doing one of the tasks.  Therefore the goal was to learn what a good sequence of tasks would be.
 \subsection{DDLearner}
 The DDLearner is a learning algorithm created with the goal to learn how to scale the bounties appropriately in order to identify the set of tasks to take.  Essentially to learn a role.  
-
 
 \section{Experimental Setup}
 
@@ -209,7 +209,7 @@ We also demonstrated the system on two Darwin-OP humanoid robots.  We placed a R
 We ran the simulation for 5000 time steps until the DDLearner robots converged to a set of roles where one robot took one task and the the other took the other task.  Then we switched the controller mechanism to move the Darwin-OPs and update the simulation with their location data.  The robots were able to successfully complete their separate tasks using the learned behaviors from the simulation.  A video of the demonstration can be found \url{http://youtu.be/LXiHaUqBWLI}.
 
 \section{Future Work}
-The future work will be focused on tasks that require multiple robots and therefore cooperation within a competitive environment.  We intended to carry out experiments in this ST-MR-IA environment to explore how the DDLearner and bounties work. This needs to be done because this type of problem is NP-Hard and will show how well bounties actually do.  We would study the emergent coalitions from just our DDLearner and compare it to a Coalition learning algorithm.  We would like to analyze both convergence and fairness to the tasks as measured by average time the tasks are on the field.
+The future work will be focused on tasks that require multiple robots and therefore cooperation within a competitive environment.  We intend to carry out experiments in this ST-MR-IA environment to explore how the DDLearner and bounties work. This needs to be done because this type of problem is NP-Hard and will show how well bounties actually do.  We would study the emergent coalitions from just our DDLearner and compare it to a Coalition learning algorithm.  We would like to analyze both convergence and fairness to the tasks as measured by average time the tasks are on the field.
 
 \bibliographystyle{ecai2014}
 \bibliography{cs880}
