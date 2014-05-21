@@ -1,5 +1,15 @@
 \documentclass[twocolumn]{article}
 \usepackage{mathpazo}
+%david added
+\usepackage{amsmath}
+\usepackage{geometry}                % See geometry.pdf to learn the layout options. There are lots.
+\geometry{letterpaper}                   % ... or a4paper or a5paper or ... 
+%\geometry{landscape}                % Activate for for rotated page geometry
+%\usepackage[parfill]{parskip}    % Activate to begin paragraphs with an empty line rather than an indent
+\usepackage{graphicx}
+\usepackage{epstopdf}
+
+%end david added
 \usepackage{microtype}
 \usepackage[citecolor=Fuchsia,urlcolor=blue,linkcolor=Cerulean]{hyperref}
 \usepackage{graphicx}
@@ -99,12 +109,50 @@ However, for the purposes of this paper we do make a number of limiting assumpti
 We created three different methods for picking tasks to solve the role allocation problem.  The Jump-ship approach is a greedy approach with full information that follows a static protocol.  Q-learning which follows the standard Q-learning algorithm.  And our new approach DDLearner that was created specifically for bounties.  However, both Q-learning and the DDLearner approach define dynamic role.  
 \subsection{Jump-ship Robot}
 The Jumpship robot is a greedy approach to picking the task to do.  The robot can also change tasks after starting to go after the task.  However, once the task is in progress it can not switch.  Also, instead of adding a fixed amount of utility to stay in our current role as in \cite{Brusey2001} we penalize all the tasks that the robot is not currently doing in order for it to not oscillate.
+
+
+$_aR_t^b = v^bP_a^b$
+\[
+P_a^b = \Pi_{i \in a} 
+\begin{cases}
+    1, E(T_a^b) <E(T_i^b)\\
+    1/2, E(T_a^b) = E(T_i^b)\\
+    0, E(T_a^b) >E(T_i^b)\\
+
+\end{cases}
+\]
+\begin{itemize}
+\item $_aR_t^b$: reward for agent $a$  to grab task $b$ at time $t$
+\item $v^bP_a^b$: $v^b$ is the value of the bounty,  $P_a^b$ is the approximated probability that the agent will attain the bounty $b$ 
+\item $E(T_i^j)$:  defined as the expected time is takes $j$ to go after bounty $i$
+\end{itemize}
+
 \subsection{Q-Learner}
 We also tried using a standard q-learning algorithm.  The states were the different tasks and the actions were to change to doing one of the tasks.  Therefore the goal was to learn what a good sequence of tasks would be.
 \subsection{DDLearner}
 The DDLearner is a learning algorithm created with the goal to learn how to scale the bounties appropriately in order to identify the set of tasks to take.  Essentially to learn a role.  
+$S = \{s_1,s_2,s_3....s_n\}$
+$s \in S$
+$s^* = max_s\{R_s(B,DD(s))\}$
+$R_s=B*(DD(s)+\epsilon)$
+
+\[ DD(s) = 
+\begin{cases}
+     (1-\alpha)DD(s)+ \alpha r,& \text{if } r!=0\\
+     \alpha*DD(s),& \text{if } r=0\\
+
+\end{cases}
+\]
+
+\begin{itemize}
+\item $S$ set of all tasks you can take
+\item $s^*$:  best task to take, it is a function of the reward of a given task $s$
+\item $R_s$: the reward of taking task $s$. Multiplies the bounty by the sum $\epsilon$ and the learned function $DD(s)$
+\item $DD(s)$:  learned function. If you complete the task, you chose the first equation, which is essentially a Q-update, without looking at future reward calculation. Else, you actually learn at a differentiate, we chose $\alpha$ as an example, but the reality is that it can be perform well by replacing it with some different constant
 
 
+\end{itemize}
+The reasoning for a different learning vs unlearning rate, was to avoid robots from learning, or unlearning, at an even rate to other robots. Allowing them to learn at the same rate appeared to cause unwanted oscillation with multiple robots in the system. 
 \section{Experimental Setup}
 
 We experimented with bounties in simulation and demonstrated the system on two Darwin-OP humanoid robots.  To simulate the bounty system we created a MASON simulation \cite{Luke2003}.  We created the simulation so that we can easily change between real robots and virtual robots.  In order for the simulation field to align to the actual field we made the simulation 60 tiles long by 40 wide where each tile is a decimeter.  Our experiments are ST-SR-IA, Single Task, Single Robot, Instantaneous Assignment as defined by \cite{Gerkey2004}.  Meaning that the robot can complete at most a single task at a time, only a single robot is required to accomplish each task and that there is not future planning on who will do what task ahead of time.  This is also therefore in the computational complexity class of P \cite{Campbell2010, Gerkey2003}.
