@@ -22,6 +22,7 @@ public class AbstractRobot implements IRobot {
     IController control;
     IController realControl;
     Task curTask;
+    Int2D home;
 
     public void setId(int id) {
         this.id = id;
@@ -101,9 +102,9 @@ public class AbstractRobot implements IRobot {
     public boolean getIsRealRobot() {
         return realRobot;
     }
-
-    @Override
-    public void setIsRealRobot(boolean isReal) {
+/*
+    @Override// seems like dead code
+    public void setIsRealRobot(boolean isReal) { 
         if (isReal != realRobot) {
             if (isReal && realControl != null) {
                 control = realControl;// don't reinit it.
@@ -117,6 +118,21 @@ public class AbstractRobot implements IRobot {
             realRobot = isReal;
             control.setMyRobot(this);
         }
+    }
+*/
+    @Override
+    public void setRobotHome(Int2D home) {
+        this.home = home;
+    }
+
+    @Override
+    public Int2D getRobotHome() {
+        return home;
+    }
+
+    @Override
+    public void setRobotController(IController controller) {
+        this.control = controller;
     }
 
 }

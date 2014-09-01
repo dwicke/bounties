@@ -197,6 +197,10 @@ public class Bounties extends SimState {
             int xloc = random.nextInt(GRID_WIDTH);
             int yloc = random.nextInt(GRID_HEIGHT);
             robotgrid.setObjectLocation(bot, xloc, yloc);
+            robots[x].setRobotHome(new Int2D(xloc, yloc));
+            TeleportController t = new TeleportController();
+            t.setMyRobot(bot);
+            robots[x].setRobotController(t);
             schedule.scheduleRepeating(Schedule.EPOCH + x, 0, bot, 1);
         }
 

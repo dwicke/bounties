@@ -28,7 +28,7 @@ public class JointTaskQRobot extends AbstractRobot implements Steppable  {
     Goal curGoal;
     double reward = 0;// what i will get by completing current task
     double totalReward = 0;
-    double epsilon = .01;
+    double epsilon = .1;
     boolean atTask = false;
     boolean enoughBots = false;
     boolean needNewTask = false;
@@ -86,7 +86,7 @@ public class JointTaskQRobot extends AbstractRobot implements Steppable  {
 
             // pick one randomly
             if (bondsman.getAvailableTasks().numObjs > 0) {
-                myQtable = new QTable(bondsman.getTotalNumTasks(), 1, .9, .1, state.random);// focus on current reward
+                myQtable = new QTable(bondsman.getTotalNumTasks(), 1, .1, .1, state.random);// focus on current reward
                 decideTask();
                 //curTask = (Task) bondsman.getAvailableTasks().objs[state.random.nextInt(bondsman.getAvailableTasks().numObjs)];
                 //curGoal = curTask.getGoal();

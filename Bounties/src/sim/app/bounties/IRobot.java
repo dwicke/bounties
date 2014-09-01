@@ -7,6 +7,7 @@
 package sim.app.bounties;
 
 import java.awt.Color;
+import sim.util.Int2D;
 
 /**
  *
@@ -20,5 +21,8 @@ public interface IRobot {
     public int getId();
     public int getCurrentTaskID();
     public boolean getIsRealRobot();
-    public void setIsRealRobot(boolean isReal);
+    //public void setIsRealRobot(boolean isReal);
+    public void setRobotHome(Int2D home); // the base 
+    public Int2D getRobotHome();
+    public void setRobotController(IController controller);
 }
