@@ -39,7 +39,18 @@ public class Bounties extends SimState {
     public Console getConsole() {
         return con;
     }
-    
+    public double getStatistics(){
+        //System.err.println("fun " + ((Robot)robots[1]).decisionsMade[0]);
+        try{
+            if(robots !=null && robots[0]!=null && ((AbstractRobot)robots[0]).decisionsMade!=null)
+             return Math.abs(((AbstractRobot)robots[0]).decisionsMade[0]);
+        }catch(Exception e){
+            
+            e.printStackTrace();
+            System.exit(0);
+        }
+     return 10;
+    }
     public double getAverageTicks(){
         if (bondsman != null) {
             Bag tasks = bondsman.getTasks();

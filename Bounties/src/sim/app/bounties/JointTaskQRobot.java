@@ -230,6 +230,7 @@ public class JointTaskQRobot extends AbstractRobot implements Steppable  {
         curGoal = curTask.getGoal();
       //  System.err.println("prev " + prevTask + " curTask " + curTask);
       //  System.err.println("REWARD: " + reward);
+        updateStatistics(true,2,80); //random crap... should be real
         return true;
 
     }
