@@ -8,6 +8,7 @@ package sim.app.bounties;
 import java.awt.Color;
 import sim.app.bounties.robot.darwin.agent.Real;
 import sim.engine.SimState;
+import sim.util.Bag;
 import sim.util.Int2D;
 
 /**
@@ -15,7 +16,7 @@ import sim.util.Int2D;
  * @author drew
  */
 public class AbstractRobot implements IRobot {
-
+    int historySize = 100;
     boolean realRobot = false;
     boolean hasTaskItem = false;
     int id;
@@ -23,7 +24,9 @@ public class AbstractRobot implements IRobot {
     IController realControl;
     Task curTask;
     Int2D home;
-
+    int[] decisionsMade = new int[historySize];
+    int[] timeOnTask = new int[historySize];
+    int rollingHistoryCounter = 0; // pointer to current spot in the list for history purposes
     public void setId(int id) {
         this.id = id;
     }
@@ -51,7 +54,16 @@ public class AbstractRobot implements IRobot {
     public boolean getHasTaskItem() {
         return hasTaskItem;
     }
-
+    // there will be one history array for decisions, if the task is negitive it means you jumped ship, positive means you completed
+    public void updateStatistics(boolean jumpedShip, int taskID, int totalTimeOnTask){
+       int multiplier = 1;
+       if(jumpedShip)
+           multiplier = -1;
+       System.out.println("updated decisionsMade at " + rollingHistoryCounter + " with 10");
+       decisionsMade[rollingHistoryCounter] = taskID*multiplier + 10;
+       timeOnTask[rollingHistoryCounter] = totalTimeOnTask;
+       rollingHistoryCounter = (rollingHistoryCounter +1 )%historySize;
+    }
 
     public boolean gotoGoalPosition(final SimState state, Real position) {
         if (control == null) {

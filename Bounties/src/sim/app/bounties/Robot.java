@@ -100,7 +100,7 @@ public class Robot extends AbstractRobot implements Steppable {
         }
         
     }
-    public void decideTask(){
+    public void decideTask(){ // this should be implemented per algorithm
         //consult q table
         
         Bag availTasks = bondsman.getAvailableTasks();
@@ -120,13 +120,16 @@ public class Robot extends AbstractRobot implements Steppable {
             }
         }
         
-        
+        //update because we changed task q-table update or whatever
         curTask = (Task) availTasks.objs[bestTaskIndex];
         curGoal = curTask.getGoal();
         if(reward>0)
             reward = 1;
         myQtable.update(prevTask.getID(), 0, reward, curTask.getID());
         reward = 1;
+        
+        //method for gathering statistics about decisions. Jump ship vs complete, and what task i did.
+        
         
     }
     
