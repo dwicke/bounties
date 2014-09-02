@@ -4,7 +4,7 @@ bounties
 
 TODO:
 
-- [ ] Communication (broadcast info)
+- [X] Communication (broadcast info) // we'll just ask bondsman/grab bondsman object
 - [X] Statistics 
 - [ ] Jumpship mechanism to take care of the different consequences
 - [ ] Experiement scenarios like rotating the agents' home base and measuring how long they take to adapt
