@@ -83,6 +83,10 @@ public class Bondsman implements Steppable {
     public Bag getTasks(){
         return tasks;
     }
+    public void setTasks(Bag tasks) {
+        this.tasks = tasks;
+        numTasks = tasks.size();
+    }
     public void addTask(Task a){
         tasks.add(a);
     }

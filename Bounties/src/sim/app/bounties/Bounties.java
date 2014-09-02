@@ -174,16 +174,30 @@ public class Bounties extends SimState {
         }
         
         tasksGrid = new SparseGrid2D(GRID_WIDTH, GRID_HEIGHT);
+        
+        
+        
+        
+        // set up the tasks in each of the quadrants
         Bag tasksLocs = bondsman.initTasks(new Int2D(tasksGrid.getWidth(), tasksGrid.getHeight()),
-                this.random);
+                this.random);// bottom left
         
         for (int i = 0; i < tasksLocs.numObjs; i++) {
             Task curTask = ((Task)(tasksLocs.objs[i]));
-            tasksGrid.setObjectLocation(tasksLocs.objs[i], curTask.getLocation());
+            tasksGrid.setObjectLocation(tasksLocs.objs[i], curTask.getLocation()); 
+            
+            
         }
         
         
         robotTabsCols = new double[numTasks];
+        
+        
+        Int2D quads[] = new Int2D[4];
+        quads[0] = new Int2D(0, 0);
+        quads[1] = new Int2D(0, GRID_HEIGHT -1);
+        quads[2] = new Int2D(GRID_WIDTH - 1, 0);
+        quads[3] = new Int2D(GRID_WIDTH - 1, GRID_HEIGHT - 1);
         
         
         robots = new IRobot[numRobots];
@@ -194,10 +208,16 @@ public class Bounties extends SimState {
             JointTaskQRobot bot = new JointTaskQRobot();//139 //131
             robots[x] = bot;
             bot.setId(x);
-            int xloc = random.nextInt(GRID_WIDTH);
-            int yloc = random.nextInt(GRID_HEIGHT);
-            robotgrid.setObjectLocation(bot, xloc, yloc);
-            robots[x].setRobotHome(new Int2D(xloc, yloc));
+            //int xloc = random.nextInt(GRID_WIDTH);
+            //int yloc = random.nextInt(GRID_HEIGHT);
+            
+            robotgrid.setObjectLocation(bot, quads[x%4]);
+            robots[x].setRobotHome(quads[x%4]);
+            
+            //robotgrid.setObjectLocation(bot, xloc, yloc);
+            //robots[x].setRobotHome(new Int2D(xloc, yloc));
+            
+            
             TeleportController t = new TeleportController();
             t.setMyRobot(bot);
             robots[x].setRobotController(t);
