@@ -222,6 +222,7 @@ public class JointTaskQRobot extends AbstractRobot implements Steppable  {
         if (curTask.getID() == ((Task)(availTasks.objs[bestTaskIndex])).getID()) {
             return false;
         }
+        
         double k = (epsilon+  myQtable.getQValue(((Task) availTasks.objs[bestTaskIndex]).getID(), 0))* (((Task) availTasks.objs[bestTaskIndex]).getCurrentReward());
          //System.err.println("NEW BEST TASK: " + k + " bounty " + ((Task) availTasks.objs[bestTaskIndex]).getCurrentReward() );
         prevprevTask = prevTask;
@@ -230,7 +231,7 @@ public class JointTaskQRobot extends AbstractRobot implements Steppable  {
         curGoal = curTask.getGoal();
       //  System.err.println("prev " + prevTask + " curTask " + curTask);
       //  System.err.println("REWARD: " + reward);
-        updateStatistics(true,2,80); //random crap... should be real
+        updateStatistics(true,200,80); //random crap... should be real
         return true;
 
     }

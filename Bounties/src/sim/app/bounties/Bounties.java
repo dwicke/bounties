@@ -32,7 +32,39 @@ public class Bounties extends SimState {
     int numTasks = 2;
     int numGoals = 1;    
     double averageTicks = 0;
-    
+    boolean rotateRobots  = false;
+    boolean lastRotateValue = false;
+    int offset = 0;
+    public void setRotateRobots(boolean value){
+           
+        
+        Int2D quads[] = new Int2D[4];
+        quads[0] = new Int2D(0, 0);
+        quads[1] = new Int2D(0, GRID_HEIGHT -1);
+        quads[2] = new Int2D(GRID_WIDTH - 1, 0);
+        quads[3] = new Int2D(GRID_WIDTH - 1, GRID_HEIGHT - 1);
+
+        //robotgrid = new SparseGrid2D(GRID_WIDTH, GRID_HEIGHT);
+        if(value!= lastRotateValue){
+            lastRotateValue = value;
+            offset++;
+        }
+        for (int x = 0; x < numRobots; x++) {
+            //GreedyBot bot = new GreedyBot();
+
+            
+            IRobot bot = robots[x];
+            //int xloc = random.nextInt(GRID_WIDTH);
+            //int yloc = random.nextInt(GRID_HEIGHT);
+            
+            //robotgrid.setObjectLocation(bot, quads[x%4]);
+            bot.setRobotHome(quads[(offset+x)%4]);
+        }
+        rotateRobots = value;
+    }
+    public boolean getRotateRobots(){
+        return rotateRobots;
+    }
     public void setConsole(Console con) {
         this.con = con;
     }
@@ -42,8 +74,10 @@ public class Bounties extends SimState {
     public double getStatistics(){
         //System.err.println("fun " + ((Robot)robots[1]).decisionsMade[0]);
         try{
+            
             if(robots !=null && robots[0]!=null && ((AbstractRobot)robots[0]).decisionsMade!=null)
-             return Math.abs(((AbstractRobot)robots[0]).decisionsMade[0]);
+                return Math.abs(((AbstractRobot)robots[0]).decisionsMade[0]);
+            
         }catch(Exception e){
             
             e.printStackTrace();
