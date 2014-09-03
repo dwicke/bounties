@@ -6,7 +6,7 @@ TODO:
 
 - [X] Communication (broadcast info) // we'll just ask bondsman/grab bondsman object
 - [X] Statistics 
-- [ ] Jumpship mechanism to take care of the different consequences.  Use the bondsman.  Tell the bondsman that you are jumping ship.  (pass yourself)
+- [X] Jumpship mechanism to take care of the different consequences.  Use the bondsman.  Tell the bondsman that you are jumping ship.  (pass yourself)
   - [ ] Penalty to jumpship
   - [ ] Start over if jumpship
   - [ ] Once you commit then that is the bounty you get if you jumpship and come back to it.
