@@ -11,7 +11,10 @@ import sim.engine.*;
 import static sim.engine.SimState.doLoop;
 import sim.field.grid.*;
 import sim.util.*;
-
+/**
+ * 
+ * @author drew
+ */
 public class Bounties extends SimState {
 
     private static final long serialVersionUID = 1;
