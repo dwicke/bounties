@@ -7,10 +7,10 @@ TODO:
 - [X] Communication (broadcast info) // we'll just ask bondsman/grab bondsman object
 - [X] Statistics 
 - [X] Jumpship mechanism to take care of the different consequences.  Use the bondsman.  Tell the bondsman that you are jumping ship.  (pass yourself)
-  - [ ] Penalty to jumpship
-  - [ ] Start over if jumpship
-  - [ ] Once you commit then that is the bounty you get if you jumpship and come back to it.
-  - [ ] Can't jumpship if no one else is working on the task
+  - [x] Penalty to jumpship
+  - [x] Start over if jumpship
+  - [x] Once you commit then that is the bounty you get if you jumpship and come back to it.
+  - [x] Can't jumpship if no one else is working on the task
 - [ ] Experiement scenarios like rotating the agents' home base and measuring how long they take to adapt
 - [ ] Learning Algorithms
   - [ ] Q(<task, agent type>) (state takes other agents into account not just the task) and a better update function
