@@ -65,16 +65,15 @@ public class QTable implements java.io.Serializable {
      //   System.err.println("AFTER reward: " + reward + " qvalue: " + qtable[state][action]);
       //  printTable();
         // find max q-value for the state
-        double max = qtable[state][action];
+     /*   double max = qtable[state][action];
         for (int i = 0; i < numActions; i++) {
             if (max < qtable[state][i])
                 max = qtable[state][i];
         }
-        V[state] = max;
+        V[state] = max;*/
     }
     
-    
-    
+
     
     public double getQValue(int state, int action) {
        // System.err.println("Q_" + state + " = " + qtable[state][action]);

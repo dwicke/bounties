@@ -104,7 +104,9 @@ public class Bondsman implements Steppable {
     public int getTotalNumTasks() {
         return tasks.size();
     }
-    
+    public int getTotalNumRobots() {
+        return bounties.numRobots;
+    }
     public Bag getAvailableTasks() {
         Bag avail = new Bag();
         for (int i = 0; i < tasks.size(); i++) {
