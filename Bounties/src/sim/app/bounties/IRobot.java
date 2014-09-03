@@ -20,6 +20,7 @@ public interface IRobot {
     public void setId(int id);
     public int getId();
     public int getCurrentTaskID();
+    public int getRewardCurrentTask();// the reward for the current task i am working on
     public boolean getIsRealRobot();
     //public void setIsRealRobot(boolean isReal);
     public void setRobotHome(Int2D home); // the base 

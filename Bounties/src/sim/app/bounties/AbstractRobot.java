@@ -27,6 +27,19 @@ public class AbstractRobot implements IRobot {
     int[] decisionsMade = new int[historySize];
     int[] timeOnTask = new int[historySize];
     int rollingHistoryCounter = 0; // pointer to current spot in the list for history purposes
+    int rewardCurrentTask; // the reward for the current task
+    
+    public int getRewardCurrentTask() {
+        return rewardCurrentTask;
+    }
+    /**
+     * Must set this whenever I switch to a task or take a task
+     * @param reward the bounty at time of commitment for me
+     */
+    public void setRewardCurrentTask(int reward) {
+        this.rewardCurrentTask = reward;
+    }
+    
     public void setId(int id) {
         this.id = id;
     }

@@ -2,6 +2,7 @@ package sim.app.bounties;
 
 import java.awt.Color;
 import java.awt.Graphics2D;
+import java.util.Arrays;
 import sim.app.bounties.robot.darwin.agent.Real;
 import sim.field.grid.SparseGrid2D;
 import sim.portrayal.DrawInfo2D;
@@ -29,11 +30,21 @@ public class Task implements Real, Fixed2D{
     private boolean available = true;// true when a robot is not carrying and not at a goal it is false if not at the
     private Int2D initialLocation;// location
     private int id = 0;
+    private int defaultReward = 200;
     private Goal goal;
     private Color availableColor = Color.RED;// may want to change color if we have different types of tasks
     private Color notAvailableColor = Color.WHITE;
     private int requiredRobots = 1;
     private Bag presentRobots = new Bag();
+    
+    private int perAgentReward[]; // the reward that is individualized for each agent like if they jumpship this might not be 0
+    
+    private Task() {}
+    public Task(int numAgents) {
+        perAgentReward = new int[numAgents];
+        Arrays.fill(perAgentReward, defaultReward);
+    }
+    
     
     public void setGoal(Goal goal) {
         this.goal = goal;
@@ -88,6 +99,24 @@ public class Task implements Real, Fixed2D{
     public void incrementCurrentReward(){
         currentReward+=requiredRobots;
     }
+    
+    /**
+     * Use this not the getCurrentReward if reward may be dependent on robot
+     * @param robot
+     * @return 
+     */
+    public int getCurrentReward(IRobot robot) {
+        if (perAgentReward[robot.getId()] > defaultReward)
+        {
+            return perAgentReward[robot.getId()];
+        }
+        return getCurrentReward();
+    }
+    
+    public void setCurrentReward(IRobot robot, int reward) {
+        perAgentReward[robot.getId()] = reward;
+    }
+    
     public int getCurrentReward(){
         return currentReward;
     }
@@ -111,7 +140,8 @@ public class Task implements Real, Fixed2D{
     }
 
     void resetReward() {
-        currentReward = 200;
+        currentReward = defaultReward;
+        Arrays.fill(perAgentReward, defaultReward);//reset everyone's agent specific reward
     }
 
     public Double2D getRealTargetLocation()

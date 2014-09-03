@@ -7,9 +7,10 @@
 package sim.app.bounties;
 
 import ec.util.MersenneTwisterFast;
+import java.util.Arrays;
+import sim.app.bounties.jumpship.Jumpship;
 import sim.engine.SimState;
 import sim.engine.Steppable;
-import sim.portrayal.simple.MovablePortrayal2D;
 import sim.util.Bag;
 import sim.util.Int2D;
 
@@ -26,6 +27,8 @@ public class Bondsman implements Steppable {
     private int numTasks = 50;
     private int numGoals = 1;
     private Bounties bounties;
+    private Jumpship jumpPolicy;
+    private double penaltyFactor[]; // each robot has a penalty factor what percentage of current bounty do they get
     
     public Bondsman(){
     }
@@ -39,6 +42,8 @@ public class Bondsman implements Steppable {
     public void setWorld(Bounties bounties) {
         this.bounties = bounties;
         whosDoingWhatTaskID = new int[this.bounties.numRobots];
+        penaltyFactor = new double[this.bounties.numRobots];
+        Arrays.fill(penaltyFactor, 1);
         // set everyone to do task -1 since not doing anytask
         for (int i = 0; i < whosDoingWhatTaskID.length; i++) {
             whosDoingWhatTaskID[i] = -1;
@@ -54,9 +59,9 @@ public class Bondsman implements Steppable {
     public Bag initTasks(Int2D field, MersenneTwisterFast rand) {
         tasks.clear();
         for (int i = 0; i < numTasks; i++) {
-            Task t = new Task();
+            Task t = new Task(this.bounties.numRobots);
             t.setID(i);
-            t.setCurrentReward(1);
+            //t.setCurrentReward(1);// this isn't used.
             t.setLoc(new Int2D(rand.nextInt(field.x), rand.nextInt(field.y)));
             t.setGoal((Goal)goals.objs[rand.nextInt(goals.numObjs)]);
             t.setRequiredRobots(rand.nextInt(1)+1);
@@ -151,12 +156,32 @@ public class Bondsman implements Steppable {
         curTask.setDone(true);
         curTask.resetReward(); // start it back at 0
     }
-    
+    /**
+     * use this when you finish a task and are committing to a new task
+     * @param robotID who you are 
+     * @param taskID what task you are doing
+     */
     public void doingTask(int robotID, int taskID) {
         whosDoingWhatTaskID[robotID] = taskID;
     }
+    /**
+     * So if you were doing a task and you are switching
+     * you must tell the bondsman.  
+     * @param robot 
+     * @param newTaskID 
+     * @return true if changed.
+     */
+    public boolean changeTask(IRobot robot, Task oldTask, Task newTask, SimState state) {
+        if (jumpPolicy.jumpship(robot,oldTask, newTask, state)) {
+            whosDoingWhatTaskID[robot.getId()] = newTask.getID();
+            return true;
+        }
+        return false;
+    }
+    
+    
 
-    Bag whoseDoingTask(Task b) {
+    public Bag whoseDoingTask(Task b) {
         Bag robots = new Bag();
         // only jumpship robots use this.
         IRobot[] allRobots = (IRobot[]) bounties.getRobots();
@@ -168,8 +193,17 @@ public class Bondsman implements Steppable {
         return robots;
     }
     
+    public int getBondsmanAdjustedBounty(Task task, IRobot bot) {
+        return (int) (task.getCurrentReward(bot) * penaltyFactor[bot.getId()]);
+    }
     
+    public void setPenaltyFactor(IRobot bot, double rate) {
+        penaltyFactor[bot.getId()] = rate;
+    }
     
+    public double getPenaltyFactor(IRobot bot) {
+        return penaltyFactor[bot.getId()];
+    }
     
     
 }
