@@ -7,12 +7,30 @@
 *.jar
 *.war
 *.ear
-*.log
-*.aux
-*.gz
 
 # virtual machine crash logs, see http://www.java.com/en/download/help/error_hotspot.xml
 hs_err_pid*
+/Bounties/nbproject/
 /Bounties/nbproject/private/
 /Bounties/build/
 /Bounties/dist/
+
+# LaTeX temporary files
+*.aux
+*.log
+*.toc
+ 
+# SyncTeX
+*.synctex.gz
+ 
+# LaTeX Beamer
+*.snm
+*.vrb
+*.nav
+*.out
+ 
+# BibTeX
+*.bbl
+*.blg
+
+
