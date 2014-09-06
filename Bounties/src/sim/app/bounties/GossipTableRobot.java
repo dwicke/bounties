@@ -242,7 +242,7 @@ public class GossipTableRobot extends AbstractRobot implements Steppable  {
         //report if we actually decidedto jumpship or not.
         if(curTask!=null)
             if (curTask.getID() == ((Task)(availTasks.objs[bestTaskIndex])).getID()) {
-                // sticking to my task.
+                // sticking to my task. so don't change the lastSeenFinish
                 updateStatistics(true,200,80);
                 return false;
             }
@@ -257,6 +257,7 @@ public class GossipTableRobot extends AbstractRobot implements Steppable  {
             // task because it was finished or this is my first time
             curTask = (Task) availTasks.objs[bestTaskIndex];
             curGoal = curTask.getGoal();
+            lastSeenFinish = curTask.getLastFinishedTime();
         } else {
             // I'm jumping ship!
             if (bondsman.changeTask(this, curTask, (Task) availTasks.objs[bestTaskIndex], state) == true) {
@@ -265,6 +266,7 @@ public class GossipTableRobot extends AbstractRobot implements Steppable  {
                 prevTask = curTask;
                 curTask = (Task) availTasks.objs[bestTaskIndex];
                 curGoal = curTask.getGoal();
+                lastSeenFinish = curTask.getLastFinishedTime();
             } else {
                 return false;
             }
