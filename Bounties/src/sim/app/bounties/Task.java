@@ -91,7 +91,7 @@ public class Task implements Real, Fixed2D{
         lastFinishedRobotID =  robotid;
         finishedTime = timestamp;
     }
-    public long getLastFinishedRobotID(){
+    public int getLastFinishedRobotID(){
         return lastFinishedRobotID;
     }
     public long getLastFinishedTime() {

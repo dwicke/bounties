@@ -96,7 +96,35 @@ public class GossipTableRobot extends AbstractRobot implements Steppable  {
             return;
         }
         
-        if (needNewTask) {
+        
+        boolean someoneFinishedMyTask = (curTask != null && curTask.getLastFinishedTime() != lastSeenFinish);
+        
+        if (someoneFinishedMyTask) {
+            if (bondsman.getAvailableTasks().numObjs > 0) {
+                
+                System.err.println("Last robot finished id = " + curTask.getLastFinishedRobotID());
+                
+                // so i need to say back up what my prev and cur tasks are
+                
+                
+                
+                // then pick a new task without jumping ship
+                prevprevTask = prevTask;
+                prevTask = curTask;
+                curTask = null;
+                
+                decideTask(state);
+                
+                qUpdate(curTask.getLastFinishedRobotID());
+                needNewTask = false;
+                workOnTask(state);
+                return;
+            } else {
+                return;// no new tasks so don't update yet.
+            }
+        }
+        
+        else if (needNewTask) {
             if (bondsman.getAvailableTasks().numObjs > 0) {
                 
                 
@@ -104,12 +132,14 @@ public class GossipTableRobot extends AbstractRobot implements Steppable  {
                 prevprevTask = prevTask;
                 prevTask = curTask;
                 curTask = null;
-                
+                bondsman.doingTask(id, -1);// not doing anything don't want me mixed in
                 decideTask(state);
                 needNewTask = false;
                 reward = 1;
                 qUpdate(this.id);
                 System.err.println("Got a new Task");
+                workOnTask(state);
+                return;
             } else {
                 return;// no new tasks so don't update yet.
             }
@@ -151,7 +181,7 @@ public class GossipTableRobot extends AbstractRobot implements Steppable  {
                     // quickest way to get the tasks back to the way they were
                     // so I can update the reward correctly without changing 
                     // decide task too much.
-                    System.err.println("my id is: " + id);
+                    
                     Task prevTemp = prevTask;
                    // prevTask = prevprevTask;
                     Task curTemp = curTask;
@@ -172,9 +202,17 @@ public class GossipTableRobot extends AbstractRobot implements Steppable  {
             }
             
             
+            workOnTask(state);
             
             
-            if (gotoTaskPosition(state, curTask)) {
+            
+        }
+
+    }
+    
+    
+    public void workOnTask(SimState state) {
+        if (gotoTaskPosition(state, curTask)) {
                 // we made it to the task position
                 atTask = true;
                 if(!curTask.isEnoughRobots())
@@ -185,9 +223,6 @@ public class GossipTableRobot extends AbstractRobot implements Steppable  {
                     curTask.setAvailable(false);// make sure no one else can decide to take this task
                 }
             }
-            
-        }
-
     }
 
     /**
@@ -296,8 +331,12 @@ public class GossipTableRobot extends AbstractRobot implements Steppable  {
             whoWon = this.id;
             reward = 0;
         }
-        if(prevTask!=null && curTask!=null)
-            myQtable.update(prevTask.getID(), whoWon, (double)reward, curTask.getID());
+        System.err.println("Who Won: " + whoWon + " my id = " + id) ;
+        if(prevTask!=null && curTask!=null) {
+            myQtable.updateQ(prevTask.getID(), whoWon, (double)reward, curTask.getID());
+            if (whoWon != id)
+                myQtable.updateQ(prevTask.getID(), id, (double)reward, curTask.getID());
+        }
         reward = 1;//curTask.getCurrentReward();//truReward
     
     }
