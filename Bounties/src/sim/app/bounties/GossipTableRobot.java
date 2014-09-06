@@ -211,7 +211,9 @@ public class GossipTableRobot extends AbstractRobot implements Steppable  {
             if(curTask!=null)
                 if(curTask.getID()!=((Task)availTasks.objs[i]).getID())//add myself if i'm not already on the list
                     peopleWorkingOnTaski.add(this);//i'm looking to start working on it
-
+            if(curTask.getID()!=id){
+                peopleWorkingOnTaski.add(this.id);
+            }
             // might be interesting to take the mean rather than the min.
             //  this is the glass half empty agent.  Assumes the worst so it 
             // limits loss... So, it might be less willing to explore if it has a
@@ -251,9 +253,9 @@ public class GossipTableRobot extends AbstractRobot implements Steppable  {
     double minQTableCalculation(Bag peopleOnTask, int taskID){
         System.out.println(peopleOnTask.objs);
         System.out.println(peopleOnTask.objs[0]);
-        double max =  myQtable.getQValue(taskID, ((IRobot)peopleOnTask.objs[0]).getId());
+        double max =  myQtable.getQValue(taskID, ((Integer)peopleOnTask.objs[0]));
         for(int i = 1; i<peopleOnTask.size(); i++){
-            double foo = myQtable.getQValue(taskID, ((IRobot)peopleOnTask.objs[i]).getId());
+            double foo = myQtable.getQValue(taskID, ((Integer)peopleOnTask.objs[i]));
             if(foo<max){
                 max = foo;
             }
