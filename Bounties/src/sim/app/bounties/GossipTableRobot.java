@@ -134,21 +134,7 @@ public class GossipTableRobot extends AbstractRobot implements Steppable  {
 
             }
 
-        } /*else if (atTask == false && !curTask.isEnoughRobots()) {
-            // we don't have a task with enough people yet
-
-            // anytime up until the point at which we are included in the list
-            // of robots that will move the task 
-            if (gotoTaskPosition(state, curTask)) {
-                // we made it to the task position
-                atTask = true;
-                curTask.addRobot(this);
-                if (curTask.isEnoughRobots()) {
-                    enoughBots = true;
-                }
-            }
-
-        } */else if (atTask == true && curTask.isEnoughRobots()) {
+        } else if (atTask == true && curTask.isEnoughRobots()) {
             // we are at the task and there are enough robots
             setHasTaskItem(true);
             curTask.setAvailable(false);
@@ -268,7 +254,7 @@ public class GossipTableRobot extends AbstractRobot implements Steppable  {
                 curGoal = curTask.getGoal();
                 lastSeenFinish = curTask.getLastFinishedTime();
             } else {
-                return false;
+                return false;// well I'm sticking to it even though i wanted to change.
             }
         }
         
