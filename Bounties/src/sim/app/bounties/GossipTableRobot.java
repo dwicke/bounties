@@ -6,6 +6,7 @@
 package sim.app.bounties;
 
 import java.awt.Color;
+import sim.app.bounties.jumpship.Jumpship;
 import sim.app.bounties.robot.darwin.agent.Real;
 
 import sim.engine.SimState;
@@ -61,7 +62,6 @@ public class GossipTableRobot extends AbstractRobot implements Steppable  {
 //update reward when task is done/failed
 //consult the qtable for a decision
     public GossipTableRobot() {
-
     }
 
  
@@ -88,7 +88,7 @@ public class GossipTableRobot extends AbstractRobot implements Steppable  {
             // pick one randomly
             if (bondsman.getAvailableTasks().numObjs > 0) {
                 myQtable = new QTable(bondsman.getTotalNumTasks(), bondsman.getTotalNumRobots(), .1, .1, state.random);// focus on current reward
-                decideTask();
+                decideTask(state);
                 
                 reward = 1;//assume we complete, later this will be divided by time spent.
             }
@@ -97,7 +97,7 @@ public class GossipTableRobot extends AbstractRobot implements Steppable  {
         
         if (needNewTask) {
             if (bondsman.getAvailableTasks().numObjs > 0) {
-                if (!decideTask()) {
+                if (!decideTask(state)) {
                     prevTask = curTask;
                     System.err.println("Same Task");
                 }
@@ -152,7 +152,7 @@ public class GossipTableRobot extends AbstractRobot implements Steppable  {
             
             System.err.println("Num Robots: " + curTask.isEnoughRobots() + " atTask="+ atTask);
             if (bondsman.getAvailableTasks().numObjs > 0) {
-                if (decideTask()) {// we have changed if true
+                if (decideTask(state)) {// we have changed if true
                     prevTask.subtractRobot(this);
                     
                     // AAAHHHHHH this is realllllly bad
@@ -195,7 +195,7 @@ public class GossipTableRobot extends AbstractRobot implements Steppable  {
      *
      * @return only if we changed the task do we return true
      */
-    public boolean decideTask() {
+    public boolean decideTask(SimState state) {
         //consult q table
         //myQTable.getBestAction(0);
 
@@ -216,7 +216,7 @@ public class GossipTableRobot extends AbstractRobot implements Steppable  {
             // bad experience.
             double qValue = minQTableCalculation(peopleWorkingOnTaski,i);
             // need epsilon so will try something.
-            double cur = (epsilon + qValue)* (((Task) availTasks.objs[i]).getCurrentReward());
+            double cur = (epsilon + qValue)* (((Task) availTasks.objs[i]).getCurrentReward(this));
            // System.err.println("agent id " + id+ " Cur q-val:  " + cur);
             if (cur > max) {
                 bestTaskIndex = i;
@@ -235,13 +235,31 @@ public class GossipTableRobot extends AbstractRobot implements Steppable  {
         
         //System.err.println("NEW BEST TASK: " + k + " bounty " + ((Task) availTasks.objs[bestTaskIndex]).getCurrentReward() );
         
-        // I'm jumping ship!
-        prevprevTask = prevTask;
-        prevTask = curTask;
-        curTask = (Task) availTasks.objs[bestTaskIndex];
-        curGoal = curTask.getGoal();
         
-        bondsman.doingTask(id, curTask.getID());
+        if (curTask == null) {
+            // then this is the first task i am choosing
+            bondsman.doingTask(id,  ((Task) availTasks.objs[bestTaskIndex]).getID()); // so I'm not jumping ship
+            prevprevTask = prevTask;
+            prevTask = curTask;
+            curTask = (Task) availTasks.objs[bestTaskIndex];
+            curGoal = curTask.getGoal();
+        } else {
+            // I'm jumping ship!
+            if (bondsman.changeTask(this, curTask, (Task) availTasks.objs[bestTaskIndex], state) == true) {
+                // then I successfully jumped ship! so update my info
+                prevprevTask = prevTask;
+                prevTask = curTask;
+                curTask = (Task) availTasks.objs[bestTaskIndex];
+                curGoal = curTask.getGoal();
+            }
+        }
+        
+        
+        
+       // bondsman.doingTask(id, curTask.getID());
+        
+        
+        
       //  System.err.println("prev " + prevTask + " curTask " + curTask);
       //  System.err.println("REWARD: " + reward);
         updateStatistics(false,200,80); //random crap... should be real

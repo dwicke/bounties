@@ -6,6 +6,7 @@
 package sim.app.bounties;
 
 
+import sim.app.bounties.jumpship.LonelyJumpship;
 import sim.display.Console;
 import sim.engine.*;
 import static sim.engine.SimState.doLoop;
@@ -205,7 +206,8 @@ public class Bounties extends SimState {
         //debug 
         prevRobotTabsCols = new double[numTasks];
         //debug
-        bondsman = new Bondsman(numGoals, numTasks);
+        LonelyJumpship js = new LonelyJumpship();
+        bondsman = new Bondsman(numGoals, numTasks, js);
         bondsman.setWorld(this);
         
         // make new grids
@@ -250,6 +252,8 @@ public class Bounties extends SimState {
         
         robots = new IRobot[numRobots];
         robotgrid = new SparseGrid2D(GRID_WIDTH, GRID_HEIGHT);
+        
+        
         for (int x = 0; x < numRobots; x++) {
             //GreedyBot bot = new GreedyBot();
 
