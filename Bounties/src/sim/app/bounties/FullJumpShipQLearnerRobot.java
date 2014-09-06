@@ -114,7 +114,7 @@ public class FullJumpShipQLearnerRobot extends AbstractRobot implements Steppabl
 
                 if (curTask.getNumRobotsDoingTask() == 0) {
                     //i'm the last one to make it to the goal
-                    bondsman.finishTask(curTask);
+                    bondsman.finishTask(curTask,id);
                     System.err.println("Made it to done!");
                 }
                 needNewTask = true;

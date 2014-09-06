@@ -77,7 +77,7 @@ public class JumpshipRobot extends AbstractRobot implements Steppable {
                 System.err.println("FINISHED LOL");
                 hasTaskItem = false;
                 world.bondsman.doingTask(id, -1);
-                world.bondsman.finishTask(curTask);
+                world.bondsman.finishTask(curTask,id);
                 curTask = null;
             }
             
