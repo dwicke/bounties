@@ -253,7 +253,7 @@ public class GossipTableRobot extends AbstractRobot implements Steppable  {
         System.out.println(peopleOnTask.objs[0]);
         double max =  myQtable.getQValue(taskID, ((IRobot)peopleOnTask.objs[0]).getId());
         for(int i = 1; i<peopleOnTask.size(); i++){
-            double foo = myQtable.getQValue(taskID, ((IRobot)peopleOnTask.objs[0]).getId());
+            double foo = myQtable.getQValue(taskID, ((IRobot)peopleOnTask.objs[i]).getId());
             if(foo<max){
                 max = foo;
             }
