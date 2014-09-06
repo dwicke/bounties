@@ -60,7 +60,10 @@ public class QTable implements java.io.Serializable {
      //   }
         //if(reward ==1 )
           qtable[state][action] = oneMinusAlpha * qtable[state][action] + alpha * ( (double)reward /*+ beta * V[nextState]*/);
-       // else 
+          printTable();
+
+
+// else 
         //  qtable[state][action] = alpha * qtable[state][action];
      //   System.err.println("AFTER reward: " + reward + " qvalue: " + qtable[state][action]);
       //  printTable();

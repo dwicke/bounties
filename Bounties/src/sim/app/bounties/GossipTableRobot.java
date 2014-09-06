@@ -33,6 +33,7 @@ public class GossipTableRobot extends AbstractRobot implements Steppable  {
     boolean atTask = false;
     boolean enoughBots = false;
     boolean needNewTask = false;
+    long lastSeenFinish = -1; // the time that we last saw the finish.
 
     // make a q-table for each task? and the states are values of the bounty
     // we would use the dual q-learning again where we are learning the thresholds
@@ -125,7 +126,7 @@ public class GossipTableRobot extends AbstractRobot implements Steppable  {
 
                 if (curTask.getNumRobotsDoingTask() == 0) {
                     //i'm the last one to make it to the goal
-                    bondsman.finishTask(curTask,id);
+                    bondsman.finishTask(curTask,id, state.schedule.getSteps());
                     System.err.println("Made it to done!");
                 }
                 needNewTask = true;
@@ -154,7 +155,7 @@ public class GossipTableRobot extends AbstractRobot implements Steppable  {
             enoughBots = true;
         } else if (atTask == false || (atTask == true && !curTask.isEnoughRobots())) {
             
-            System.err.println("Num Robots: " + curTask.isEnoughRobots() + " atTask="+ atTask);
+            //System.err.println("Num Robots: " + curTask.isEnoughRobots() + " atTask="+ atTask);
             if (bondsman.getAvailableTasks().numObjs > 0) {
                 if (decideTask(state)) {// we have changed if true
                     prevTask.subtractRobot(this);
@@ -170,7 +171,11 @@ public class GossipTableRobot extends AbstractRobot implements Steppable  {
                     //curTask = prevTemp;
                     reward = 0;
                    // try{Thread.sleep(1000);}catch(Exception e){}
-                    qUpdate(prevTask.getLastFinished());//okay should do it now
+                    
+                    // Don't think we should be updating when we change tasks
+                    // we do need to update q when the other robot finishes before
+                    // we do.  
+                    //qUpdate(prevTask.getLastFinished());
                     timeOnTask = 0;
                     reward = 1;
                     prevTask = prevTemp;
@@ -178,6 +183,9 @@ public class GossipTableRobot extends AbstractRobot implements Steppable  {
                     atTask = false;
                 }
             }
+            
+            
+            
             
             if (gotoTaskPosition(state, curTask)) {
                 // we made it to the task position
@@ -187,6 +195,7 @@ public class GossipTableRobot extends AbstractRobot implements Steppable  {
                 
                 if (curTask.isEnoughRobots()) {
                     enoughBots = true;
+                    curTask.setAvailable(false);// make sure no one else can decide to take this task
                 }
             }
             
@@ -273,8 +282,8 @@ public class GossipTableRobot extends AbstractRobot implements Steppable  {
 
     }
     double minQTableCalculation(Bag peopleOnTask, int taskID){
-        System.out.println(peopleOnTask.objs);
-        System.out.println(peopleOnTask.objs[0]);
+        //System.out.println(peopleOnTask.objs);
+        //System.out.println(peopleOnTask.objs[0]);
         double max =  myQtable.getQValue(taskID, ((IRobot)peopleOnTask.objs[0]).getId());
         for(int i = 1; i<peopleOnTask.size(); i++){
             double foo = myQtable.getQValue(taskID, ((IRobot)peopleOnTask.objs[i]).getId());

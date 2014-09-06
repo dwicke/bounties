@@ -6,7 +6,9 @@
 package sim.app.bounties;
 
 
+import sim.app.bounties.jumpship.Jumpship;
 import sim.app.bounties.jumpship.LonelyJumpship;
+import sim.app.bounties.jumpship.ResetJumpship;
 import sim.display.Console;
 import sim.engine.*;
 import static sim.engine.SimState.doLoop;
@@ -218,7 +220,7 @@ public class Bounties extends SimState {
         */
         
         
-        LonelyJumpship js = new LonelyJumpship();
+        Jumpship js = new ResetJumpship();
         bondsman = new Bondsman(numGoals, numTasks, js);
         bondsman.setWorld(this);
         
