@@ -156,7 +156,12 @@ public class GossipTableRobot extends AbstractRobot implements Steppable  {
         } else if (atTask == false || (atTask == true && !curTask.isEnoughRobots())) {
             
             System.err.println("Num Robots: " + curTask.isEnoughRobots() + " atTask="+ atTask);
-            if (bondsman.getAvailableTasks().numObjs > 0 && false) {
+            if (bondsman.getAvailableTasks().numObjs > 0 ) {
+                if(curTask.getLastFinished()+1 >= state.schedule.getSteps()  && timeOnTask>0){ //if somebody else took our task since we've been on it!
+                    reward = 0;
+                    qUpdate(curTask.getLastFinished());
+                    reward = 1;// in case we go after the same reward still, i dont want to scale down the reward if i get it
+                }
                 if (decideTask(state)) {// we have changed if true
                     prevTask.subtractRobot(this);
                     
@@ -298,6 +303,7 @@ public class GossipTableRobot extends AbstractRobot implements Steppable  {
         if (reward > 0) {//completeness goal....
            reward = 1;
         }
+        
         if(whoWon!=this.id)
             reward = 0;
         else

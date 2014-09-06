@@ -121,7 +121,7 @@ public class JointTaskQRobot extends AbstractRobot implements Steppable  {
 
                 if (curTask.getNumRobotsDoingTask() == 0) {
                     //i'm the last one to make it to the goal
-                    bondsman.finishTask(curTask,id);
+                    bondsman.finishTask(curTask,id,state.schedule.getSteps());
                     System.err.println("Made it to done!");
                 }
                 needNewTask = true;

@@ -177,6 +177,7 @@ public class Bondsman implements Steppable {
      * @return true if changed.
      */
     public boolean changeTask(IRobot robot, Task oldTask, Task newTask, SimState state) {
+        if(newTask.getLastFinished() + 1 < state.schedule.getSteps())// only consider it a jumpship if somebody hasnt just taken it recently
         if (jumpPolicy.jumpship(robot,oldTask, newTask, state)) {
             whosDoingWhatTaskID[robot.getId()] = newTask.getID();
             return true;
