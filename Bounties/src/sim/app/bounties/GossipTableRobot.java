@@ -97,10 +97,14 @@ public class GossipTableRobot extends AbstractRobot implements Steppable  {
         
         if (needNewTask) {
             if (bondsman.getAvailableTasks().numObjs > 0) {
-                if (!decideTask(state)) {
-                    prevTask = curTask;
-                    System.err.println("Same Task");
-                }
+                
+                
+                
+                prevprevTask = prevTask;
+                prevTask = curTask;
+                curTask = null;
+                
+                decideTask(state);
                 needNewTask = false;
                 reward = 1;
                 qUpdate(this.id);
@@ -239,8 +243,8 @@ public class GossipTableRobot extends AbstractRobot implements Steppable  {
         if (curTask == null) {
             // then this is the first task i am choosing
             bondsman.doingTask(id,  ((Task) availTasks.objs[bestTaskIndex]).getID()); // so I'm not jumping ship
-            prevprevTask = prevTask;
-            prevTask = curTask;
+            // only update curTask since it was null that means that I'm choosing a new
+            // task because it was finished or this is my first time
             curTask = (Task) availTasks.objs[bestTaskIndex];
             curGoal = curTask.getGoal();
         } else {
