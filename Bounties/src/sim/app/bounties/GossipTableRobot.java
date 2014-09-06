@@ -259,7 +259,7 @@ public class GossipTableRobot extends AbstractRobot implements Steppable  {
         return max;
     }
     public void qUpdate(int whoWon) {
-        
+       
         if (reward > 0) {//completeness goal....
            reward = 1;
         }
@@ -267,8 +267,12 @@ public class GossipTableRobot extends AbstractRobot implements Steppable  {
             reward = 0;
         else
             reward = 1/((double)timeOnTask);
+        if(whoWon==-1){
+            whoWon = this.id;
+            reward = 0;
+        }
         if(prevTask!=null && curTask!=null)
-            myQtable.update(prevTask.getID(), 0, (double)reward, curTask.getID());
+            myQtable.update(prevTask.getID(), whoWon, (double)reward, curTask.getID());
         reward = 1;//curTask.getCurrentReward();//truReward
     
     }
