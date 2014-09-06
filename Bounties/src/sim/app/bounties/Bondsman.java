@@ -158,6 +158,7 @@ public class Bondsman implements Steppable {
         curTask.setAvailable(true);
         curTask.setDone(true);
         curTask.resetReward(); // start it back at 0
+        whosDoingWhatTaskID[robotID] = -1;
     }
     /**
      * use this when you finish a task and are committing to a new task

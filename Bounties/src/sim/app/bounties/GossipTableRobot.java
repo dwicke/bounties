@@ -240,6 +240,8 @@ public class GossipTableRobot extends AbstractRobot implements Steppable  {
         prevTask = curTask;
         curTask = (Task) availTasks.objs[bestTaskIndex];
         curGoal = curTask.getGoal();
+        
+        bondsman.doingTask(id, curTask.getID());
       //  System.err.println("prev " + prevTask + " curTask " + curTask);
       //  System.err.println("REWARD: " + reward);
         updateStatistics(false,200,80); //random crap... should be real
