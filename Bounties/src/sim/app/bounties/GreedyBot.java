@@ -92,7 +92,7 @@ public class GreedyBot extends AbstractRobot implements Steppable {
                 // if I reached the goal then I will set my current task to null
                 // and notify the bondsman
                 world.bondsman.doingTask(id, -1);
-                world.bondsman.finishTask(curTask);
+                world.bondsman.finishTask(curTask,id);
                 hasTaskItem = false;
                 decided = false;
             }

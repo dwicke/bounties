@@ -66,7 +66,7 @@ public class Robot extends AbstractRobot implements Steppable {
             
             if(gotoGoalPosition(state, curGoal)) {
                 // then we should tell the bondsman that we have done that task
-                bondsman.finishTask(curTask);
+                bondsman.finishTask(curTask,id);
                 hasTaskItem = false;
                 prevTask = curTask; // set previous task to the one I finished
                 curTask = null; // set to null since not doing anytihng

@@ -122,7 +122,7 @@ public class GossipTableRobot extends AbstractRobot implements Steppable  {
 
                 if (curTask.getNumRobotsDoingTask() == 0) {
                     //i'm the last one to make it to the goal
-                    bondsman.finishTask(curTask);
+                    bondsman.finishTask(curTask,id);
                     System.err.println("Made it to done!");
                 }
                 needNewTask = true;
@@ -167,7 +167,7 @@ public class GossipTableRobot extends AbstractRobot implements Steppable  {
                     //curTask = prevTemp;
                     reward = 0;
                    // try{Thread.sleep(1000);}catch(Exception e){}
-                    qUpdate(this.id);//TODO FIX THIS should be whoever won the task
+                    qUpdate(prevTask.getLastFinished());//okay should do it now
                     timeOnTask = 0;
                     reward = 1;
                     prevTask = prevTemp;
@@ -209,10 +209,12 @@ public class GossipTableRobot extends AbstractRobot implements Steppable  {
 
                //need to figure out what "state" im in (who is already working on task + me)
             Bag peopleWorkingOnTaski = bondsman.whoseDoingTask((Task)availTasks.objs[i]);
-           
-            if(curTask.getID()!=curTask.getID())//add myself if i'm not already on the list
+            if(curTask!=null)
+            if(curTask.getID()!=this.id)//add myself if i'm not already on the list
                 peopleWorkingOnTaski.add(this.id);//i'm looking to start working on it
-            
+            if(peopleWorkingOnTaski.size()<1){
+                peopleWorkingOnTaski.add(this.id);
+            }
             double qValue = minQTableCalculation(peopleWorkingOnTaski,i);
             
             double cur = (epsilon + qValue)* (((Task) availTasks.objs[i]).getCurrentReward());
@@ -243,14 +245,16 @@ public class GossipTableRobot extends AbstractRobot implements Steppable  {
 
     }
     double minQTableCalculation(Bag peopleOnTask, int taskID){
-        double min =  myQtable.getQValue(taskID, ((AbstractRobot)peopleOnTask.objs[0]).getId());
+        System.out.println(peopleOnTask.objs);
+        System.out.println(peopleOnTask.objs[0]);
+        double max =  myQtable.getQValue(taskID, (Integer)peopleOnTask.objs[0]);
         for(int i = 1; i<peopleOnTask.size(); i++){
-            double foo = myQtable.getQValue(taskID, ((AbstractRobot)peopleOnTask.objs[i]).getId());
-            if(foo<min){
-                min = foo;
+            double foo = myQtable.getQValue(taskID, (Integer)peopleOnTask.objs[i]);
+            if(foo<max){
+                max = foo;
             }
         }
-        return min;
+        return max;
     }
     public void qUpdate(int whoWon) {
         
@@ -262,8 +266,9 @@ public class GossipTableRobot extends AbstractRobot implements Steppable  {
         else
             reward = 1/((double)timeOnTask);
         if(prevTask!=null && curTask!=null)
-        myQtable.update(prevTask.getID(), 0, (double)reward/(double)timeOnTask, curTask.getID());
+        myQtable.update(prevTask.getID(), 0, (double)reward, curTask.getID());
         reward = 1;//curTask.getCurrentReward();//truReward
+    
     }
 
 }

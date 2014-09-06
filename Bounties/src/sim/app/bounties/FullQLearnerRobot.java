@@ -65,7 +65,7 @@ public class FullQLearnerRobot extends AbstractRobot implements Steppable {
             
             if(gotoGoalPosition(state, curGoal)) {
                 // then we should tell the bondsman that we have done that task
-                bondsman.finishTask(curTask);
+                bondsman.finishTask(curTask,id);
                 hasTaskItem = false;
                 finishedTask = true;
 

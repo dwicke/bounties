@@ -36,7 +36,7 @@ public class Task implements Real, Fixed2D{
     private Color notAvailableColor = Color.WHITE;
     private int requiredRobots = 1;
     private Bag presentRobots = new Bag();
-    
+    private int lastFinished = -1;//hopefully this wont cause a runtime error... who last finished the task by default set to -1;
     private int perAgentReward[]; // the reward that is individualized for each agent like if they jumpship this might not be 0
     
     private Task() {}
@@ -85,7 +85,12 @@ public class Task implements Real, Fixed2D{
     public void setDone(boolean val){
         done = val;
     }
-
+    public void setLastFinished(int robot){
+        lastFinished =  robot;
+    }
+     public int getLastFinished(){
+        return lastFinished;
+    }
     public void setAvailable(boolean available) {
         this.available = available;
     }
