@@ -209,9 +209,9 @@ public class GossipTableRobot extends AbstractRobot implements Steppable  {
                //need to figure out what "state" im in (who is already working on task + me)
             Bag peopleWorkingOnTaski = bondsman.whoseDoingTask((Task)availTasks.objs[i]);
             if(curTask!=null)
-            if(curTask.getID()!=this.id)//add myself if i'm not already on the list
-                peopleWorkingOnTaski.add(this.id);//i'm looking to start working on it
-            
+                if(curTask.getID()!=((Task)availTasks.objs[i]).getID())//add myself if i'm not already on the list
+                    peopleWorkingOnTaski.add(this);//i'm looking to start working on it
+
             // might be interesting to take the mean rather than the min.
             //  this is the glass half empty agent.  Assumes the worst so it 
             // limits loss... So, it might be less willing to explore if it has a
@@ -251,9 +251,9 @@ public class GossipTableRobot extends AbstractRobot implements Steppable  {
     double minQTableCalculation(Bag peopleOnTask, int taskID){
         System.out.println(peopleOnTask.objs);
         System.out.println(peopleOnTask.objs[0]);
-        double max =  myQtable.getQValue(taskID, (Integer)peopleOnTask.objs[0]);
+        double max =  myQtable.getQValue(taskID, ((IRobot)peopleOnTask.objs[0]).getId());
         for(int i = 1; i<peopleOnTask.size(); i++){
-            double foo = myQtable.getQValue(taskID, (Integer)peopleOnTask.objs[i]);
+            double foo = myQtable.getQValue(taskID, ((IRobot)peopleOnTask.objs[0]).getId());
             if(foo<max){
                 max = foo;
             }
@@ -270,7 +270,7 @@ public class GossipTableRobot extends AbstractRobot implements Steppable  {
         else
             reward = 1/((double)timeOnTask);
         if(prevTask!=null && curTask!=null)
-        myQtable.update(prevTask.getID(), 0, (double)reward, curTask.getID());
+            myQtable.update(prevTask.getID(), 0, (double)reward, curTask.getID());
         reward = 1;//curTask.getCurrentReward();//truReward
     
     }
