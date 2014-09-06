@@ -72,7 +72,7 @@ public class AbstractRobot implements IRobot {
        int multiplier = 1;
        if(jumpedShip)
            multiplier = -1;
-       System.out.println("updated decisionsMade at " + rollingHistoryCounter + " with 10");
+      // System.out.println("updated decisionsMade at " + rollingHistoryCounter + " with 10");
        decisionsMade[rollingHistoryCounter] = taskID*multiplier + 10;
        timeOnTask[rollingHistoryCounter] = totalTimeOnTask;
        rollingHistoryCounter = (rollingHistoryCounter +1 )%historySize;

@@ -154,8 +154,8 @@ public class Bondsman implements Steppable {
         return numTasks;
     }
     
-    void finishTask(Task curTask, int robotID) {
-        curTask.setLastFinished(robotID);
+    void finishTask(Task curTask, int robotID, long timestamp) {
+        curTask.setLastFinished(robotID, timestamp);
         curTask.setAvailable(true);
         curTask.setDone(true);
         curTask.resetReward(); // start it back at 0
