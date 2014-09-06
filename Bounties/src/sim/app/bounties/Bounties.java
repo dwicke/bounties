@@ -206,6 +206,18 @@ public class Bounties extends SimState {
         //debug 
         prevRobotTabsCols = new double[numTasks];
         //debug
+        
+        /*
+        Jumpship methods can be constructed together like so:
+        
+        Jumpship js = new ResetJumpship(new LonelyJumpship())
+        
+        make sure that lonelyJumpship is the inner most one to be added
+        otherwise the other penalties can be applied and
+        
+        */
+        
+        
         LonelyJumpship js = new LonelyJumpship();
         bondsman = new Bondsman(numGoals, numTasks, js);
         bondsman.setWorld(this);

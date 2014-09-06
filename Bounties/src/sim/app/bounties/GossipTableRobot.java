@@ -251,6 +251,8 @@ public class GossipTableRobot extends AbstractRobot implements Steppable  {
                 prevTask = curTask;
                 curTask = (Task) availTasks.objs[bestTaskIndex];
                 curGoal = curTask.getGoal();
+            } else {
+                return false;
             }
         }
         
