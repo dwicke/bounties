@@ -29,7 +29,7 @@ public class GossipTableRobot extends AbstractRobot implements Steppable  {
     Goal curGoal;
     double reward = 0;// what i will get by completing current task
     double totalReward = 0;
-    double epsilon = .1;
+    double epsilon = 1/400;
     boolean atTask = false;
     boolean enoughBots = false;
     boolean needNewTask = false;
@@ -155,7 +155,7 @@ public class GossipTableRobot extends AbstractRobot implements Steppable  {
         } else if (atTask == false || (atTask == true && !curTask.isEnoughRobots())) {
             
             System.err.println("Num Robots: " + curTask.isEnoughRobots() + " atTask="+ atTask);
-            if (bondsman.getAvailableTasks().numObjs > 0) {
+            if (bondsman.getAvailableTasks().numObjs > 0 && false) {
                 if (decideTask(state)) {// we have changed if true
                     prevTask.subtractRobot(this);
                     
@@ -202,7 +202,7 @@ public class GossipTableRobot extends AbstractRobot implements Steppable  {
     public boolean decideTask(SimState state) {
         //consult q table
         //myQTable.getBestAction(0);
-
+        
         Bag availTasks = bondsman.getAvailableTasks();
         int bestTaskIndex = 0;
      
