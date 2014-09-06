@@ -89,8 +89,7 @@ public class GossipTableRobot extends AbstractRobot implements Steppable  {
             if (bondsman.getAvailableTasks().numObjs > 0) {
                 myQtable = new QTable(bondsman.getTotalNumTasks(), bondsman.getTotalNumRobots(), .1, .1, state.random);// focus on current reward
                 decideTask();
-                //curTask = (Task) bondsman.getAvailableTasks().objs[state.random.nextInt(bondsman.getAvailableTasks().numObjs)];
-                //curGoal = curTask.getGoal();
+                
                 reward = 1;//assume we complete, later this will be divided by time spent.
             }
             return;
@@ -213,8 +212,12 @@ public class GossipTableRobot extends AbstractRobot implements Steppable  {
             if(curTask.getID()!=curTask.getID())//add myself if i'm not already on the list
                 peopleWorkingOnTaski.add(this.id);//i'm looking to start working on it
             
+            // might be interesting to take the mean rather than the min.
+            //  this is the glass half empty agent.  Assumes the worst so it 
+            // limits loss... So, it might be less willing to explore if it has a
+            // bad experience.
             double qValue = minQTableCalculation(peopleWorkingOnTaski,i);
-            
+            // need epsilon so will try something.
             double cur = (epsilon + qValue)* (((Task) availTasks.objs[i]).getCurrentReward());
            // System.err.println("agent id " + id+ " Cur q-val:  " + cur);
             if (cur > max) {
@@ -226,12 +229,15 @@ public class GossipTableRobot extends AbstractRobot implements Steppable  {
         //System.err.println("Robot id " + id + " max Q:" + max + " val " + ((Task) availTasks.objs[bestTaskIndex]).getCurrentReward());
         //report if we actually decidedto jumpship or not.
         if(curTask!=null)
-        if (curTask.getID() == ((Task)(availTasks.objs[bestTaskIndex])).getID()) {
-            updateStatistics(true,200,80);
-            return false;
-        }
+            if (curTask.getID() == ((Task)(availTasks.objs[bestTaskIndex])).getID()) {
+                // sticking to my task.
+                updateStatistics(true,200,80);
+                return false;
+            }
         
-                 //System.err.println("NEW BEST TASK: " + k + " bounty " + ((Task) availTasks.objs[bestTaskIndex]).getCurrentReward() );
+        //System.err.println("NEW BEST TASK: " + k + " bounty " + ((Task) availTasks.objs[bestTaskIndex]).getCurrentReward() );
+        
+        // I'm jumping ship!
         prevprevTask = prevTask;
         prevTask = curTask;
         curTask = (Task) availTasks.objs[bestTaskIndex];
