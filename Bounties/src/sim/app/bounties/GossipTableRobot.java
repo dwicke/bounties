@@ -126,9 +126,6 @@ public class GossipTableRobot extends AbstractRobot implements Steppable  {
         
         else if (needNewTask) {
             if (bondsman.getAvailableTasks().numObjs > 0) {
-                
-                
-                
                 prevprevTask = prevTask;
                 prevTask = curTask;
                 curTask = null;
