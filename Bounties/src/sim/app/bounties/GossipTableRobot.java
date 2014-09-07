@@ -25,7 +25,7 @@ public class GossipTableRobot extends AbstractRobot implements Steppable  {
     double reward = 0;// what i will get by completing current task
     double totalReward = 0;
     double epsilon = 1/400;
-    double epsilonExplorationFactor = .4; // problem is that they can immediatly jumpship
+    double epsilonExplorationFactor = 1; // problem is that they can immediatly jumpship
     boolean atTask = false;
     boolean enoughBots = false;
     boolean needNewTask = false;
