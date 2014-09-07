@@ -5,14 +5,9 @@
  */
 package sim.app.bounties;
 
-import java.awt.Color;
-import sim.app.bounties.jumpship.Jumpship;
-import sim.app.bounties.robot.darwin.agent.Real;
-
 import sim.engine.SimState;
 import sim.engine.Steppable;
 import sim.util.Bag;
-import sim.util.Int2D;
 
 /**
  * This robot can change tasks anytime other than when it is taking a task to the
@@ -30,7 +25,7 @@ public class GossipTableRobot extends AbstractRobot implements Steppable  {
     double reward = 0;// what i will get by completing current task
     double totalReward = 0;
     double epsilon = 1/400;
-    double epsilonExplorationFactor = 1; // problem is that they can immediatly jumpship
+    double epsilonExplorationFactor = .4; // problem is that they can immediatly jumpship
     boolean atTask = false;
     boolean enoughBots = false;
     boolean needNewTask = false;
@@ -90,7 +85,7 @@ public class GossipTableRobot extends AbstractRobot implements Steppable  {
 
             // pick one randomly
             if (bondsman.getAvailableTasks().numObjs > 0) {
-                myQtable = new QTable(bondsman.getTotalNumTasks(), bondsman.getTotalNumRobots(), .1, .1, state.random, 0.05, 0.0025);// focus on current reward
+                myQtable = new QTable(bondsman.getTotalNumTasks(), bondsman.getTotalNumRobots(), .1, .1, state.random, 0.0, 0.0);// focus on current reward
                 decideTask(state);
                 
                 reward = 1;//assume we complete, later this will be divided by time spent.
@@ -118,6 +113,7 @@ public class GossipTableRobot extends AbstractRobot implements Steppable  {
                 decideTask(state);
                 
                 qUpdate(curTask.getLastFinishedRobotID());
+                timeOnTask = 0;
                 needNewTask = false;
                 workOnTask(state);
                 return;
@@ -156,11 +152,13 @@ public class GossipTableRobot extends AbstractRobot implements Steppable  {
                 prevprevTask = prevTask;
                 prevTask = curTask;
                 curTask = null;
+                
                 bondsman.doingTask(id, -1);// not doing anything don't want me mixed in
                 decideTask(state);
                 needNewTask = false;
                 reward = 1;
                 qUpdate(this.id);
+                timeOnTask = 0;
                 System.err.println("Got a new Task");
                 workOnTask(state);
                 return;
@@ -359,7 +357,7 @@ public class GossipTableRobot extends AbstractRobot implements Steppable  {
             reward = 0;
         }
         System.err.println("Who Won: " + whoWon + " my id = " + id) ;
-        myQtable.updateQ(prevTask.getID(), whoWon, (double)reward, curTask.getID());
+        myQtable.update(prevTask.getID(), whoWon, (double)reward, curTask.getID());
         /*if(prevTask!=null && curTask!=null) {
             myQtable.updateQ(prevTask.getID(), whoWon, (double)reward, curTask.getID());
             if (whoWon != id)
@@ -368,7 +366,7 @@ public class GossipTableRobot extends AbstractRobot implements Steppable  {
         
         for(int i = 0; i< peopleWhoWereWorkingOnTask.size(); i++){
             if(((IRobot)peopleWhoWereWorkingOnTask.objs[i]).getId() != whoWon){
-                myQtable.updateQ(prevTask.getID(), ((IRobot)peopleWhoWereWorkingOnTask.objs[i]).getId(), (double)reward, curTask.getID());
+                myQtable.update(prevTask.getID(), ((IRobot)peopleWhoWereWorkingOnTask.objs[i]).getId(), (double)reward, curTask.getID());
             }
         }
         reward = 1;//curTask.getCurrentReward();//truReward

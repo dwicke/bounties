@@ -30,7 +30,7 @@ public class Task implements Real, Fixed2D{
     private boolean available = true;// true when a robot is not carrying and not at a goal it is false if not at the
     private Int2D initialLocation;// location
     private int id = 0;
-    private int defaultReward = 200;
+    private int defaultReward = 100;
     private Goal goal;
     private Color availableColor = Color.RED;// may want to change color if we have different types of tasks
     private Color notAvailableColor = Color.WHITE;
