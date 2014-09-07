@@ -29,7 +29,7 @@ public class QTable implements java.io.Serializable {
         beta = discountBeta;
     }
     
-    public QTable(int numStates, int numActions, double learningRate, double discountBeta, MersenneTwisterFast rand, double min, double max) {
+    public QTable(int numStates, int numActions, double learningRate, double discountBeta, MersenneTwisterFast rand, double max, double min) {
         this.numActions = numActions;
         this.numStates = numStates;
         setAlpha(learningRate);

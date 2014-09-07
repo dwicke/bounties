@@ -34,6 +34,7 @@ public class GossipTableRobot extends AbstractRobot implements Steppable  {
     boolean atTask = false;
     boolean enoughBots = false;
     boolean needNewTask = false;
+    boolean iPickedTaskRandomly = false;
     long lastSeenFinish = -1; // the time that we last saw the finish.
     Bag peopleWhoWereWorkingOnTask = new Bag();
     // make a q-table for each task? and the states are values of the bounty
@@ -100,7 +101,7 @@ public class GossipTableRobot extends AbstractRobot implements Steppable  {
         
         boolean someoneFinishedMyTask = (curTask != null && curTask.getLastFinishedTime() != lastSeenFinish);
         
-        if (someoneFinishedMyTask) {
+        if (someoneFinishedMyTask && !iPickedTaskRandomly) {
             if (bondsman.getAvailableTasks().numObjs > 0) {
                 
                 System.err.println("Last robot finished id = " + curTask.getLastFinishedRobotID());
@@ -126,9 +127,9 @@ public class GossipTableRobot extends AbstractRobot implements Steppable  {
         }
         
         else if (needNewTask) {
-            if (bondsman.getAvailableTasks().numObjs > 0) {
+            if (bondsman.getAvailableTasks().numObjs > 0) {//NEED new task
                 
-                if (state.random.nextDouble() < epsilonExplorationFactor) {
+                if (state.random.nextDouble() < epsilonExplorationFactor) { //only randomly pick a task if we NEED a new task (condition above)
                     // randomly pick a task
                     Bag availTasks = bondsman.getAvailableTasks();
                     prevprevTask = prevTask;
@@ -145,11 +146,13 @@ public class GossipTableRobot extends AbstractRobot implements Steppable  {
                     peopleWhoWereWorkingOnTask = peopleWorkingOnTaski;
                     reward = 1;
                     qUpdate(this.id);
+                    timeOnTask = 0;
                     System.err.println("picked task randomly");
                     workOnTask(state);
+                    iPickedTaskRandomly = true;
                     return;
                 }
-                
+                iPickedTaskRandomly = false;
                 prevprevTask = prevTask;
                 prevTask = curTask;
                 curTask = null;
@@ -195,7 +198,7 @@ public class GossipTableRobot extends AbstractRobot implements Steppable  {
             
             //System.err.println("Num Robots: " + curTask.isEnoughRobots() + " atTask="+ atTask);
             if (bondsman.getAvailableTasks().numObjs > 0 ) {
-                
+                if(!iPickedTaskRandomly && curTask!=null) // don't allow us to jump ship
                 if (decideTask(state)) {// we have changed if true
                     prevTask.subtractRobot(this);
                     
