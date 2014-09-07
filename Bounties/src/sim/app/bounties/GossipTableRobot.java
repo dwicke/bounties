@@ -90,7 +90,7 @@ public class GossipTableRobot extends AbstractRobot implements Steppable  {
 
             // pick one randomly
             if (bondsman.getAvailableTasks().numObjs > 0) {
-                myQtable = new QTable(bondsman.getTotalNumTasks(), bondsman.getTotalNumRobots(), .1, .1, state.random, 1/20, 1/400);// focus on current reward
+                myQtable = new QTable(bondsman.getTotalNumTasks(), bondsman.getTotalNumRobots(), .1, .1, state.random, 0.05, 0.0025);// focus on current reward
                 decideTask(state);
                 
                 reward = 1;//assume we complete, later this will be divided by time spent.
