@@ -34,7 +34,7 @@ public class GossipTableRobot extends AbstractRobot implements Steppable  {
     boolean enoughBots = false;
     boolean needNewTask = false;
     long lastSeenFinish = -1; // the time that we last saw the finish.
-
+    Bag peopleWhoWereWorkingOnTask = new Bag();
     // make a q-table for each task? and the states are values of the bounty
     // we would use the dual q-learning again where we are learning the thresholds
     // for the decision maker and
@@ -183,16 +183,17 @@ public class GossipTableRobot extends AbstractRobot implements Steppable  {
                     // decide task too much.
                     
                     Task prevTemp = prevTask;
-                   // prevTask = prevprevTask;
+                    prevTask = prevprevTask;
                     Task curTemp = curTask;
-                    //curTask = prevTemp;
+                    curTask = prevTemp;
                     reward = 0;
                    // try{Thread.sleep(1000);}catch(Exception e){}
                     
                     // Don't think we should be updating when we change tasks
                     // we do need to update q when the other robot finishes before
                     // we do.  
-                    //qUpdate(prevTask.getLastFinished());
+                    if(prevTask!=null)
+                        qUpdate(prevTask.getLastFinishedRobotID());
                     timeOnTask = 0;
                     reward = 1;
                     prevTask = prevTemp;
@@ -238,11 +239,11 @@ public class GossipTableRobot extends AbstractRobot implements Steppable  {
         int bestTaskIndex = 0;
      
         double max = -1; // i would take the first part of the loop out, but it's too complex now
-
+        Bag peopleWorkingOnTaski = null;
         for (int i = 0; i < availTasks.numObjs; i++) { // over all tasks
 
                //need to figure out what "state" im in (who is already working on task + me)
-            Bag peopleWorkingOnTaski = bondsman.whoseDoingTask((Task)availTasks.objs[i]);
+            peopleWorkingOnTaski = bondsman.whoseDoingTask((Task)availTasks.objs[i]);
             peopleWorkingOnTaski.add(this);
             
             // might be interesting to take the mean rather than the min.
@@ -279,6 +280,7 @@ public class GossipTableRobot extends AbstractRobot implements Steppable  {
             curTask = (Task) availTasks.objs[bestTaskIndex];
             curGoal = curTask.getGoal();
             lastSeenFinish = curTask.getLastFinishedTime();
+            peopleWhoWereWorkingOnTask = peopleWorkingOnTaski;
         } else {
             // I'm jumping ship!
             if (bondsman.changeTask(this, curTask, (Task) availTasks.objs[bestTaskIndex], state) == true) {
@@ -332,10 +334,17 @@ public class GossipTableRobot extends AbstractRobot implements Steppable  {
             reward = 0;
         }
         System.err.println("Who Won: " + whoWon + " my id = " + id) ;
-        if(prevTask!=null && curTask!=null) {
+        myQtable.updateQ(prevTask.getID(), whoWon, (double)reward, curTask.getID());
+        /*if(prevTask!=null && curTask!=null) {
             myQtable.updateQ(prevTask.getID(), whoWon, (double)reward, curTask.getID());
             if (whoWon != id)
                 myQtable.updateQ(prevTask.getID(), id, (double)reward, curTask.getID());
+        }*/
+        
+        for(int i = 0; i< peopleWhoWereWorkingOnTask.size(); i++){
+            if(((IRobot)peopleWhoWereWorkingOnTask.objs[i]).getId() != whoWon){
+                myQtable.updateQ(prevTask.getID(), ((IRobot)peopleWhoWereWorkingOnTask.objs[i]).getId(), (double)reward, curTask.getID());
+            }
         }
         reward = 1;//curTask.getCurrentReward();//truReward
     
