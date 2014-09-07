@@ -30,6 +30,7 @@ public class GossipTableRobot extends AbstractRobot implements Steppable  {
     double reward = 0;// what i will get by completing current task
     double totalReward = 0;
     double epsilon = 1/400;
+    double epsilonExplorationFactor = 1; // problem is that they can immediatly jumpship
     boolean atTask = false;
     boolean enoughBots = false;
     boolean needNewTask = false;
@@ -88,7 +89,7 @@ public class GossipTableRobot extends AbstractRobot implements Steppable  {
 
             // pick one randomly
             if (bondsman.getAvailableTasks().numObjs > 0) {
-                myQtable = new QTable(bondsman.getTotalNumTasks(), bondsman.getTotalNumRobots(), .1, .1, state.random);// focus on current reward
+                myQtable = new QTable(bondsman.getTotalNumTasks(), bondsman.getTotalNumRobots(), .1, .1, state.random, 1/20, 1/400);// focus on current reward
                 decideTask(state);
                 
                 reward = 1;//assume we complete, later this will be divided by time spent.
@@ -126,6 +127,29 @@ public class GossipTableRobot extends AbstractRobot implements Steppable  {
         
         else if (needNewTask) {
             if (bondsman.getAvailableTasks().numObjs > 0) {
+                
+                if (state.random.nextDouble() < epsilonExplorationFactor) {
+                    // randomly pick a task
+                    Bag availTasks = bondsman.getAvailableTasks();
+                    prevprevTask = prevTask;
+                    prevTask = curTask;
+                    curTask = (Task)availTasks.objs[state.random.nextInt(availTasks.size())];
+                    
+                    System.err.println("ID " + id + " picks: " + curTask.getID());
+                    
+                    needNewTask = false;
+                    bondsman.doingTask(id,  curTask.getID()); // so I'm not jumping ship
+                    curGoal = curTask.getGoal();
+                    lastSeenFinish = curTask.getLastFinishedTime();
+                    Bag peopleWorkingOnTaski = bondsman.whoseDoingTask(curTask);
+                    peopleWhoWereWorkingOnTask = peopleWorkingOnTaski;
+                    reward = 1;
+                    qUpdate(this.id);
+                    System.err.println("picked task randomly");
+                    workOnTask(state);
+                    return;
+                }
+                
                 prevprevTask = prevTask;
                 prevTask = curTask;
                 curTask = null;
@@ -154,6 +178,7 @@ public class GossipTableRobot extends AbstractRobot implements Steppable  {
                 if (curTask.getNumRobotsDoingTask() == 0) {
                     //i'm the last one to make it to the goal
                     bondsman.finishTask(curTask,id, state.schedule.getSteps());
+                    lastSeenFinish = state.schedule.getSteps(); // i finished it
                     System.err.println("Made it to done!");
                 }
                 needNewTask = true;
@@ -168,7 +193,7 @@ public class GossipTableRobot extends AbstractRobot implements Steppable  {
             enoughBots = true;
         } else if (atTask == false || (atTask == true && !curTask.isEnoughRobots())) {
             
-            System.err.println("Num Robots: " + curTask.isEnoughRobots() + " atTask="+ atTask);
+            //System.err.println("Num Robots: " + curTask.isEnoughRobots() + " atTask="+ atTask);
             if (bondsman.getAvailableTasks().numObjs > 0 ) {
                 
                 if (decideTask(state)) {// we have changed if true
