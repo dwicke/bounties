@@ -14,15 +14,27 @@ import sim.engine.Steppable;
  * @author drew
  */
 public class TableRobot extends AbstractRobot implements Steppable {
-
+    
+    QTable myQtable;
     Task curTask, prevTask; // the curent and previous tasks I was doing
     int timeOnTask; // the number of timesteps i have worked on the task
     long lastSeenFinished; // the timestep the current task was sa
     
-    
+    /**
+     * Call this before scheduling the robots.
+     * @param state the bounties state
+     */
+    public void init(SimState state) {
+        Bondsman bondsman = ((Bounties)state).bondsman;
+        myQtable = new QTable(bondsman.getTotalNumTasks(), bondsman.getTotalNumRobots(), .1, .1);// focus on current reward
+        debug("In init for id: " + id);
+        debug("Qtable for id: " + id + " \n" + myQtable.getQTableAsString());
+    }
     
     @Override
     public void step(SimState state) {
+        
+        
         
         // check if someone (including me) finished the task if I am at the task then I will finish it
             // if finished current task then learn
@@ -42,6 +54,7 @@ public class TableRobot extends AbstractRobot implements Steppable {
     }
     
     public boolean finishedTask(Bounties state) {
+        
         
         
         return false;

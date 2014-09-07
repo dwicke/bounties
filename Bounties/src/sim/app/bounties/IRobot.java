@@ -7,6 +7,7 @@
 package sim.app.bounties;
 
 import java.awt.Color;
+import sim.engine.SimState;
 import sim.util.Int2D;
 
 /**
@@ -14,6 +15,7 @@ import sim.util.Int2D;
  * @author drew
  */
 public interface IRobot {
+    public void init(SimState state);
     public boolean getHasTaskItem();
     public Color getHasTaskColor();
     public Color getNoTaskColor();

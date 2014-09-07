@@ -28,6 +28,19 @@ public class QTable implements java.io.Serializable {
         V = new double[numStates];
         beta = discountBeta;
     }
+    public QTable(int numStates, int numActions, double learningRate, double discountBeta) {
+        this.numActions = numActions;
+        this.numStates = numStates;
+        setAlpha(learningRate);
+        qtable = new double[numStates][numActions];
+        for (int i = 0; i < numStates; i++) {
+            for (int j = 0; j < numActions; j++) {
+                qtable[i][j] = 0;
+            }
+        }
+        V = new double[numStates];
+        beta = discountBeta;
+    }
     
     public QTable(int numStates, int numActions, double learningRate, double discountBeta, MersenneTwisterFast rand, double max, double min) {
         this.numActions = numActions;
@@ -140,6 +153,19 @@ public class QTable implements java.io.Serializable {
             }
             System.err.println(build.toString());
         }
+    }
+    
+    String getQTableAsString() {
+        StringBuilder build = new StringBuilder();
+        for (int i = 0; i < qtable.length; i++) {
+            
+            build.append("state ").append(i).append(" vals: ");
+            for (int j = 0; j < qtable[i].length; j++) {
+                build.append(qtable[i][j]).append(" ");
+            }
+            build.append("\n");
+        }
+        return build.toString();
     }
 }
 

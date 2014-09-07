@@ -29,6 +29,10 @@ public class AbstractRobot implements IRobot {
     int rollingHistoryCounter = 0; // pointer to current spot in the list for history purposes
     int rewardCurrentTask; // the reward for the current task
     
+    public void init(SimState state) {
+        // do nothing...
+    }
+    
     public int getRewardCurrentTask() {
         return rewardCurrentTask;
     }
@@ -160,4 +164,9 @@ public class AbstractRobot implements IRobot {
         this.control = controller;
     }
 
+    
+    
+    public void debug(String message) {
+        System.err.println(message);
+    }
 }
