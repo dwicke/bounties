@@ -45,6 +45,7 @@ public class Task implements Real, Fixed2D{
     public Task(int numAgents) {
         perAgentReward = new int[numAgents];
         Arrays.fill(perAgentReward, defaultReward);
+        currentReward = defaultReward;
     }
     
     
@@ -103,6 +104,8 @@ public class Task implements Real, Fixed2D{
         lastAgentsWorkingOnTask = lastAgentIDsWorkingOnTask;
     }
     
+
+    
     public Bag getLastAgentsWorkingOnTask() {
         return lastAgentsWorkingOnTask;
     }
@@ -160,7 +163,6 @@ public class Task implements Real, Fixed2D{
         this.initialLocation = loc;
     }
 
-    
     
     public int getNumRobotsDoingTask() {
         return presentRobots.numObjs;
