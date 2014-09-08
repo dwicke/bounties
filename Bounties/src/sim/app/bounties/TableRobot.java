@@ -10,7 +10,18 @@ import sim.engine.SimState;
 import sim.engine.Steppable;
 
 /**
- *
+ * Main things:
+ * 
+ * You will teleport home when:
+ * 1. you finish the task
+ * 2. someone else finishes the task
+ * 
+ * At the end of each step you will have at least made progress toward your current task
+ * 
+ * Before and after the current step you will not have a null curTask
+ * 
+ * 
+ * 
  * @author drew
  */
 public class TableRobot extends AbstractRobot implements Steppable {
@@ -46,7 +57,9 @@ public class TableRobot extends AbstractRobot implements Steppable {
         numTimeSteps++;
         if (finishedTask()) {
             learn(0.0); // then learn from it
-            numTimeSteps = 1; // someone else finished the task
+            jumpHome(); // someone else finished the task so start again
+            curTask = null;
+            numTimeSteps = 1; 
         }  
         
         pickTask();
@@ -86,11 +99,15 @@ public class TableRobot extends AbstractRobot implements Steppable {
      */
     public void pickTask() {
         if (curTask == null) {
-            // pick randomly
-            curTask = (Task)bondsman.getAvailableTasks().objs[bountyState.random.nextInt(bondsman.getTotalNumTasks())];
-            bondsman.doingTask(id, curTask.getID());
-            lastSeenFinished = curTask.getLastFinishedTime();
+            
         }
+    }
+    
+    public void pickRandomTask() {
+        // pick randomly
+        curTask = (Task)bondsman.getAvailableTasks().objs[bountyState.random.nextInt(bondsman.getTotalNumTasks())];
+        bondsman.doingTask(id, curTask.getID());
+        lastSeenFinished = curTask.getLastFinishedTime();
     }
     
     /**
