@@ -189,7 +189,7 @@ public class TableRobot extends AbstractRobot implements Steppable {
     public void pickRandomTask() {
         // pick randomly
         
-        curTask = (Task)bondsman.getAvailableTasks().objs[bountyState.random.nextInt(bondsman.getTotalNumTasks())];
+        curTask = (Task)bondsman.getAvailableTasks().objs[bountyState.random.nextInt(bondsman.getAvailableTasks().size())];
         bondsman.doingTask(id, curTask.getID());
         lastSeenFinished = curTask.getLastFinishedTime();
         updateStatistics(false,curTask.getID(),numTimeSteps);
