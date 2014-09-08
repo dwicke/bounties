@@ -20,7 +20,8 @@ import sim.util.Bag;
  * At the end of each step you will have at least made progress toward your current task
  * 
  * Before and after the current step you will not have a null curTask
- * 
+ * unless there are not enough available tasks and then you will each
+ * timestep check and call decideTask().
  * 
  * 
  * @author drew
