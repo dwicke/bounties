@@ -36,6 +36,7 @@ public class TableRobot extends AbstractRobot implements Steppable {
     double epsilon = .0025;
     boolean randomChosen = false;
     double epsilonChooseRandomTask = 0.2;
+    boolean decideTaskFailed = false;
         
     /**
      * Call this before scheduling the robots.
@@ -58,34 +59,46 @@ public class TableRobot extends AbstractRobot implements Steppable {
             // if finished current task then learn
         // pick task
         // goto task
-        numTimeSteps++;
-        if (finishedTask()) {
-            learn(0.0, curTask.getLastAgentsWorkingOnTask()); // then learn from it
-            jumpHome(); // someone else finished the task so start again
-            curTask = null;
-            numTimeSteps = 1;
-            decideNextTask();
-        } else if (!randomChosen) {
-            pickTask();
-        }
-        
-        if (gotoTask()) { // if i made it to the task then finish it and learn
-            jumpHome();
-            iFinished = true;
-            curTask.setLastFinished(id, bountyState.schedule.getSteps(), bondsman.whoseDoingTaskByID(curTask));
-            bondsman.finishTask(curTask, id, bountyState.schedule.getSteps());
-            learn(1.0 / (double)numTimeSteps, curTask.getLastAgentsWorkingOnTask());
-            curTask = null;
-            numTimeSteps = 0;
-            decideNextTask();
+        if (decideTaskFailed) {
+            decideTaskFailed = decideNextTask();
+        } else {
+            numTimeSteps++;
+            if (finishedTask()) {
+                learn(0.0, curTask.getLastAgentsWorkingOnTask()); // then learn from it
+                jumpHome(); // someone else finished the task so start again
+                curTask = null;
+                numTimeSteps = 1;
+                decideTaskFailed = decideNextTask();
+                return; // can't start it in the same timestep that i chose it since doesn't happen if I was the one who completed it
+            } else if (!randomChosen) {
+                pickTask(); // There will always be a task to choose from if i am here.
+            }
+
+            if (gotoTask()) { // if i made it to the task then finish it and learn
+                jumpHome();
+                iFinished = true;
+                curTask.setLastFinished(id, bountyState.schedule.getSteps(), bondsman.whoseDoingTaskByID(curTask));
+                bondsman.finishTask(curTask, id, bountyState.schedule.getSteps());
+                learn(1.0 / (double)numTimeSteps, curTask.getLastAgentsWorkingOnTask());
+                curTask = null;
+                numTimeSteps = 0;
+                decideTaskFailed = decideNextTask();
+            }
         }
         
     }
     
     /**
      * Can be either random or based on q-value
+     * @return returns true if task was not picked
+     * true if picked
      */
-    public void decideNextTask() {
+    public boolean decideNextTask() {
+        
+        if(bondsman.getAvailableTasks().isEmpty()) {
+            return true; // wasn't succesful
+        }
+        
         if (bountyState.random.nextDouble() < epsilonChooseRandomTask) {
             randomChosen = true;
             pickRandomTask();
@@ -93,6 +106,7 @@ public class TableRobot extends AbstractRobot implements Steppable {
             randomChosen = false;
             pickTask();
         }
+        return false;// then there was a task i could choose from
     }
     
     /**
@@ -174,6 +188,7 @@ public class TableRobot extends AbstractRobot implements Steppable {
     
     public void pickRandomTask() {
         // pick randomly
+        
         curTask = (Task)bondsman.getAvailableTasks().objs[bountyState.random.nextInt(bondsman.getTotalNumTasks())];
         bondsman.doingTask(id, curTask.getID());
         lastSeenFinished = curTask.getLastFinishedTime();
