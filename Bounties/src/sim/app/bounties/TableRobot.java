@@ -68,7 +68,7 @@ public class TableRobot extends AbstractRobot implements Steppable {
                 learn(0.0, curTask.getLastAgentsWorkingOnTask()); // then learn from it
                 jumpHome(); // someone else finished the task so start again
                 curTask = null;
-                numTimeSteps = 1;
+                numTimeSteps = 0;
                 decideTaskFailed = decideNextTask();
                 return; // can't start it in the same timestep that i chose it since doesn't happen if I was the one who completed it
             } else if (!randomChosen) {
