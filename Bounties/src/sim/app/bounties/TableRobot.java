@@ -35,7 +35,7 @@ public class TableRobot extends AbstractRobot implements Steppable {
     Bondsman bondsman;
     double epsilon = .0025;
     boolean randomChosen = false;
-    double epsilonChooseRandomTask = 0.2;
+    double epsilonChooseRandomTask = 0.03;
         
     /**
      * Call this before scheduling the robots.
@@ -44,7 +44,7 @@ public class TableRobot extends AbstractRobot implements Steppable {
     public void init(SimState state) {
         bountyState = ((Bounties)state);
         bondsman = bountyState.bondsman;
-        myQtable = new QTable(bondsman.getTotalNumTasks(), bondsman.getTotalNumRobots(), .1, .1);// focus on current reward
+        myQtable = new QTable(bondsman.getTotalNumTasks(), bondsman.getTotalNumRobots(), .10, .1);// focus on current reward
         debug("In init for id: " + id);
         debug("Qtable(row = task_id  col = robot_id) for id: " + id + " \n" + myQtable.getQTableAsString());
         pickRandomTask();
@@ -53,7 +53,6 @@ public class TableRobot extends AbstractRobot implements Steppable {
     
     @Override
     public void step(SimState state) {
-        
         // check if someone else finished the task I was working on
             // if finished current task then learn
         // pick task

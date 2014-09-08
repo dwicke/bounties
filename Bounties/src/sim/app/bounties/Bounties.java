@@ -10,6 +10,7 @@ import sim.app.bounties.jumpship.DefaultJumpship;
 import sim.app.bounties.jumpship.Jumpship;
 import sim.app.bounties.jumpship.LonelyJumpship;
 import sim.app.bounties.jumpship.ResetJumpship;
+import sim.app.bounties.statistics.StatsPublisher;
 import sim.display.Console;
 import sim.engine.*;
 import static sim.engine.SimState.doLoop;
@@ -32,11 +33,11 @@ public class Bounties extends SimState {
     public double[] rollingAverage = new double[1000];
     int avgCount = 0;
     public Bondsman bondsman;
-    public int numRobots = 2;
+    public int numRobots = 4;
     
     public IRobot robots[];// index into this array corresponds to its id
     
-    int numTasks = 2;
+    int numTasks = 20;
     int numGoals = 1;    
     double averageTicks = 0;
     boolean rotateRobots  = false;
@@ -93,17 +94,36 @@ public class Bounties extends SimState {
      return 10;
     }
     public double getAverageTicks(){
-        if (bondsman != null) {
-            Bag tasks = bondsman.getTasks();
-            if(tasks==null) return -1;
-            double sum =0;
-            for(int i = 0; i< tasks.objs.length; i++){
-                if(tasks.objs[i] !=null){ // shouldnt really be null normally.....
-                    sum+=((Task)tasks.objs[i]).getCurrentReward();
-                }
+        double sum =0;
+        Bag tasks = bondsman.getTasks();
+        if(tasks==null) return -1;
+        double count = 0;
+        for(int i = 0; i< tasks.objs.length; i++){
+            if(tasks.objs[i] !=null){ // shouldnt really be null normally.....
+                sum+=((Task)tasks.objs[i]).getCurrentReward();
+                count++;
             }
+        }
 
-            sum/=tasks.objs.length;
+         return sum/count;
+    }
+    public double getTotalTicks(){
+        double sum =0;
+        Bag tasks = bondsman.getTasks();
+        if(tasks==null) return -1;
+        for(int i = 0; i< tasks.objs.length; i++){
+            if(tasks.objs[i] !=null){ // shouldnt really be null normally.....
+                sum+=((Task)tasks.objs[i]).getCurrentReward();
+               
+            }
+        }
+        return sum;
+    }
+    public double getRollingAverageTicks(){
+        if (bondsman != null) {
+          
+            
+            double sum = getAverageTicks();
             rollingAverage[avgCount] = sum;
             avgCount++;
             if(avgCount == rollingAverage.length) avgCount= 0;
@@ -221,7 +241,7 @@ public class Bounties extends SimState {
         */
         
         
-        Jumpship js = new DefaultJumpship();
+        Jumpship js = new ResetJumpship();
         bondsman = new Bondsman(numGoals, numTasks, js);
         bondsman.setWorld(this);
         
@@ -289,10 +309,14 @@ public class Bounties extends SimState {
             t.setMyRobot(bot);
             robots[x].setRobotController(t);
             schedule.scheduleRepeating(Schedule.EPOCH + x, 0, bot, 1);
+            
         }
-
+        
+        StatsPublisher stats = new StatsPublisher(this,0);
         // now schedule the bondsman so that it can add more tasks as needed.
-        schedule.scheduleRepeating(Schedule.EPOCH + numRobots, 0, bondsman, 1);
+        schedule.scheduleRepeating(Schedule.EPOCH+numRobots,0, bondsman, 1);
+        //schedule statistics gatherer
+        schedule.scheduleRepeating(Schedule.EPOCH+numRobots+1,0,stats,1);
     }
 
     public static void main(String[] args) {
