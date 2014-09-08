@@ -70,7 +70,14 @@ public class TableRobot extends AbstractRobot implements Steppable {
             jumpHome();
             iFinished = true;
             curTask.setLastFinished(id, bountyState.schedule.getSteps(), bondsman.whoseDoingTaskByID(curTask));
+            debug("Number of people doing the task " + bondsman.whoseDoingTaskByID(curTask).size());
+            for (int i = 0; i < bondsman.whoseDoingTaskByID(curTask).size(); i++) {
+                debug("id i = " + bondsman.whoseDoingTaskByID(curTask).objs[i] + " is doing task i = " + curTask.getID());
+            }
             bondsman.finishTask(curTask, id, bountyState.schedule.getSteps());
+            
+            
+            
             learn(1.0 / (double)numTimeSteps, curTask.getLastAgentsWorkingOnTask());
             curTask = null;
             numTimeSteps = 0;
@@ -111,7 +118,7 @@ public class TableRobot extends AbstractRobot implements Steppable {
         Bag peopleWorkingOnTaski = null;
         for (int i = 0; i < availTasks.numObjs; i++) { // over all tasks
 
-               //need to figure out what "state" im in (who is already working on task + me)
+            //need to figure out what "state" im in (who is already working on task + me)
             peopleWorkingOnTaski = bondsman.whoseDoingTask((Task)availTasks.objs[i]);
             peopleWorkingOnTaski.add(this);
             
@@ -137,7 +144,7 @@ public class TableRobot extends AbstractRobot implements Steppable {
             // then I am jumping ship
             jumpship(newTask);
         }
-        
+        bondsman.doingTask(id, curTask.getID());
         // always set the lastSeenFinished
         lastSeenFinished = curTask.getLastFinishedTime(); 
     }
