@@ -167,6 +167,6 @@ public class AbstractRobot implements IRobot {
     
     
     public void debug(String message) {
-        System.err.println(message);
+        //System.err.println(message);
     }
 }
