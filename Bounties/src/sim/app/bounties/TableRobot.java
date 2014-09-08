@@ -16,63 +16,96 @@ import sim.engine.Steppable;
 public class TableRobot extends AbstractRobot implements Steppable {
     
     QTable myQtable;
-    Task curTask, prevTask; // the curent and previous tasks I was doing
-    int timeOnTask; // the number of timesteps i have worked on the task
-    long lastSeenFinished; // the timestep the current task was sa
-    
+    int numTimeSteps; // the number of timesteps since someone completed a task
+    long lastSeenFinished; // the timestep the current task was at
+    boolean iFinished = false; // true if I finish the cur task
+    Bounties bountyState;
+    Bondsman bondsman;
+        
     /**
      * Call this before scheduling the robots.
      * @param state the bounties state
      */
     public void init(SimState state) {
-        Bondsman bondsman = ((Bounties)state).bondsman;
+        bountyState = ((Bounties)state);
+        bondsman = bountyState.bondsman;
         myQtable = new QTable(bondsman.getTotalNumTasks(), bondsman.getTotalNumRobots(), .1, .1);// focus on current reward
         debug("In init for id: " + id);
-        debug("Qtable for id: " + id + " \n" + myQtable.getQTableAsString());
+        debug("Qtable(row = task_id  col = robot_id) for id: " + id + " \n" + myQtable.getQTableAsString());
+        pickTask();
+        numTimeSteps = 0;
     }
     
     @Override
     public void step(SimState state) {
         
-        
-        
-        // check if someone (including me) finished the task if I am at the task then I will finish it
+        // check if someone else finished the task I was working on
             // if finished current task then learn
         // pick task
         // goto task
+        numTimeSteps++;
+        if (finishedTask()) {
+            learn(0.0); // then learn from it
+            numTimeSteps = 1; // someone else finished the task
+        }  
         
-        Bounties bountyState = (Bounties) state;
+        pickTask();
         
-        if (finishedTask(bountyState)) {
-            learn(bountyState);
+        if (gotoTask()) { // if i made it to the task then finish it and learn
+            jumpHome();
+            iFinished = true;
+            curTask.setLastFinished(id, bountyState.schedule.getSteps(), bondsman.whoseDoingTaskByID(curTask));
+            learn(1.0 / (double)numTimeSteps);
+            curTask = null;
+            numTimeSteps = 0;
+            pickTask();
         }
         
-        pickTask(bountyState);
-        
-        gotoTask(bountyState);
-        
     }
     
-    public boolean finishedTask(Bounties state) {
-        
-        
-        
-        return false;
+    /**
+     * Returns whether the task was finished by someone else
+     * @return true if finished false otherwise
+     */
+    public boolean finishedTask() {
+        return curTask.getLastFinishedTime() != lastSeenFinished;
+    }
+    /**
+     * Learn given the reward and the current task
+     * @param reward the reward 
+     */
+    public void learn(double reward) { 
+        for(int i = 0; i < curTask.getLastAgentsWorkingOnTask().size(); i++){
+            int aID = (int) curTask.getLastAgentsWorkingOnTask().objs[i];
+            myQtable.update(curTask.getID(), aID, (double)reward);
+        }
     }
     
-    public void learn(Bounties state) {
-        
+    /**
+     * Pick the current task to do.
+     */
+    public void pickTask() {
+        if (curTask == null) {
+            // pick randomly
+            curTask = (Task)bondsman.getAvailableTasks().objs[bountyState.random.nextInt(bondsman.getTotalNumTasks())];
+            bondsman.doingTask(id, curTask.getID());
+            lastSeenFinished = curTask.getLastFinishedTime();
+        }
     }
     
-    public void pickTask(Bounties state) {
-        
+    /**
+     * Move toward the curTask
+     * @return true if i made it to the task
+     */
+    public boolean gotoTask() {
+        return gotoTaskPosition(bountyState, curTask);
     }
     
-    
-    public void gotoTask(Bounties state) {
-        
+    /**
+     * Transport robot to home location
+     */
+    public void jumpHome() {
+        bountyState.robotgrid.setObjectLocation(this,this.getRobotHome());// teleport home
     }
-    
-    
 
 }

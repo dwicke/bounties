@@ -39,7 +39,7 @@ public class Task implements Real, Fixed2D{
     private int lastFinishedRobotID = -1;//hopefully this wont cause a runtime error... who last finished the task by default set to -1;
     private int perAgentReward[]; // the reward that is individualized for each agent like if they jumpship this might not be 0
     private long finishedTime = -1;
-    
+    private Bag lastAgentsWorkingOnTask; // these are the agents working on the task when someone finished it
     
     private Task() {}
     public Task(int numAgents) {
@@ -90,6 +90,21 @@ public class Task implements Real, Fixed2D{
     public void setLastFinished(int robotid, long timestamp){
         lastFinishedRobotID =  robotid;
         finishedTime = timestamp;
+    }
+    /**
+     * Call this when you finish a task.
+     * @param robotid your id
+     * @param timestamp the timestep that you completed the task
+     * @param lastAgentIDsWorkingOnTask the list of ids of the agents that were working on it when you finished it
+     */
+    public void setLastFinished(int robotid, long timestamp, Bag lastAgentIDsWorkingOnTask){
+        lastFinishedRobotID =  robotid;
+        finishedTime = timestamp;
+        lastAgentsWorkingOnTask = lastAgentIDsWorkingOnTask;
+    }
+    
+    public Bag getLastAgentsWorkingOnTask() {
+        return lastAgentsWorkingOnTask;
     }
     public int getLastFinishedRobotID(){
         return lastFinishedRobotID;

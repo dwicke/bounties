@@ -198,6 +198,18 @@ public class Bondsman implements Steppable {
         return robots;
     }
     
+    public Bag whoseDoingTaskByID(Task b) {
+        Bag robots = new Bag();
+        // only jumpship robots use this.
+        IRobot[] allRobots = (IRobot[]) bounties.getRobots();
+        for (int i = 0; i < bounties.numRobots; i++) {
+            if (whosDoingWhatTaskID[i] == b.getID()){
+                robots.add(allRobots[i].getId());
+            }
+        }
+        return robots;
+    }
+    
     public int getBondsmanAdjustedBounty(Task task, IRobot bot) {
         return (int) (task.getCurrentReward(bot) * penaltyFactor[bot.getId()]);
     }
