@@ -60,7 +60,7 @@ public class Bondsman implements Steppable {
     public Bag initTasks(Int2D field, MersenneTwisterFast rand) {
         tasks.clear();
         for (int i = 0; i < numTasks; i++) {
-            Task t = new Task(this.bounties.numRobots);
+            Task t = new Task(this.bounties.numRobots, rand, this.bounties);
             t.setID(i);
             //t.setCurrentReward(1);// this isn't used.
             t.setLoc(new Int2D(rand.nextInt(field.x), rand.nextInt(field.y)));
@@ -101,7 +101,6 @@ public class Bondsman implements Steppable {
             ((Task)tasks.objs[i]).incrementCurrentReward();
         }
     }
-
     public int getTotalNumTasks() {
         return tasks.size();
     }
@@ -121,8 +120,10 @@ public class Bondsman implements Steppable {
     public void makeAvailable() {
         for (int i = 0; i < tasks.size(); i++) {
             if (((Task) tasks.objs[i]).isDone()) {
-                ((Task) tasks.objs[i]).setAvailable(true);
-                ((Task) tasks.objs[i]).setDone(false);
+                if(((Task) tasks.objs[i]).isTaskReady()){
+                    ((Task) tasks.objs[i]).setAvailable(true);
+                    ((Task) tasks.objs[i]).setDone(false);
+                }
             }
         }
     }

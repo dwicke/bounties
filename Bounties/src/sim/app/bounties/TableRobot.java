@@ -36,9 +36,9 @@ public class TableRobot extends AbstractRobot implements Steppable {
     Bondsman bondsman;
     double epsilon = .0025;
     boolean randomChosen = false;
-    double epsilonChooseRandomTask = 0.2;
+    double epsilonChooseRandomTask = .01;
     boolean decideTaskFailed = false;
-        
+    Bag whoWasDoingWhenIDecided = new Bag();
     /**
      * Call this before scheduling the robots.
      * @param state the bounties state
@@ -46,7 +46,7 @@ public class TableRobot extends AbstractRobot implements Steppable {
     public void init(SimState state) {
         bountyState = ((Bounties)state);
         bondsman = bountyState.bondsman;
-        myQtable = new QTable(bondsman.getTotalNumTasks(), bondsman.getTotalNumRobots(), .10, .1);// focus on current reward
+        myQtable = new QTable(bondsman.getTotalNumTasks(), bondsman.getTotalNumRobots(), .1, .1);// focus on current reward
         debug("In init for id: " + id);
         debug("Qtable(row = task_id  col = robot_id) for id: " + id + " \n" + myQtable.getQTableAsString());
         pickRandomTask();
@@ -126,6 +126,11 @@ public class TableRobot extends AbstractRobot implements Steppable {
             int aID = (int) agentsWorking.objs[i];
             myQtable.update(curTask.getID(), aID, (double)reward);
         }
+        /* for(int i = 0; i < whoWasDoingWhenIDecided.size(); i++){
+            int aID = ((IRobot)whoWasDoingWhenIDecided.objs[i]).getId();
+            myQtable.update(curTask.getID(), aID, (double)reward);
+        }*/
+        
     }
     
     /**
@@ -150,6 +155,7 @@ public class TableRobot extends AbstractRobot implements Steppable {
             double cur = (epsilon + qValue) * (((Task) availTasks.objs[i]).getCurrentReward(this));
            debug("Cur = " + cur + " taskID = " + ((Task) availTasks.objs[i]).getID() + " curent reward = " + (((Task) availTasks.objs[i]).getCurrentReward(this)) + " q-value = " + qValue);
             if (cur > max) {
+                whoWasDoingWhenIDecided = peopleWorkingOnTaski;
                 bestTaskIndex = i;
                 max = cur;
             }
@@ -178,7 +184,7 @@ public class TableRobot extends AbstractRobot implements Steppable {
     public void jumpship(Task newTask) {
         if (bondsman.changeTask(this, curTask, newTask, bountyState) == true) {
                 // then I successfully jumped ship! so learn
-                learn(0, bondsman.whoseDoingTaskByID(curTask));
+              //  learn(0, bondsman.whoseDoingTaskByID(curTask));
                 curTask = newTask;
                 updateStatistics(true,curTask.getID(),numTimeSteps);
             } else {
@@ -213,6 +219,9 @@ public class TableRobot extends AbstractRobot implements Steppable {
      * @return true if i made it to the task
      */
     public boolean gotoTask() {
+        if(bountyState == null || curTask == null){
+            System.err.println("one was null " + bountyState + "  " + curTask);
+        }
         return gotoTaskPosition(bountyState, curTask);
     }
     

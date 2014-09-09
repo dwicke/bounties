@@ -95,6 +95,7 @@ public class Bounties extends SimState {
     }
     public double getAverageTicks(){
         double sum =0;
+        if(bondsman==null) return 0.0;
         Bag tasks = bondsman.getTasks();
         if(tasks==null) return -1;
         double count = 0;
@@ -109,6 +110,7 @@ public class Bounties extends SimState {
     }
     public double getTotalTicks(){
         double sum =0;
+        if(bondsman==null) return 0.0;
         Bag tasks = bondsman.getTasks();
         if(tasks==null) return -1;
         for(int i = 0; i< tasks.objs.length; i++){
@@ -316,7 +318,7 @@ public class Bounties extends SimState {
         // now schedule the bondsman so that it can add more tasks as needed.
         schedule.scheduleRepeating(Schedule.EPOCH+numRobots,0, bondsman, 1);
         //schedule statistics gatherer
-        schedule.scheduleRepeating(Schedule.EPOCH+numRobots+1,0,stats,1);
+        //schedule.scheduleRepeating(Schedule.EPOCH+numRobots+1,0,stats,1);
     }
 
     public static void main(String[] args) {

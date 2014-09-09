@@ -1,9 +1,12 @@
 package sim.app.bounties;
 
+import ec.util.MersenneTwister;
+import ec.util.MersenneTwisterFast;
 import java.awt.Color;
 import java.awt.Graphics2D;
 import java.util.Arrays;
 import sim.app.bounties.robot.darwin.agent.Real;
+import sim.engine.SimState;
 import sim.field.grid.SparseGrid2D;
 import sim.portrayal.DrawInfo2D;
 import sim.portrayal.Fixed2D;
@@ -28,7 +31,8 @@ public class Task implements Real, Fixed2D{
     private int currentReward = 0; // controlled by bondsman to increase
     private boolean done = false; // true when at the goal false otherwise
     private boolean available = true;// true when a robot is not carrying and not at a goal it is false if not at the
-    private Int2D initialLocation;// location
+    private Int2D realLocation;// location
+    private Int2D initialLocation; 
     private int id = 0;
     private int defaultReward = 100;
     private Goal goal;
@@ -40,15 +44,21 @@ public class Task implements Real, Fixed2D{
     private int perAgentReward[]; // the reward that is individualized for each agent like if they jumpship this might not be 0
     private long finishedTime = -1;
     private Bag lastAgentsWorkingOnTask; // these are the agents working on the task when someone finished it
-    
+    private int timeUntilRespawn = 0;
+    private MersenneTwisterFast rand = null; 
+    Bounties hackItIn = null; //this is so we can hack in the graphics
     private Task() {}
-    public Task(int numAgents) {
+    public Task(int numAgents, MersenneTwisterFast rand, Bounties hack) {
         perAgentReward = new int[numAgents];
         Arrays.fill(perAgentReward, defaultReward);
         currentReward = defaultReward;
+        this.rand = rand;
+        hackItIn = hack;
     }
     
-    
+    public void setRandom(MersenneTwisterFast rand){
+        this.rand = rand;
+    }
     public void setGoal(Goal goal) {
         this.goal = goal;
     }
@@ -86,7 +96,25 @@ public class Task implements Real, Fixed2D{
         return done;
     }
     public void setDone(boolean val){
+        if(val == true && done == false){
+            changeTaskLocation();
+        }
+        if(val==false && done == true){
+            makeRespawnTime();
+        }
         done = val;
+    }
+    public void changeTaskLocation(){
+        int newX = initialLocation.x + (int)Math.round((rand.nextGaussian() * 5) - 2.5);
+        int newY = initialLocation.y + (int)Math.round((rand.nextGaussian() * 5) - 2.5);
+        //System.err.println(initialLocation.x);
+        realLocation = new Int2D(newX,newY);
+        this.hackItIn.tasksGrid.setObjectLocation(this, realLocation);
+    }
+    public boolean isTaskReady(){//check to see if this is finally time to spawn.
+        if(isDone()==true) return true;
+        timeUntilRespawn--;
+        return timeUntilRespawn==0;
     }
     public void setLastFinished(int robotid, long timestamp){
         lastFinishedRobotID =  robotid;
@@ -115,8 +143,13 @@ public class Task implements Real, Fixed2D{
     public long getLastFinishedTime() {
         return finishedTime;
     }
-    
+    public void makeRespawnTime(){
+        timeUntilRespawn = 10 + (int)(Math.round(rand.nextGaussian())*10-5);
+    }
     public void setAvailable(boolean available) {
+        if(available == true){
+            makeRespawnTime();
+        }
         this.available = available;
     }
     public boolean getIsAvailable() {
@@ -157,10 +190,11 @@ public class Task implements Real, Fixed2D{
         this.id = id; 
     }
     public Int2D getLocation() {
-        return initialLocation;
+        return realLocation;
     }
     public void setLoc(Int2D loc) {
         this.initialLocation = loc;
+        changeTaskLocation();
     }
 
     
@@ -175,7 +209,7 @@ public class Task implements Real, Fixed2D{
 
     public Double2D getRealTargetLocation()
     {
-        return new Double2D((initialLocation.x - 30) * 0.1, (initialLocation.y - 20) * 0.1);
+        return new Double2D((realLocation.x - 30) * 0.1, (realLocation.y - 20) * 0.1);
     }
    
     public double getOrientation() { return 0; }
@@ -185,6 +219,7 @@ public class Task implements Real, Fixed2D{
         
         initialLocation = (Int2D) newObjectLocation;
         System.err.println("Set new location to: " + initialLocation.toCoordinates());
+        realLocation = initialLocation;
         //((SparseGrid2D)field).setObjectLocation(this, initialLocation);// move myself
         return true;
     }
