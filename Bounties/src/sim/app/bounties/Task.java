@@ -1,6 +1,6 @@
 package sim.app.bounties;
 
-import ec.util.MersenneTwister;
+//import ec.util.MersenneTwister;
 import ec.util.MersenneTwisterFast;
 import java.awt.Color;
 import java.awt.Graphics2D;

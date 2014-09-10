@@ -26,7 +26,7 @@ import sim.util.Bag;
  * 
  * @author drew
  */
-public class TableRobot extends AbstractRobot implements Steppable {
+public class DyingTableRobot extends AbstractRobot implements Steppable {
     
     QTable myQtable;
     int numTimeSteps; // the number of timesteps since someone completed a task
@@ -34,11 +34,13 @@ public class TableRobot extends AbstractRobot implements Steppable {
     boolean iFinished = false; // true if I finish the cur task
     Bounties bountyState;
     Bondsman bondsman;
+    double deadEpsilon = .0001;
     double epsilon = .0025;
     boolean randomChosen = false;
-    double epsilonChooseRandomTask = .01;
+    double epsilonChooseRandomTask = 1;
     boolean decideTaskFailed = false;
     Bag whoWasDoingWhenIDecided = new Bag();
+    int deadCount = 0;
     /**
      * Call this before scheduling the robots.
      * @param state the bounties state
@@ -59,6 +61,14 @@ public class TableRobot extends AbstractRobot implements Steppable {
             // if finished current task then learn
         // pick task
         // goto task
+        if(state.random.nextDouble() < deadEpsilon){
+            deadCount = 500;
+        }
+        if(deadCount>0){
+            deadCount--;
+            return;
+        }
+        
         if (decideTaskFailed) {
             decideTaskFailed = decideNextTask();
         } else {

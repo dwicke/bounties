@@ -26,7 +26,7 @@ import sim.util.Bag;
  * 
  * @author drew
  */
-public class TableRobot extends AbstractRobot implements Steppable {
+public class NoComTableRobot extends AbstractRobot implements Steppable {
     
     QTable myQtable;
     int numTimeSteps; // the number of timesteps since someone completed a task
@@ -36,7 +36,7 @@ public class TableRobot extends AbstractRobot implements Steppable {
     Bondsman bondsman;
     double epsilon = .0025;
     boolean randomChosen = false;
-    double epsilonChooseRandomTask = .01;
+    double epsilonChooseRandomTask = .2;
     boolean decideTaskFailed = false;
     Bag whoWasDoingWhenIDecided = new Bag();
     /**
@@ -63,22 +63,22 @@ public class TableRobot extends AbstractRobot implements Steppable {
             decideTaskFailed = decideNextTask();
         } else {
             numTimeSteps++;
-            if (finishedTask()) {
-                learn(0.0, curTask.getLastAgentsWorkingOnTask()); // then learn from it
-                jumpHome(); // someone else finished the task so start again
-                curTask = null;
-                numTimeSteps = 0;
-                decideTaskFailed = decideNextTask();
-                return; // can't start it in the same timestep that i chose it since doesn't happen if I was the one who completed it
-            } else if (!randomChosen) {
-                pickTask(); // There will always be a task to choose from if i am here.
-            }
+            
 
             if (gotoTask()) { // if i made it to the task then finish it and learn
+                if (finishedTask()) {
+                    learn(0.0, curTask.getLastAgentsWorkingOnTask()); // then learn from it
+                    jumpHome(); // someone else finished the task so start again
+                    curTask = null;
+                    numTimeSteps = 0;
+                    decideTaskFailed = decideNextTask();
+                    return; // can't start it in the same timestep that i chose it since doesn't happen if I was the one who completed it
+                } 
                 jumpHome();
                 iFinished = true;
                 curTask.setLastFinished(id, bountyState.schedule.getSteps(), bondsman.whoseDoingTaskByID(curTask));
                 bondsman.finishTask(curTask, id, bountyState.schedule.getSteps());
+                
                 learn(1.0 / (double)numTimeSteps, curTask.getLastAgentsWorkingOnTask());
                 curTask = null;
                 numTimeSteps = 0;
@@ -114,7 +114,7 @@ public class TableRobot extends AbstractRobot implements Steppable {
      * @return true if finished false otherwise
      */
     public boolean finishedTask() {
-        return curTask.getLastFinishedTime() != lastSeenFinished;
+        return curTask.getLastFinishedTime() != lastSeenFinished ;
     }
     /**
      * Learn given the reward and the current task
@@ -183,14 +183,7 @@ public class TableRobot extends AbstractRobot implements Steppable {
      */
     public void jumpship(Task newTask) {
         
-        if (bondsman.changeTask(this, curTask, newTask, bountyState) == true) {
-                // then I successfully jumped ship! so learn
-              //  learn(0, bondsman.whoseDoingTaskByID(curTask));
-                curTask = newTask;
-                updateStatistics(true,curTask.getID(),numTimeSteps);
-            } else {
-                updateStatistics(false,curTask.getID(),numTimeSteps);
-            }
+       //nope, not with no communication
     }
     
     public void pickRandomTask() {
