@@ -44,6 +44,9 @@ public class Bounties extends SimState {
     boolean rotateRobots  = false;
     boolean lastRotateValue = false;
     int offset = 0;
+    long maxRotateSteps = 400000;
+    
+    
     public void setRotateRobots(boolean value){
            
         
@@ -255,6 +258,10 @@ public class Bounties extends SimState {
          if(myArgs !=null && keyExists("-dir", myArgs)) {
             dir = argumentForKey("-dir", myArgs);
         }
+         
+         if(myArgs !=null && keyExists("-rot", myArgs)) {
+            maxRotateSteps = Long.parseLong(argumentForKey("-rot", myArgs));
+        }
         
         //debug 
         prevRobotTabsCols = new double[numTasks];
@@ -347,7 +354,30 @@ public class Bounties extends SimState {
         schedule.scheduleRepeating(Schedule.EPOCH+numRobots,0, bondsman, 1);
         //schedule statistics gatherer
         schedule.scheduleRepeating(Schedule.EPOCH+numRobots+1,0,stats,1);
+        schedule.scheduleRepeating(Schedule.EPOCH+numRobots+2,0,new RotateBots(maxRotateSteps),1);
+        
+        
     }
+    
+    public class RotateBots implements Steppable {
+
+        long rotateStep;
+        boolean rotated = false;
+        
+        public RotateBots(long rotateStep) {
+            this.rotateStep = rotateStep;
+        }
+        
+        @Override
+        public void step(SimState state) {
+            if (state.schedule.getSteps() >= rotateStep && rotated == false) {
+                rotated = true;
+                setRotateRobots(!lastRotateValue);
+            }
+        }
+        
+    }
+    
 
     public static void main(String[] args) {
         myArgs = args;
