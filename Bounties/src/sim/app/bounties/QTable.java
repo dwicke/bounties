@@ -85,6 +85,32 @@ public class QTable implements java.io.Serializable {
         qtable[state][action] = oneMinusAlpha * qtable[state][action] + alpha * (double)reward;
       //  printTable();
     }
+    public void lesserUpdate(int state, int action, double reward) {
+        double tempAlpha = alpha/2;
+        qtable[state][action] = (1-tempAlpha) * qtable[state][action] + tempAlpha * (double)reward;
+      //  printTable();
+    }
+    public void meanUpdate(double gamma) {
+        
+        // average q-table
+        
+        double sum = 0.0;
+        for (int i = 0; i < qtable.length; i++) {
+            for (int j = 0; j < qtable[i].length; j++)
+                sum += qtable[i][j];
+        }
+        
+        // muliply the average by gamma
+        double avg = (sum / (double)(qtable.length * qtable[0].length)) * gamma;
+        
+        // Q[i][j] = Q[i][j]*(1-gamma) + gamma*avg
+        for (int i = 0; i < qtable.length; i++) {
+            for (int j = 0; j < qtable[i].length; j++)
+                qtable[i][j] = qtable[i][j] * (1 - gamma) + avg;
+        }
+        
+    }
+    
     
     public void update(int state, int action, double reward, int nextState) {
       
