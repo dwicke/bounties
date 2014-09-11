@@ -62,15 +62,7 @@ public class MeanTableRobot extends AbstractRobot implements Steppable {
             // if finished current task then learn
         // pick task
         // goto task
-         if(state.random.nextDouble() < deadEpsilon){
-            deadCount = 3000;
-            System.err.println("robot number " + this.id + " died at step " + state.schedule.getSteps());
-        }
-        if(deadCount>0){
-            deadCount--;
-            
-            return;
-        }
+         
         
         if (decideTaskFailed) {
             decideTaskFailed = decideNextTask();

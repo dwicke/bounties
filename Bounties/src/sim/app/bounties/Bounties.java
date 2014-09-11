@@ -226,8 +226,9 @@ public class Bounties extends SimState {
         return robotTabsCols;
     }
     static boolean keyExists(String key, String[] args) {
-        for (int x = 0; x < args.length; x++) {
-            if (args[x].equalsIgnoreCase(key)) {
+        
+        for (String arg : args) {
+            if (arg.equalsIgnoreCase(key)) {
                 return true;
             }
         }
@@ -247,10 +248,13 @@ public class Bounties extends SimState {
         super.start();  // clear out the schedule
         
         long maxNumSteps = 45000;
-        if(keyExists("for", myArgs)) {
+        if(myArgs !=null && keyExists("for", myArgs)) {
             maxNumSteps = Long.parseLong(argumentForKey("for", myArgs));
         }
-        
+        String dir = "C:\\Users\\dfreelan\\Dropbox";
+         if(myArgs !=null && keyExists("dir", myArgs)) {
+            dir = argumentForKey("dir", myArgs);
+        }
         
         //debug 
         prevRobotTabsCols = new double[numTasks];
@@ -318,9 +322,7 @@ public class Bounties extends SimState {
         for (int x = 0; x < numRobots; x++) {
             //GreedyBot bot = new GreedyBot();
 
-            MeanTableRobot bot = new MeanTableRobot();//139 //131
-            //TableRobot bot = new TableRobot();//139 //131
-            
+            MeanTableRobotWithDeath bot = new MeanTableRobotWithDeath();            
             robots[x] = bot;
             bot.setId(x);
             //int xloc = random.nextInt(GRID_WIDTH);
@@ -340,11 +342,11 @@ public class Bounties extends SimState {
             
         }
         
-        StatsPublisher stats = new StatsPublisher(this, maxNumSteps);
+        StatsPublisher stats = new StatsPublisher(this, maxNumSteps,dir);
         // now schedule the bondsman so that it can add more tasks as needed.
         schedule.scheduleRepeating(Schedule.EPOCH+numRobots,0, bondsman, 1);
         //schedule statistics gatherer
-        //schedule.scheduleRepeating(Schedule.EPOCH+numRobots+1,0,stats,1);
+        schedule.scheduleRepeating(Schedule.EPOCH+numRobots+1,0,stats,1);
     }
 
     public static void main(String[] args) {

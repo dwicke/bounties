@@ -6,11 +6,15 @@
 
 package sim.app.bounties.statistics;
 
+import java.io.File;
 import java.io.PrintWriter;
+import sim.app.bounties.AbstractRobot;
 import sim.app.bounties.Bounties;
+import sim.app.bounties.Task;
 import sim.engine.SimState;
 import sim.engine.Steppable;
 import sim.util.Bag;
+import sim.util.Int2D;
 
 /**
  *
@@ -19,19 +23,50 @@ import sim.util.Bag;
 public class StatsPublisher implements Steppable{
     Bounties board  = null;
     Bag bagOfTotal = new Bag();
+    Bag[] arrayOfBagsOfDecisions = null;
+    String directoryName;
     private long maxNumSteps;
-    public StatsPublisher(Bounties a, long maxNumSteps){
+    int numberOfDecisionsToRecord =1000;
+    public StatsPublisher(Bounties a, long maxNumSteps, String dir){
         this.board = a;
         this.maxNumSteps = maxNumSteps;
+        directoryName = dir;
+        arrayOfBagsOfDecisions = new Bag[board.getNumRobots()];
+        System.out.println("numROBOTS " + board.getNumRobots());
     }
     @Override
     public void step(SimState state) {
         
         bagOfTotal.add(board.getTotalTicks());
-        if(state.schedule.getSteps() >= maxNumSteps){
-           try{ PrintWriter writer = new PrintWriter("/Users/dfreelan/initialTest.test" + state.seed(), "UTF-8");
+        
+        if( maxNumSteps - state.schedule.getSteps() >numberOfDecisionsToRecord)
+        for(int i = 0; i<arrayOfBagsOfDecisions.length; i++){
+            arrayOfBagsOfDecisions[i] = new Bag();
+            arrayOfBagsOfDecisions[i].add(((AbstractRobot)board.getRobots()[i]).getLastDecision());
+           // System.err.println("key word" +  arrayOfBagsOfDecisions[i].objs[0]);
+        }
+
+        if(state.schedule.getSteps() >= maxNumSteps-2){
+           try{ 
+            File file = new File(directoryName + "/" + "maxTicks" + state.seed() + ".bounties");
+            file.getParentFile().mkdirs();   
+            PrintWriter writer = new PrintWriter(file, "UTF-8");
+           
             for(int i = 0; i<bagOfTotal.numObjs; i++){
                 writer.print(((Double)bagOfTotal.objs[i]) + ",");
+            }
+            Bag tasks = board.bondsman.getTasks();
+            for(int i = 0; i<arrayOfBagsOfDecisions.length; i++){
+                
+                File file2 = new File(directoryName + "/" + "robot#" + i + "/" +  "locations" +state.seed() + ".bounties");
+                file2.getParentFile().mkdirs();
+                PrintWriter writer2 = new PrintWriter(file2, "UTF-8");
+                System.out.println("arraybag robots" + arrayOfBagsOfDecisions[i]);
+                for(int a = 0; a<arrayOfBagsOfDecisions[i].numObjs; a++){
+                    Task theTask = (Task)tasks.get(Math.abs((Integer)arrayOfBagsOfDecisions[i].get(a)));
+                    writer2.write(theTask.getLocation().toCoordinates());
+                }
+                writer2.close();
             }
             writer.close();}catch(Exception e){e.printStackTrace(); System.exit(0);}
         }

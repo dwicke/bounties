@@ -77,9 +77,12 @@ public class AbstractRobot implements IRobot {
        if(jumpedShip)
            multiplier = -1;
       // System.out.println("updated decisionsMade at " + rollingHistoryCounter + " with 10");
-       decisionsMade[rollingHistoryCounter] = taskID*multiplier + 10;
+       decisionsMade[rollingHistoryCounter] = taskID*multiplier;
        timeOnTask[rollingHistoryCounter] = totalTimeOnTask;
        rollingHistoryCounter = (rollingHistoryCounter +1 )%historySize;
+    }
+    public int getLastDecision(){
+        return decisionsMade[rollingHistoryCounter];
     }
 
     public boolean gotoGoalPosition(final SimState state, Real position) {

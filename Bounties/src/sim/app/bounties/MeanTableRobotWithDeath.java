@@ -26,7 +26,7 @@ import sim.util.Bag;
  * 
  * @author drew
  */
-public class DyingTableRobot extends AbstractRobot implements Steppable {
+public class MeanTableRobotWithDeath extends AbstractRobot implements Steppable {
     
     QTable myQtable;
     int numTimeSteps; // the number of timesteps since someone completed a task
@@ -34,12 +34,13 @@ public class DyingTableRobot extends AbstractRobot implements Steppable {
     boolean iFinished = false; // true if I finish the cur task
     Bounties bountyState;
     Bondsman bondsman;
-    double deadEpsilon = .0001;
     double epsilon = .0025;
     boolean randomChosen = false;
-    double epsilonChooseRandomTask = 1;
+    double epsilonChooseRandomTask = .01;
     boolean decideTaskFailed = false;
     Bag whoWasDoingWhenIDecided = new Bag();
+    double gamma = .05;
+    double deadEpsilon = .0001;
     int deadCount = 0;
     int deadLength = 2000;
     int dieEveryN = 5000;
@@ -56,7 +57,6 @@ public class DyingTableRobot extends AbstractRobot implements Steppable {
         debug("Qtable(row = task_id  col = robot_id) for id: " + id + " \n" + myQtable.getQTableAsString());
         pickRandomTask();
         numTimeSteps = 0;
-        
     }
     
     @Override
@@ -65,7 +65,7 @@ public class DyingTableRobot extends AbstractRobot implements Steppable {
             // if finished current task then learn
         // pick task
         // goto task
-         if(state.schedule.getSteps()!=0 && state.schedule.getSteps()%twoDieEveryN == 0){
+        if(state.schedule.getSteps()!=0 && state.schedule.getSteps()%twoDieEveryN == 0){
             if(id==0 || id == 1){
                 deadCount = deadLength;
             }
@@ -76,12 +76,10 @@ public class DyingTableRobot extends AbstractRobot implements Steppable {
             }
             
         }
-         
         if(deadCount>0){
             deadCount--;
             return;
         }
-        
         if (decideTaskFailed) {
             decideTaskFailed = decideNextTask();
         } else {
@@ -144,11 +142,18 @@ public class DyingTableRobot extends AbstractRobot implements Steppable {
      * @param reward the reward 
      */
     public void learn(double reward, Bag agentsWorking) { 
-        
-        for(int i = 0; i < agentsWorking.size(); i++){
-            int aID = (int) agentsWorking.objs[i];
-            myQtable.update(curTask.getID(), aID, (double)reward);
+        if(agentsWorking.size() == 1)
+             myQtable.update(curTask.getID(), this.id, (double)reward);
+        else{
+            for(int i = 0; i < agentsWorking.size(); i++){
+                int aID = (int) agentsWorking.objs[i];
+                if(aID != this.id)
+                myQtable.update(curTask.getID(), aID, (double)reward);
+            }
+            // myQtable.update(curTask.getID(), this.id, (double)reward);
+            myQtable.lesserUpdate(curTask.getID(), this.id, (double)reward);
         }
+        myQtable.meanUpdate(gamma);
         /* for(int i = 0; i < whoWasDoingWhenIDecided.size(); i++){
             int aID = ((IRobot)whoWasDoingWhenIDecided.objs[i]).getId();
             myQtable.update(curTask.getID(), aID, (double)reward);
