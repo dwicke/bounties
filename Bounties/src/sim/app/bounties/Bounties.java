@@ -34,6 +34,7 @@ public class Bounties extends SimState {
     int avgCount = 0;
     public Bondsman bondsman;
     public int numRobots = 4;
+    public static String[] myArgs;
     
     public IRobot robots[];// index into this array corresponds to its id
     
@@ -224,9 +225,32 @@ public class Bounties extends SimState {
         }
         return robotTabsCols;
     }
+    static boolean keyExists(String key, String[] args) {
+        for (int x = 0; x < args.length; x++) {
+            if (args[x].equalsIgnoreCase(key)) {
+                return true;
+            }
+        }
+        return false;
+    }
 
+    static String argumentForKey(String key, String[] args) {
+        for (int x = 0; x < args.length - 1; x++) // if a key has an argument, it can't be the last string
+        {
+            if (args[x].equalsIgnoreCase(key)) {
+                return args[x + 1];
+            }
+        }
+        return null;
+    }
     public void start() {
         super.start();  // clear out the schedule
+        
+        long maxNumSteps = 45000;
+        if(keyExists("for", myArgs)) {
+            maxNumSteps = Long.parseLong(argumentForKey("for", myArgs));
+        }
+        
         
         //debug 
         prevRobotTabsCols = new double[numTasks];
@@ -316,7 +340,7 @@ public class Bounties extends SimState {
             
         }
         
-        StatsPublisher stats = new StatsPublisher(this,0);
+        StatsPublisher stats = new StatsPublisher(this, maxNumSteps);
         // now schedule the bondsman so that it can add more tasks as needed.
         schedule.scheduleRepeating(Schedule.EPOCH+numRobots,0, bondsman, 1);
         //schedule statistics gatherer
@@ -324,6 +348,7 @@ public class Bounties extends SimState {
     }
 
     public static void main(String[] args) {
+        myArgs = args;
         doLoop(Bounties.class, args);
         System.exit(0);
     }

@@ -19,14 +19,16 @@ import sim.util.Bag;
 public class StatsPublisher implements Steppable{
     Bounties board  = null;
     Bag bagOfTotal = new Bag();
-    public StatsPublisher(Bounties a, int numSteps){
+    private long maxNumSteps;
+    public StatsPublisher(Bounties a, long maxNumSteps){
         this.board = a;
+        this.maxNumSteps = maxNumSteps;
     }
     @Override
     public void step(SimState state) {
         
         bagOfTotal.add(board.getTotalTicks());
-        if(state.schedule.getSteps() >= 45000){
+        if(state.schedule.getSteps() >= maxNumSteps){
            try{ PrintWriter writer = new PrintWriter("/Users/dfreelan/initialTest.test" + state.seed(), "UTF-8");
             for(int i = 0; i<bagOfTotal.numObjs; i++){
                 writer.print(((Double)bagOfTotal.objs[i]) + ",");
