@@ -248,12 +248,12 @@ public class Bounties extends SimState {
         super.start();  // clear out the schedule
         
         long maxNumSteps = 45000;
-        if(myArgs !=null && keyExists("for", myArgs)) {
-            maxNumSteps = Long.parseLong(argumentForKey("for", myArgs));
+        if(myArgs !=null && keyExists("-for", myArgs)) {
+            maxNumSteps = Long.parseLong(argumentForKey("-for", myArgs));
         }
         String dir = "C:\\Users\\dfreelan\\Dropbox";
-         if(myArgs !=null && keyExists("dir", myArgs)) {
-            dir = argumentForKey("dir", myArgs);
+         if(myArgs !=null && keyExists("-dir", myArgs)) {
+            dir = argumentForKey("-dir", myArgs);
         }
         
         //debug 

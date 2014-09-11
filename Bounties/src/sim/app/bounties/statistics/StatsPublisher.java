@@ -68,6 +68,7 @@ public class StatsPublisher implements Steppable{
                 }
                 writer2.close();
             }
+            System.out.println("wrote to " + directoryName + "/" + "maxTicks" + state.seed() + ".bounties");
             writer.close();}catch(Exception e){e.printStackTrace(); System.exit(0);}
         }
     }

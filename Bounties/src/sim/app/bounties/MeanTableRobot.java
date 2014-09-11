@@ -36,7 +36,7 @@ public class MeanTableRobot extends AbstractRobot implements Steppable {
     Bondsman bondsman;
     double epsilon = .0025;
     boolean randomChosen = false;
-    double epsilonChooseRandomTask = .01;
+    double epsilonChooseRandomTask = .1;
     boolean decideTaskFailed = false;
     Bag whoWasDoingWhenIDecided = new Bag();
     double gamma = .05;
@@ -135,7 +135,7 @@ public class MeanTableRobot extends AbstractRobot implements Steppable {
                 myQtable.update(curTask.getID(), aID, (double)reward);
             }
             // myQtable.update(curTask.getID(), this.id, (double)reward);
-            myQtable.lesserUpdate(curTask.getID(), this.id, (double)reward);
+            myQtable.update(curTask.getID(), this.id, (double)reward);
         }
         myQtable.meanUpdate(gamma);
         /* for(int i = 0; i < whoWasDoingWhenIDecided.size(); i++){

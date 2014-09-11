@@ -36,7 +36,7 @@ public class MeanTableRobotWithDeath extends AbstractRobot implements Steppable 
     Bondsman bondsman;
     double epsilon = .0025;
     boolean randomChosen = false;
-    double epsilonChooseRandomTask = .01;
+    double epsilonChooseRandomTask = .1;
     boolean decideTaskFailed = false;
     Bag whoWasDoingWhenIDecided = new Bag();
     double gamma = .05;

@@ -86,7 +86,7 @@ public class QTable implements java.io.Serializable {
       //  printTable();
     }
     public void lesserUpdate(int state, int action, double reward) {
-        double tempAlpha = alpha/2;
+        double tempAlpha = 0;
         qtable[state][action] = (1-tempAlpha) * qtable[state][action] + tempAlpha * (double)reward;
       //  printTable();
     }
