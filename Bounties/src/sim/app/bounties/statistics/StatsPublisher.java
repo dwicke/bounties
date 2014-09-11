@@ -32,6 +32,9 @@ public class StatsPublisher implements Steppable{
         this.maxNumSteps = maxNumSteps;
         directoryName = dir;
         arrayOfBagsOfDecisions = new Bag[board.getNumRobots()];
+        for(int i = 0; i<arrayOfBagsOfDecisions.length; i++){
+            arrayOfBagsOfDecisions[i] = new Bag();
+        }
         System.out.println("numROBOTS " + board.getNumRobots());
     }
     @Override
@@ -39,9 +42,8 @@ public class StatsPublisher implements Steppable{
         
         bagOfTotal.add(board.getTotalTicks());
         
-        if( maxNumSteps - state.schedule.getSteps() >numberOfDecisionsToRecord)
+        if( maxNumSteps - state.schedule.getSteps() < numberOfDecisionsToRecord)
         for(int i = 0; i<arrayOfBagsOfDecisions.length; i++){
-            arrayOfBagsOfDecisions[i] = new Bag();
             arrayOfBagsOfDecisions[i].add(((AbstractRobot)board.getRobots()[i]).getLastDecision());
            // System.err.println("key word" +  arrayOfBagsOfDecisions[i].objs[0]);
         }
