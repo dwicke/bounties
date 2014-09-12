@@ -26,7 +26,7 @@ public class StatsPublisher implements Steppable{
     Bag[] arrayOfBagsOfDecisions = null;
     String directoryName;
     private long maxNumSteps;
-    int numberOfDecisionsToRecord =1000;
+    int numberOfDecisionsToRecord =10000;
     public StatsPublisher(Bounties a, long maxNumSteps, String dir){
         this.board = a;
         this.maxNumSteps = maxNumSteps;
@@ -37,6 +37,7 @@ public class StatsPublisher implements Steppable{
         }
         System.out.println("numROBOTS " + board.getNumRobots());
     }
+    int previousID = 0;
     @Override
     public void step(SimState state) {
         
@@ -44,7 +45,9 @@ public class StatsPublisher implements Steppable{
         
         if( maxNumSteps - state.schedule.getSteps() < numberOfDecisionsToRecord)
         for(int i = 0; i<arrayOfBagsOfDecisions.length; i++){
-            arrayOfBagsOfDecisions[i].add(((AbstractRobot)board.getRobots()[i]).getLastDecision());
+            int lastDecision = ((AbstractRobot)board.getRobots()[i]).getLastDecision();
+            if(previousID != lastDecision)
+                arrayOfBagsOfDecisions[i].add(lastDecision);
            // System.err.println("key word" +  arrayOfBagsOfDecisions[i].objs[0]);
         }
 
