@@ -13,16 +13,7 @@ import sim.util.Bag;
 /**
  * Main things:
  * 
- * You will teleport home when:
- * 1. you finish the task
- * 2. someone else finishes the task
- * 
- * At the end of each step you will have at least made progress toward your current task
- * 
- * Before and after the current step you will not have a null curTask
- * unless there are not enough available tasks and then you will each
- * timestep check and call decideTask().
- * 
+ * picks task by max money/time
  * 
  * @author drew
  */
@@ -52,44 +43,30 @@ public class OptimalRobot extends AbstractRobot implements Steppable {
         myQtable = new QTable(bondsman.getTotalNumTasks(), bondsman.getTotalNumRobots(), .1, .1);// focus on current reward
         debug("In init for id: " + id);
         debug("Qtable(row = task_id  col = robot_id) for id: " + id + " \n" + myQtable.getQTableAsString());
-        pickRandomTask();
+        decideNextTask();
         numTimeSteps = 0;
     }
     
     @Override
     public void step(SimState state) {
-        // check if someone else finished the task I was working on
-            // if finished current task then learn
-        // pick task
-        // goto task
-         
+       
         
-        if (decideTaskFailed) {
-            decideTaskFailed = decideNextTask();
-        } else {
-            numTimeSteps++;
-            if (finishedTask()) {
-                
-                jumpHome(); // someone else finished the task so start again
-                curTask = null;
-                numTimeSteps = 0;
-                decideTaskFailed = decideNextTask();
-                return; // can't start it in the same timestep that i chose it since doesn't happen if I was the one who completed it
-            } else if (!randomChosen) {
-                pickTask(); // There will always be a task to choose from if i am here.
+         
+            if(curTask == null) {
+                if(decideNextTask()) {
+                    return; // failed to pick a task.
+                }
             }
-
+            numTimeSteps++;
             if (gotoTask()) { // if i made it to the task then finish it and learn
                 jumpHome();
                 iFinished = true;
                 curTask.setLastFinished(id, bountyState.schedule.getSteps(), bondsman.whoseDoingTaskByID(curTask));
                 bondsman.finishTask(curTask, id, bountyState.schedule.getSteps());
-                learn(1.0 / (double)numTimeSteps, curTask.getLastAgentsWorkingOnTask());
                 curTask = null;
                 numTimeSteps = 0;
-                decideTaskFailed = decideNextTask();
             }
-        }
+        
         
     }
     
@@ -103,44 +80,13 @@ public class OptimalRobot extends AbstractRobot implements Steppable {
         if(bondsman.getAvailableTasks().isEmpty()) {
             return true; // wasn't succesful
         }
-        
-        
         randomChosen = false;
         pickTask();
-        
         return false;// then there was a task i could choose from
     }
     
-    /**
-     * Returns whether the task was finished by someone else
-     * @return true if finished false otherwise
-     */
-    public boolean finishedTask() {
-        return curTask.getLastFinishedTime() != lastSeenFinished;
-    }
-    /**
-     * Learn given the reward and the current task
-     * @param reward the reward 
-     */
-    public void learn(double reward, Bag agentsWorking) { 
-        if(agentsWorking.size() == 1)
-             myQtable.update(curTask.getID(), this.id, (double)reward);
-        else{
-            for(int i = 0; i < agentsWorking.size(); i++){
-                int aID = (int) agentsWorking.objs[i];
-                if(aID != this.id)
-                myQtable.update(curTask.getID(), aID, (double)reward);
-            }
-            // myQtable.update(curTask.getID(), this.id, (double)reward);
-            myQtable.update(curTask.getID(), this.id, (double)reward);
-        }
-        myQtable.meanUpdate(gamma);
-        /* for(int i = 0; i < whoWasDoingWhenIDecided.size(); i++){
-            int aID = ((IRobot)whoWasDoingWhenIDecided.objs[i]).getId();
-            myQtable.update(curTask.getID(), aID, (double)reward);
-        }*/
-        
-    }
+    
+   
     
     /**
      * Pick the current task to do.
@@ -158,71 +104,23 @@ public class OptimalRobot extends AbstractRobot implements Steppable {
             peopleWorkingOnTaski = bondsman.whoseDoingTask((Task)availTasks.objs[i]);
             peopleWorkingOnTaski.add(this);
             
+            // distance from home to task (since we are at home when we choose to take a task)
+            double dist = 1.0 / ((double) (bountyState.tasksGrid.getObjectLocation((Task)availTasks.objs[i])).manhattanDistance(this.home));
             
-            double qValue = minQTableCalculation(peopleWorkingOnTaski,i);
             // need epsilon so will try something.
-            double cur = (epsilon + qValue) * (((Task) availTasks.objs[i]).getCurrentReward(this));
-           debug("Cur = " + cur + " taskID = " + ((Task) availTasks.objs[i]).getID() + " curent reward = " + (((Task) availTasks.objs[i]).getCurrentReward(this)) + " q-value = " + qValue);
-            if (cur > max) {
-                whoWasDoingWhenIDecided = peopleWorkingOnTaski;
-                bestTaskIndex = i;
-                max = cur;
+            double rewardPerDist = dist * (((Task) availTasks.objs[i]).getCurrentReward(this));
+           
+            if (rewardPerDist > max) {
+                curTask = ((Task)availTasks.objs[i]);
+                max = rewardPerDist;
             }
+            
         }
         
-        
-        Task newTask = ((Task)(availTasks.objs[bestTaskIndex]));
-        
-        if (curTask == null || curTask.getID() == newTask.getID()) {
-            // then i am not jumping ship and i need a new task
-            curTask = newTask;
-            updateStatistics(false,curTask.getID(),numTimeSteps);
-        } else {
-            // then I am jumping ship
-            jumpship(newTask);
-        }
-        bondsman.doingTask(id, curTask.getID());
-        // always set the lastSeenFinished
-        lastSeenFinished = curTask.getLastFinishedTime(); 
     }
     
-    /**
-     * do necessary things to jumpship
-     * @param newTask the task i am jumping to from curTask
-     */
-    public void jumpship(Task newTask) {
-        
-        if (bondsman.changeTask(this, curTask, newTask, bountyState) == true) {
-                // then I successfully jumped ship! so learn
-              //  learn(0, bondsman.whoseDoingTaskByID(curTask));
-                curTask = newTask;
-                updateStatistics(true,curTask.getID(),numTimeSteps);
-            } else {
-                updateStatistics(false,curTask.getID(),numTimeSteps);
-            }
-    }
-    
-    public void pickRandomTask() {
-        // pick randomly
-        
-        curTask = (Task)bondsman.getAvailableTasks().objs[bountyState.random.nextInt(bondsman.getAvailableTasks().size())];
-        bondsman.doingTask(id, curTask.getID());
-        lastSeenFinished = curTask.getLastFinishedTime();
-        updateStatistics(false,curTask.getID(),numTimeSteps);
-    }
-    
-    double minQTableCalculation(Bag peopleOnTask, int taskID){
-        //System.out.println(peopleOnTask.objs);
-        //System.out.println(peopleOnTask.objs[0]);
-        double max =  myQtable.getQValue(taskID, ((IRobot)peopleOnTask.objs[0]).getId());
-        for(int i = 1; i<peopleOnTask.size(); i++){
-            double foo = myQtable.getQValue(taskID, ((IRobot)peopleOnTask.objs[i]).getId());
-            if(foo<max){
-                max = foo;
-            }
-        }
-        return max;
-    }
+   
+  
     
     /**
      * Move toward the curTask
