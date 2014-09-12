@@ -35,7 +35,7 @@ public class Bounties extends SimState {
     public Bondsman bondsman;
     public int numRobots = 4;
     public static String[] myArgs;
-    
+    Leaderboard board;
     public IRobot robots[];// index into this array corresponds to its id
     
     int numTasks = 20;
@@ -281,7 +281,7 @@ public class Bounties extends SimState {
         Jumpship js = new ResetJumpship();
         bondsman = new Bondsman(numGoals, numTasks, js);
         bondsman.setWorld(this);
-        
+        board = new Leaderboard(numTasks, Long.MAX_VALUE);
         // make new grids
         goalsGrid = new SparseGrid2D(GRID_WIDTH, GRID_HEIGHT);
         
