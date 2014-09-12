@@ -80,12 +80,24 @@ public class SemiOptimalRobot extends AbstractRobot implements Steppable {
         if(bondsman.getAvailableTasks().isEmpty()) {
             return true; // wasn't succesful
         }
-        randomChosen = false;
-        pickTask();
+        if (bountyState.random.nextDouble() < epsilonChooseRandomTask) {
+            randomChosen = true;
+            pickRandomTask();
+        } else {
+            randomChosen = false;
+            pickTask();
+        }
         return false;// then there was a task i could choose from
     }
     
-    
+    public void pickRandomTask() {
+        // pick randomly
+        
+        curTask = (Task)bondsman.getAvailableTasks().objs[bountyState.random.nextInt(bondsman.getAvailableTasks().size())];
+        bondsman.doingTask(id, curTask.getID());
+        lastSeenFinished = curTask.getLastFinishedTime();
+        updateStatistics(false,curTask.getID(),numTimeSteps);
+    }
    
     
     /**
@@ -107,7 +119,7 @@ public class SemiOptimalRobot extends AbstractRobot implements Steppable {
             double dist = 1.0 / ((double) (((Task)availTasks.objs[i]).getInitialPosition()).manhattanDistance(this.home));
             
             // need epsilon so will try something.
-            double rewardPerDist = dist * (((Task) availTasks.objs[i]).getCurrentReward(this));
+            double rewardPerDist = (dist+ 0.0025) * (((Task) availTasks.objs[i]).getCurrentReward(this)) ;
            
             if (rewardPerDist > max) {
                 curTask = ((Task)availTasks.objs[i]);
