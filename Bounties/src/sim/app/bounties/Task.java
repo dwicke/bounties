@@ -196,6 +196,10 @@ public class Task implements Real, Fixed2D{
         this.initialLocation = loc;
         changeTaskLocation();
     }
+    
+    public Int2D getInitialPosition() {
+        return this.initialLocation;
+    }
 
     
     public int getNumRobotsDoingTask() {

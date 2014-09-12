@@ -135,7 +135,7 @@ public class MeanTableRobot extends AbstractRobot implements Steppable {
                 myQtable.update(curTask.getID(), aID, (double)reward);
             }
             // myQtable.update(curTask.getID(), this.id, (double)reward);
-            myQtable.update(curTask.getID(), this.id, (double)reward);
+            myQtable.lesserUpdate(curTask.getID(), this.id, (double)reward);
         }
         myQtable.meanUpdate(gamma);
         /* for(int i = 0; i < whoWasDoingWhenIDecided.size(); i++){

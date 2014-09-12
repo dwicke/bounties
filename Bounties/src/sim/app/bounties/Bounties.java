@@ -35,7 +35,7 @@ public class Bounties extends SimState {
     public Bondsman bondsman;
     public int numRobots = 4;
     public static String[] myArgs;
-    
+    Leaderboard board;
     public IRobot robots[];// index into this array corresponds to its id
     
     int numTasks = 20;
@@ -321,7 +321,7 @@ public class Bounties extends SimState {
         quads[3] = new Int2D(GRID_WIDTH - 1, 0);
         quads[2] = new Int2D(GRID_WIDTH - 1, GRID_HEIGHT - 1);
         
-        
+        board = new Leaderboard(numTasks, Long.MAX_VALUE);
         robots = new IRobot[numRobots];
         robotgrid = new SparseGrid2D(GRID_WIDTH, GRID_HEIGHT);
         
@@ -329,7 +329,7 @@ public class Bounties extends SimState {
         for (int x = 0; x < numRobots; x++) {
             //GreedyBot bot = new GreedyBot();
 
-            TableRobot bot = new TableRobot();            
+            MeanTableRobot bot = new MeanTableRobot();            
             robots[x] = bot;
             bot.setId(x);
             //int xloc = random.nextInt(GRID_WIDTH);
