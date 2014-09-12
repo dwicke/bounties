@@ -250,7 +250,7 @@ public class Bounties extends SimState {
     public void start() {
         super.start();  // clear out the schedule
         
-        long maxNumSteps = 45000;
+        long maxNumSteps = Long.MAX_VALUE;
         if(myArgs !=null && keyExists("-for", myArgs)) {
             maxNumSteps = Long.parseLong(argumentForKey("-for", myArgs));
         }
@@ -329,7 +329,7 @@ public class Bounties extends SimState {
         for (int x = 0; x < numRobots; x++) {
             //GreedyBot bot = new GreedyBot();
 
-            OptimalRobot bot = new OptimalRobot();            
+            TableRobot bot = new TableRobot();            
             robots[x] = bot;
             bot.setId(x);
             //int xloc = random.nextInt(GRID_WIDTH);
