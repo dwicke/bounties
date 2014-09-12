@@ -66,18 +66,24 @@ public class TableRobotWithDeath extends AbstractRobot implements Steppable {
         if(state.schedule.getSteps()!=0 && state.schedule.getSteps()%twoDieEveryN == 0){
             if(id==0 || id == 1){
                 deadCount = deadLength;
+                bondsman.doingTask(id, -1);// don't do any task
+                jumpHome();
+                curTask = null;
+                decideTaskFailed = true;
             }
             
         }else if(state.schedule.getSteps()!=0 && state.schedule.getSteps()%dieEveryN == 0){
             if(id==0){
                 deadCount = deadLength;
+                bondsman.doingTask(id, -1);// don't do any task
+                jumpHome();
+                curTask = null;
+                decideTaskFailed = true;
             }
             
         }
         if(deadCount>0){
             deadCount--;
-            if(bondsman !=null)
-               bondsman.doingTask(id,-1);
             return;
         }
         if (decideTaskFailed) {
