@@ -78,6 +78,8 @@ public class MeanTableRobotWithDeath extends AbstractRobot implements Steppable 
         }
         if(deadCount>0){
             deadCount--;
+            if(bondsman !=null)
+                bondsman.doingTask(id,-1);
             return;
         }
         if (decideTaskFailed) {

@@ -26,7 +26,7 @@ import sim.util.Bag;
  * 
  * @author drew
  */
-public class DyingTableRobot extends AbstractRobot implements Steppable {
+public class TableRobotWithDeath extends AbstractRobot implements Steppable {
     
     QTable myQtable;
     int numTimeSteps; // the number of timesteps since someone completed a task
@@ -34,10 +34,9 @@ public class DyingTableRobot extends AbstractRobot implements Steppable {
     boolean iFinished = false; // true if I finish the cur task
     Bounties bountyState;
     Bondsman bondsman;
-    double deadEpsilon = .0001;
     double epsilon = .0025;
     boolean randomChosen = false;
-    double epsilonChooseRandomTask = 1;
+    double epsilonChooseRandomTask = .1;
     boolean decideTaskFailed = false;
     Bag whoWasDoingWhenIDecided = new Bag();
     int deadCount = 0;
@@ -56,7 +55,6 @@ public class DyingTableRobot extends AbstractRobot implements Steppable {
         debug("Qtable(row = task_id  col = robot_id) for id: " + id + " \n" + myQtable.getQTableAsString());
         pickRandomTask();
         numTimeSteps = 0;
-        
     }
     
     @Override
@@ -65,7 +63,7 @@ public class DyingTableRobot extends AbstractRobot implements Steppable {
             // if finished current task then learn
         // pick task
         // goto task
-         if(state.schedule.getSteps()!=0 && state.schedule.getSteps()%twoDieEveryN == 0){
+        if(state.schedule.getSteps()!=0 && state.schedule.getSteps()%twoDieEveryN == 0){
             if(id==0 || id == 1){
                 deadCount = deadLength;
             }
@@ -76,12 +74,12 @@ public class DyingTableRobot extends AbstractRobot implements Steppable {
             }
             
         }
-         
         if(deadCount>0){
             deadCount--;
+            if(bondsman !=null)
+               bondsman.doingTask(id,-1);
             return;
         }
-        
         if (decideTaskFailed) {
             decideTaskFailed = decideNextTask();
         } else {

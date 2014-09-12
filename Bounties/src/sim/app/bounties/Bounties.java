@@ -35,7 +35,7 @@ public class Bounties extends SimState {
     public Bondsman bondsman;
     public int numRobots = 4;
     public static String[] myArgs;
-    Leaderboard board;
+    
     public IRobot robots[];// index into this array corresponds to its id
     
     int numTasks = 20;
@@ -44,7 +44,7 @@ public class Bounties extends SimState {
     boolean rotateRobots  = false;
     boolean lastRotateValue = false;
     int offset = 0;
-    long maxRotateSteps = 400000;
+    long maxRotateSteps = Long.MAX_VALUE;
     
     
     public void setRotateRobots(boolean value){
@@ -53,8 +53,8 @@ public class Bounties extends SimState {
         Int2D quads[] = new Int2D[4];
         quads[0] = new Int2D(0, 0);
         quads[1] = new Int2D(0, GRID_HEIGHT -1);
-        quads[2] = new Int2D(GRID_WIDTH - 1, 0);
-        quads[3] = new Int2D(GRID_WIDTH - 1, GRID_HEIGHT - 1);
+        quads[3] = new Int2D(GRID_WIDTH - 1, 0);
+        quads[2] = new Int2D(GRID_WIDTH - 1, GRID_HEIGHT - 1);
 
         //robotgrid = new SparseGrid2D(GRID_WIDTH, GRID_HEIGHT);
         if(value!= lastRotateValue){
@@ -281,7 +281,7 @@ public class Bounties extends SimState {
         Jumpship js = new ResetJumpship();
         bondsman = new Bondsman(numGoals, numTasks, js);
         bondsman.setWorld(this);
-        board = new Leaderboard(numTasks, Long.MAX_VALUE);
+        
         // make new grids
         goalsGrid = new SparseGrid2D(GRID_WIDTH, GRID_HEIGHT);
         
@@ -318,8 +318,8 @@ public class Bounties extends SimState {
         Int2D quads[] = new Int2D[4];
         quads[0] = new Int2D(0, 0);
         quads[1] = new Int2D(0, GRID_HEIGHT -1);
-        quads[2] = new Int2D(GRID_WIDTH - 1, 0);
-        quads[3] = new Int2D(GRID_WIDTH - 1, GRID_HEIGHT - 1);
+        quads[3] = new Int2D(GRID_WIDTH - 1, 0);
+        quads[2] = new Int2D(GRID_WIDTH - 1, GRID_HEIGHT - 1);
         
         
         robots = new IRobot[numRobots];
@@ -329,7 +329,7 @@ public class Bounties extends SimState {
         for (int x = 0; x < numRobots; x++) {
             //GreedyBot bot = new GreedyBot();
 
-            TableRobot bot = new TableRobot();            
+            OptimalRobot bot = new OptimalRobot();            
             robots[x] = bot;
             bot.setId(x);
             //int xloc = random.nextInt(GRID_WIDTH);
@@ -363,7 +363,7 @@ public class Bounties extends SimState {
 
         long rotateStep;
         boolean rotated = false;
-        
+        int howManyTimes = 0;
         public RotateBots(long rotateStep) {
             this.rotateStep = rotateStep;
         }
@@ -372,7 +372,13 @@ public class Bounties extends SimState {
         public void step(SimState state) {
             if (state.schedule.getSteps() >= rotateStep && rotated == false) {
                 rotated = true;
-                setRotateRobots(!lastRotateValue);
+                if(howManyTimes%2 == 0){
+                    setRotateRobots(!lastRotateValue);
+                }else{
+                    setRotateRobots(!lastRotateValue);
+                    setRotateRobots(!lastRotateValue);// make them all go to opposite side of the board
+                }
+               
             }
         }
         

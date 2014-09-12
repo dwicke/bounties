@@ -53,7 +53,7 @@ public class MeanTableLeaderRobotWithDeath extends AbstractRobot implements Step
      */
     public void init(SimState state) {
         bountyState = ((Bounties)state);
-        board = bountyState.board;
+       // board = bountyState.bounties;
         bondsman = bountyState.bondsman;
         myQtable = new QTable(bondsman.getTotalNumTasks(), bondsman.getTotalNumRobots(), .1, .1);// focus on current reward
         debug("In init for id: " + id);

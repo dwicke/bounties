@@ -94,15 +94,14 @@ public class OptimalRobot extends AbstractRobot implements Steppable {
     public void pickTask() {
         
         Bag availTasks = bondsman.getAvailableTasks();
-        int bestTaskIndex = 0;
+      
      
         double max = -1; 
-        Bag peopleWorkingOnTaski = null;
+
         for (int i = 0; i < availTasks.numObjs; i++) { // over all tasks
 
             //need to figure out what "state" im in (who is already working on task + me)
-            peopleWorkingOnTaski = bondsman.whoseDoingTask((Task)availTasks.objs[i]);
-            peopleWorkingOnTaski.add(this);
+
             
             // distance from home to task (since we are at home when we choose to take a task)
             double dist = 1.0 / ((double) (bountyState.tasksGrid.getObjectLocation((Task)availTasks.objs[i])).manhattanDistance(this.home));
@@ -116,6 +115,8 @@ public class OptimalRobot extends AbstractRobot implements Steppable {
             }
             
         }
+        bondsman.doingTask(this.id, curTask.getID());
+        curTask.setAvailable(false);
         
     }
     
