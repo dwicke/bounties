@@ -329,7 +329,7 @@ public class Bounties extends SimState {
         for (int x = 0; x < numRobots; x++) {
             //GreedyBot bot = new GreedyBot();
 
-            OptimalRobot bot = new OptimalRobot();            
+             DyingTableRobot bot = new DyingTableRobot();            
             robots[x] = bot;
             bot.setId(x);
             //int xloc = random.nextInt(GRID_WIDTH);

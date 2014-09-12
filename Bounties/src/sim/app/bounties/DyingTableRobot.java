@@ -37,7 +37,8 @@ public class DyingTableRobot extends AbstractRobot implements Steppable {
     double deadEpsilon = .0001;
     double epsilon = .0025;
     boolean randomChosen = false;
-    double epsilonChooseRandomTask = 1;
+    double epsilonChooseRandomTask = .1;
+    double gamma = .05;
     boolean decideTaskFailed = false;
     Bag whoWasDoingWhenIDecided = new Bag();
     int deadCount = 0;
@@ -145,10 +146,18 @@ public class DyingTableRobot extends AbstractRobot implements Steppable {
      */
     public void learn(double reward, Bag agentsWorking) { 
         
-        for(int i = 0; i < agentsWorking.size(); i++){
-            int aID = (int) agentsWorking.objs[i];
-            myQtable.update(curTask.getID(), aID, (double)reward);
+        if(agentsWorking.size() == 1)
+             myQtable.update(curTask.getID(), this.id, (double)reward);
+        else{
+            for(int i = 0; i < agentsWorking.size(); i++){
+                int aID = (int) agentsWorking.objs[i];
+                if(aID != this.id)
+                myQtable.update(curTask.getID(), aID, (double)reward);
+            }
+            // myQtable.update(curTask.getID(), this.id, (double)reward);
+            myQtable.lesserUpdate(curTask.getID(), this.id, (double)reward);
         }
+        myQtable.meanUpdate(gamma);
         /* for(int i = 0; i < whoWasDoingWhenIDecided.size(); i++){
             int aID = ((IRobot)whoWasDoingWhenIDecided.objs[i]).getId();
             myQtable.update(curTask.getID(), aID, (double)reward);
