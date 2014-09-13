@@ -42,6 +42,22 @@ public class QTable implements java.io.Serializable {
         beta = discountBeta;
     }
     
+    
+    public QTable(int numStates, int numActions, double learningRate, double discountBeta, double initValue) {
+        this.numActions = numActions;
+        this.numStates = numStates;
+        setAlpha(learningRate);
+        qtable = new double[numStates][numActions];
+        for (int i = 0; i < numStates; i++) {
+            for (int j = 0; j < numActions; j++) {
+                qtable[i][j] = initValue;
+            }
+        }
+        V = new double[numStates];
+        beta = discountBeta;
+    }
+    
+    
     public QTable(int numStates, int numActions, double learningRate, double discountBeta, MersenneTwisterFast rand, double max, double min) {
         this.numActions = numActions;
         this.numStates = numStates;
