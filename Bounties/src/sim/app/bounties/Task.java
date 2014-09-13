@@ -54,6 +54,7 @@ public class Task implements Real, Fixed2D{
         currentReward = defaultReward;
         this.rand = rand;
         hackItIn = hack;
+        lastAgentsWorkingOnTask = new Bag();
     }
     
     public void setRandom(MersenneTwisterFast rand){
