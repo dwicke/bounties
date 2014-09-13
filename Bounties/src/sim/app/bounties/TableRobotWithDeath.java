@@ -149,14 +149,17 @@ public class TableRobotWithDeath extends AbstractRobot implements Steppable {
      */
     public void learn(double reward, Bag agentsWorking) { 
         
-        for(int i = 0; i < agentsWorking.size(); i++){
-            int aID = (int) agentsWorking.objs[i];
-            myQtable.update(curTask.getID(), aID, (double)reward);
+         if(agentsWorking.size() == 1)
+             myQtable.update(curTask.getID(), this.id, (double)reward);
+        else{
+            for(int i = 0; i < agentsWorking.size(); i++){
+                int aID = (int) agentsWorking.objs[i];
+                if(aID != this.id)
+                myQtable.update(curTask.getID(), aID, (double)reward);
+            }
+            // myQtable.update(curTask.getID(), this.id, (double)reward);
+            myQtable.update(curTask.getID(), this.id, (double)reward);
         }
-        /* for(int i = 0; i < whoWasDoingWhenIDecided.size(); i++){
-            int aID = ((IRobot)whoWasDoingWhenIDecided.objs[i]).getId();
-            myQtable.update(curTask.getID(), aID, (double)reward);
-        }*/
         
     }
     

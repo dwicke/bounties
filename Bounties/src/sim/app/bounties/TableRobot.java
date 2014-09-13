@@ -121,15 +121,18 @@ public class TableRobot extends AbstractRobot implements Steppable {
      * @param reward the reward 
      */
     public void learn(double reward, Bag agentsWorking) { 
-        
-        for(int i = 0; i < agentsWorking.size(); i++){
-            int aID = (int) agentsWorking.objs[i];
-            myQtable.update(curTask.getID(), aID, (double)reward);
+        agentsWorking = whoWasDoingWhenIDecided;
+         if(agentsWorking.size() == 1)
+             myQtable.update(curTask.getID(), this.id, (double)reward);
+        else{
+            for(int i = 0; i < agentsWorking.size(); i++){
+                int aID = (int) ((AbstractRobot)agentsWorking.objs[i]).getId();
+                if(aID != this.id)
+                myQtable.update(curTask.getID(), aID, (double)reward);
+            }
+            // myQtable.update(curTask.getID(), this.id, (double)reward);
+            myQtable.update(curTask.getID(), this.id, (double)reward);
         }
-        /* for(int i = 0; i < whoWasDoingWhenIDecided.size(); i++){
-            int aID = ((IRobot)whoWasDoingWhenIDecided.objs[i]).getId();
-            myQtable.update(curTask.getID(), aID, (double)reward);
-        }*/
         
     }
     
@@ -193,9 +196,8 @@ public class TableRobot extends AbstractRobot implements Steppable {
             }
     }
     
-    public void pickRandomTask() {
+    public void pickRandomTask(){
         // pick randomly
-        
         curTask = (Task)bondsman.getAvailableTasks().objs[bountyState.random.nextInt(bondsman.getAvailableTasks().size())];
         bondsman.doingTask(id, curTask.getID());
         lastSeenFinished = curTask.getLastFinishedTime();
@@ -208,7 +210,7 @@ public class TableRobot extends AbstractRobot implements Steppable {
         double max =  myQtable.getQValue(taskID, ((IRobot)peopleOnTask.objs[0]).getId());
         for(int i = 1; i<peopleOnTask.size(); i++){
             double foo = myQtable.getQValue(taskID, ((IRobot)peopleOnTask.objs[i]).getId());
-            if(foo<max){
+            if(foo>max){
                 max = foo;
             }
         }

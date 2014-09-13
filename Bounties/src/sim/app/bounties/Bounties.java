@@ -250,7 +250,7 @@ public class Bounties extends SimState {
     public void start() {
         super.start();  // clear out the schedule
         
-        long maxNumSteps = 45000;
+        long maxNumSteps = Long.MAX_VALUE;
         if(myArgs !=null && keyExists("-for", myArgs)) {
             maxNumSteps = Long.parseLong(argumentForKey("-for", myArgs));
         }

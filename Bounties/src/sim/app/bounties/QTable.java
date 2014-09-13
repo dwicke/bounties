@@ -35,7 +35,7 @@ public class QTable implements java.io.Serializable {
         qtable = new double[numStates][numActions];
         for (int i = 0; i < numStates; i++) {
             for (int j = 0; j < numActions; j++) {
-                qtable[i][j] = 0;
+                qtable[i][j] = 1;
             }
         }
         V = new double[numStates];
@@ -99,12 +99,12 @@ public class QTable implements java.io.Serializable {
     
     public void update(int state, int action, double reward) {
         qtable[state][action] = oneMinusAlpha * qtable[state][action] + alpha * (double)reward;
-      //  printTable();
+        printTable();
     }
     public void lesserUpdate(int state, int action, double reward) {
         double tempAlpha = alpha;
         qtable[state][action] = (1-tempAlpha) * qtable[state][action] + tempAlpha * (double)reward;
-      //  printTable();
+        printTable();
     }
     public void meanUpdate(double gamma) {
         
@@ -123,6 +123,48 @@ public class QTable implements java.io.Serializable {
         for (int i = 0; i < qtable.length; i++) {
             for (int j = 0; j < qtable[i].length; j++)
                 qtable[i][j] = qtable[i][j] * (1 - gamma) + avg;
+        }
+        
+    }
+    public void meanUpdateRow(double gamma) {
+        
+        // average q-table
+        
+        double avg[] = new double[qtable.length];
+        for (int i = 0; i < qtable.length; i++) {
+            for (int j = 0; j < qtable[i].length; j++)
+                avg[i] += qtable[i][j];
+            avg[i] =  (avg[i] / (double)(qtable.length * qtable[0].length)) * gamma;
+        }
+        
+        // muliply the average by gamma
+       
+        
+        // Q[i][j] = Q[i][j]*(1-gamma) + gamma*avg
+        for (int i = 0; i < qtable.length; i++) {
+            for (int j = 0; j < qtable[i].length; j++)
+                qtable[i][j] = qtable[i][j] * (1 - gamma) + avg[i];
+        }
+        
+    }
+    public void meanUpdateColumn(double gamma) {
+        
+        // average q-table
+        
+       double avg[] = new double[qtable.length];
+        for (int i = 0; i < qtable[0].length; i++) {
+            for (int j = 0; j < qtable.length; j++)
+                avg[i] += qtable[j][i];
+            avg[i] =  (avg[i] / (double)(qtable.length * qtable[0].length)) * gamma;
+        }
+        
+        // muliply the average by gamma
+       
+        
+        // Q[i][j] = Q[i][j]*(1-gamma) + gamma*avg
+        for (int i = 0; i < qtable[0].length; i++) {
+            for (int j = 0; j < qtable.length; j++)
+                qtable[j][i] = qtable[j][i] * (1 - gamma) + avg[i];
         }
         
     }
