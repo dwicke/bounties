@@ -30,6 +30,10 @@ public class NewSimpleRobot extends AbstractRobot implements Steppable {
     double epsilonChooseRandomTask = .1;
     boolean decideTaskFailed = false;
     Bag whoWasDoingWhenIDecided = new Bag();
+    int deadCount = 0;
+    int deadLength = 2000;
+    int dieEveryN = 5000;
+    int twoDieEveryN = 10000;
     /**
      * Call this before scheduling the robots.
      * @param state the bounties state
@@ -37,8 +41,8 @@ public class NewSimpleRobot extends AbstractRobot implements Steppable {
     public void init(SimState state) {
         bountyState = ((Bounties)state);
         bondsman = bountyState.bondsman;
-        timeTable = new QTable(bondsman.getTotalNumTasks(), 1, .1, .1, 1); //only model me
-        pTable = new QTable(bondsman.getTotalNumTasks(), 1, .1, .1, 1); //only model me
+        timeTable = new QTable(bondsman.getTotalNumTasks(), 1, .05, .1, 1); //only model me
+        pTable = new QTable(bondsman.getTotalNumTasks(), 1, .2, .1, 1); //only model me
         debug("In init for id: " + id);
         debug("Qtable(row = task_id  col = robot_id) for id: " + id + " \n" + pTable.getQTableAsString());
         debug("Qtable(row = task_id  col = robot_id) for id: " + id + " \n" + timeTable.getQTableAsString());
@@ -52,6 +56,29 @@ public class NewSimpleRobot extends AbstractRobot implements Steppable {
             // if finished current task then learn
         // pick task
         // goto task
+      /*  if(state.schedule.getSteps()!=0 && state.schedule.getSteps()%twoDieEveryN == 0){
+            if(id==0 || id == 1){
+                deadCount = deadLength;
+                bondsman.doingTask(id, -1);// don't do any task
+                jumpHome();
+                curTask = null;
+                decideTaskFailed = true;
+            }
+            
+        }else if(state.schedule.getSteps()!=0 && state.schedule.getSteps()%dieEveryN == 0){
+            if(id==0){
+                deadCount = deadLength;
+                bondsman.doingTask(id, -1);// don't do any task
+                jumpHome();
+                curTask = null;
+                decideTaskFailed = true;
+            }
+            
+        }
+        if(deadCount>0){
+            deadCount--;
+            return;
+        }*/
         if (decideTaskFailed) {
             decideTaskFailed = decideNextTask();
         } else {
@@ -109,12 +136,12 @@ public class NewSimpleRobot extends AbstractRobot implements Steppable {
         // so update my p and time tables
         
         if(reward == 1.0) {
-            System.err.println("numSteps = " + numTimeSteps);
+            //System.err.println("numSteps = " + numTimeSteps);
             timeTable.update(curTask.getID(), 0, numTimeSteps);
         }
         pTable.update(curTask.getID(), 0, reward);
-        System.err.println("Agent id = " + id + " qtable = " + pTable.getQTableAsString());
-        System.err.println("Agent id = " + id + " qtable = " + timeTable.getQTableAsString());
+       // System.err.println("Agent id = " + id + " qtable = " + pTable.getQTableAsString());
+        //System.err.println("Agent id = " + id + " qtable = " + timeTable.getQTableAsString());
         
     }
     
