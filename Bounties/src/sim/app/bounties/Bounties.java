@@ -255,15 +255,16 @@ public class Bounties extends SimState {
             maxNumSteps = Long.parseLong(argumentForKey("-for", myArgs));
         }
         String dir = "C:\\Users\\dfreelan\\Dropbox";
-         if(myArgs !=null && keyExists("-dir", myArgs)) {
+        if(myArgs !=null && keyExists("-dir", myArgs)) {
             dir = argumentForKey("-dir", myArgs);
         }
          
-         if(myArgs !=null && keyExists("-rot", myArgs)) {
+        if(myArgs !=null && keyExists("-rot", myArgs)) {
             maxRotateSteps = Long.parseLong(argumentForKey("-rot", myArgs));
         }
-        
-        //debug 
+        //maxRotateSteps= 25000;
+        maxRotateSteps = Long.MAX_VALUE;
+//debug 
         prevRobotTabsCols = new double[numTasks];
         //debug
         
@@ -329,7 +330,7 @@ public class Bounties extends SimState {
         for (int x = 0; x < numRobots; x++) {
             //GreedyBot bot = new GreedyBot();
 
-            NewSimpleRobot bot = new NewSimpleRobot();            
+            SemiOptimalRobot bot = new SemiOptimalRobot();       
             robots[x] = bot;
             bot.setId(x);
             //int xloc = random.nextInt(GRID_WIDTH);
@@ -338,7 +339,7 @@ public class Bounties extends SimState {
             robotgrid.setObjectLocation(bot, quads[x%4]);
             robots[x].setRobotHome(quads[x%4]);
             
-            //robotgrid.setObjectLocation(bot, xloc, yloc);
+            //robotgrid/.setObjectLocation(bot, xloc, yloc);
             //robots[x].setRobotHome(new Int2D(xloc, yloc));
             bot.init(this);
             
@@ -370,7 +371,8 @@ public class Bounties extends SimState {
         
         @Override
         public void step(SimState state) {
-            if (state.schedule.getSteps() >= rotateStep && rotated == false) {
+            long numSteps = state.schedule.getSteps();
+            if (numSteps % rotateStep == 0 && numSteps>0) {
                 rotated = true;
                 if(howManyTimes%2 == 0){
                     setRotateRobots(!lastRotateValue);

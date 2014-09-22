@@ -33,6 +33,9 @@ public class OptimalRobot extends AbstractRobot implements Steppable {
     double gamma = .05;
     double deadEpsilon = .0001;
     int deadCount = 0;
+    int deadLength = 2000;
+    int dieEveryN = 20000;
+    int twoDieEveryN = 40000;
     /**
      * Call this before scheduling the robots.
      * @param state the bounties state
@@ -50,8 +53,34 @@ public class OptimalRobot extends AbstractRobot implements Steppable {
     @Override
     public void step(SimState state) {
        
-        
-         
+       /*if(state.schedule.getSteps()!=0 && state.schedule.getSteps()%twoDieEveryN == 0){
+            if(id==0 || id == 1){
+                deadCount = deadLength;
+                bondsman.doingTask(id, -1);// don't do any task
+                jumpHome();
+                if(curTask!=null)
+                    curTask.setAvailable(true);
+                curTask = null;
+                decideTaskFailed = true;
+            }
+            
+        }else if(state.schedule.getSteps()!=0 && state.schedule.getSteps()%dieEveryN == 0){
+            if(id==0){
+                deadCount = deadLength;
+                bondsman.doingTask(id, -1);// don't do any task
+                jumpHome();
+                if(curTask!=null)
+                    curTask.setAvailable(true);
+                curTask = null;
+                decideTaskFailed = true;
+            }
+            
+        }
+        if(deadCount>0){
+            deadCount--;
+            return;
+        }*/
+            
             if(curTask == null) {
                 if(decideNextTask()) {
                     return; // failed to pick a task.

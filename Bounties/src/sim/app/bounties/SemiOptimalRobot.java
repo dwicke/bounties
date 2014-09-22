@@ -33,6 +33,9 @@ public class SemiOptimalRobot extends AbstractRobot implements Steppable {
     double gamma = .05;
     double deadEpsilon = .0001;
     int deadCount = 0;
+    int deadLength = 20000;
+    int dieEveryN = 30000;
+    int twoDieEveryN = 60000;
     /**
      * Call this before scheduling the robots.
      * @param state the bounties state
@@ -51,7 +54,33 @@ public class SemiOptimalRobot extends AbstractRobot implements Steppable {
     public void step(SimState state) {
        
         
-         
+        if(state.schedule.getSteps()!=0 && state.schedule.getSteps()%twoDieEveryN == 0){
+            if(id==0 || id == 1){
+                deadCount = deadLength;
+                bondsman.doingTask(id, -1);// don't do any task
+                jumpHome();
+                if(curTask!=null)
+                    curTask.setAvailable(true);
+                curTask = null;
+                decideTaskFailed = true;
+            }
+            
+        }else if(state.schedule.getSteps()!=0 && state.schedule.getSteps()%dieEveryN == 0){
+            if(id==0){
+                deadCount = deadLength;
+                bondsman.doingTask(id, -1);// don't do any task
+                jumpHome();
+                if(curTask!=null)
+                    curTask.setAvailable(true);
+                curTask = null;
+                decideTaskFailed = true;
+            }
+            
+        }
+        if(deadCount>0){
+            deadCount--;
+            return;
+        }
             if(curTask == null) {
                 if(decideNextTask()) {
                     return; // failed to pick a task.
@@ -80,7 +109,7 @@ public class SemiOptimalRobot extends AbstractRobot implements Steppable {
         if(bondsman.getAvailableTasks().isEmpty()) {
             return true; // wasn't succesful
         }
-        if (bountyState.random.nextDouble() < epsilonChooseRandomTask) {
+        if (bountyState.random.nextDouble() < epsilonChooseRandomTask && false) {
             randomChosen = true;
             pickRandomTask();
         } else {

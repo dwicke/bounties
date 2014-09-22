@@ -54,6 +54,7 @@ public class Task implements Real, Fixed2D{
         currentReward = defaultReward;
         this.rand = rand;
         hackItIn = hack;
+        lastAgentsWorkingOnTask = new Bag();
     }
     
     public void setRandom(MersenneTwisterFast rand){
@@ -105,8 +106,8 @@ public class Task implements Real, Fixed2D{
         done = val;
     }
     public void changeTaskLocation(){
-        int newX = initialLocation.x + (int)Math.round((rand.nextGaussian() * 5) - 2.5);
-        int newY = initialLocation.y + (int)Math.round((rand.nextGaussian() * 5) - 2.5);
+        int newX = initialLocation.x + (int)Math.round(((rand.nextGaussian()) * 5) - 2.5);
+        int newY = initialLocation.y + (int)Math.round(((rand.nextGaussian()) * 5) - 2.5);
         //System.err.println(initialLocation.x);
         realLocation = new Int2D(newX,newY);
         this.hackItIn.tasksGrid.setObjectLocation(this, realLocation);
