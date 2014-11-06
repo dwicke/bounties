@@ -5,6 +5,7 @@
  */
 package sim.app.bounties;
 
+import sim.app.bounties.jumpship.Jumpship;
 import sim.engine.SimState;
 import sim.util.Bag;
 
@@ -14,6 +15,11 @@ import sim.util.Bag;
  */
 public class Auctioneer extends Bondsman {
 
+    Auctioneer(int numGoals, int numTasks, Jumpship js) {
+        super(numGoals,numTasks,js);
+    }
+    
+    
     @Override
     public void step(SimState state) {
         // for each of the tasks from the available task in a random order
