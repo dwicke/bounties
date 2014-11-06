@@ -54,7 +54,6 @@ public class LearningAuctionAgent extends AuctionAgent {
     }
     
     public double getAdjustment(Task t) {
-        //return taskClasses[t.getID()];
         
         if (taskClasses[t.getID()] == null) {
             taskClasses[t.getID()] = new Bag();
@@ -63,13 +62,15 @@ public class LearningAuctionAgent extends AuctionAgent {
         }
         assert taskClasses[curTask.getID()].numObjs <= historySize;
         double adj = 0;
-        for(int i = 0; i < taskClasses[curTask.getID()].numObjs; i++){
-            adj += ( (double) (taskClasses[curTask.getID()].objs[i])) * historyWeights[i];
+        double den = 0;// need it for the first couple
+        for(int i = 0; i < taskClasses[t.getID()].numObjs; i++){
+            adj += ( (double) (taskClasses[t.getID()].objs[i])) * historyWeights[i];
+            den += historyWeights[i];
         }
         
         
         
-        return adj/weightSum;
+        return adj/den;
     }
     
 }

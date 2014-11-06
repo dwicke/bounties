@@ -42,7 +42,7 @@ public abstract class AuctionAgent extends AbstractRobot implements Steppable {
                 jumpHome();
                 // and let the auctioneer know
                 auctioneer.finishTask(curTask, id, bountyState.schedule.getSteps());
-                
+                curTask = null;
             }
         }
     }
@@ -63,6 +63,7 @@ public abstract class AuctionAgent extends AbstractRobot implements Steppable {
      * @param t 
      */
     public void setTask(Task t) {
+        isAvailable = false;
         curTask = t;
         auctioneer.doingTask(id, t.getID());// confirm that I am doing the task with the auctioneer.
         startTaskTime = bountyState.schedule.getSteps();
