@@ -26,7 +26,7 @@ public class Bondsman implements Steppable {
     private int whosDoingWhatTaskID[];
     private int numTasks = 50;
     private int numGoals = 1;
-    private Bounties bounties;
+    Bounties bounties;
     private Jumpship jumpPolicy;
     private double penaltyFactor[]; // each robot has a penalty factor what percentage of current bounty do they get
     
