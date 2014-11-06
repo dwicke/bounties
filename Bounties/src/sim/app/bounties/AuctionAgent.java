@@ -18,6 +18,7 @@ public abstract class AuctionAgent extends AbstractRobot implements Steppable {
     private boolean isAvailable = true;
     Bounties bountyState;
     Auctioneer auctioneer;
+    long startTaskTime;
 
     @Override
     public void init(SimState state) {
@@ -34,10 +35,14 @@ public abstract class AuctionAgent extends AbstractRobot implements Steppable {
             // then I have a task to do so do it.
             if(gotoTask()) {
                 // if I got to the task then I'm done with task so jump home
+                // but learn first if able to
+                learn();
+                updateStatistics(false, curTask.getID(), (int)getNumStepsWorkedOnCurTask());
                 isAvailable = true;
                 jumpHome();
                 // and let the auctioneer know
                 auctioneer.finishTask(curTask, id, bountyState.schedule.getSteps());
+                
             }
         }
     }
@@ -60,8 +65,12 @@ public abstract class AuctionAgent extends AbstractRobot implements Steppable {
     public void setTask(Task t) {
         curTask = t;
         auctioneer.doingTask(id, t.getID());// confirm that I am doing the task with the auctioneer.
+        startTaskTime = bountyState.schedule.getSteps();
     }
     
+    public long getNumStepsWorkedOnCurTask() {
+        return bountyState.schedule.getSteps() - startTaskTime + 1;
+    }
     
     /**
      * Move toward the curTask
@@ -81,4 +90,6 @@ public abstract class AuctionAgent extends AbstractRobot implements Steppable {
         bountyState.robotgrid.setObjectLocation(this,this.getRobotHome());// teleport home
     }
     
+    
+    public abstract void learn();
 }
