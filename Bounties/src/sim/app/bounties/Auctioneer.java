@@ -5,6 +5,7 @@
  */
 package sim.app.bounties;
 
+import sim.app.bounties.jumpship.Jumpship;
 import sim.engine.SimState;
 import sim.util.Bag;
 
@@ -14,6 +15,11 @@ import sim.util.Bag;
  */
 public class Auctioneer extends Bondsman {
 
+    Auctioneer(int numGoals, int numTasks, Jumpship js) {
+        super(numGoals,numTasks,js);
+    }
+    
+    
     @Override
     public void step(SimState state) {
         // for each of the tasks from the available task in a random order
@@ -39,7 +45,9 @@ public class Auctioneer extends Bondsman {
                     topBidders.add(ag);
                 }
             }
-            // pick the winner randomly if ties.
+            System.out.println("availTasks:" + availAgents.numObjs + " avail tasks:" + availTasks.numObjs);
+            //Console.WriteLine("");
+            // pick the winner randomly if ties
             int winner = state.random.nextInt(topBidders.numObjs);
             ((AuctionAgent)(topBidders.objs[winner])).setTask(curTaskAuction);
             curTaskAuction.setAvailable(false);// make sure it is set to false

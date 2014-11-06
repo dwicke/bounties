@@ -55,11 +55,12 @@ public class LearningAuctionAgent extends AuctionAgent {
     public double getAdjustment(Task t) {
         //return taskClasses[t.getID()];
         
-        if (taskClasses[curTask.getID()] == null) {
-            taskClasses[curTask.getID()] = new Bag();
-            taskClasses[curTask.getID()].push(0);
-            return 0;
-        }
+            if (taskClasses[t.getID()] == null) {
+                taskClasses[t.getID()] = new Bag();
+                taskClasses[t.getID()].push(0);
+                return 0;
+            }
+        
         
         double adj = 0;
         for(int i = 0; i < historySize; i++){
