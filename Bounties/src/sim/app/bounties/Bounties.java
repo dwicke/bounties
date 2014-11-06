@@ -331,6 +331,7 @@ public class Bounties extends SimState {
             //GreedyBot bot = new GreedyBot();
 
             SemiOptimalRobot bot = new SemiOptimalRobot();       
+
             robots[x] = bot;
             bot.setId(x);
             //int xloc = random.nextInt(GRID_WIDTH);
