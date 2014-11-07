@@ -280,7 +280,7 @@ public class Bounties extends SimState {
         
         
         Jumpship js = new ResetJumpship();
-        bondsman = new Auctioneer(numGoals, numTasks, js);//new Bondsman(numGoals, numTasks, js);
+        bondsman = new Bondsman(numGoals, numTasks, js);//new Bondsman(numGoals, numTasks, js);
         bondsman.setWorld(this);
         
         // make new grids
@@ -329,9 +329,7 @@ public class Bounties extends SimState {
         
         for (int x = 0; x < numRobots; x++) {
             //GreedyBot bot = new GreedyBot();
-
-
-            AuctionAgent bot = new LearningAuctionAgent(numTasks);
+            NewSimpleRobot bot = new NewSimpleRobot();
             robots[x] = bot;
             bot.setId(x);
             //int xloc = random.nextInt(GRID_WIDTH);
