@@ -33,9 +33,15 @@ public class Auctioneer extends Bondsman {
             Bag topBidders = new Bag();
             Task curTaskAuction = (Task) availTasks.objs[i];
             double smallestBid = Double.MAX_VALUE;
+            if(availAgents.numObjs == 0) {
+                System.err.println("NO AGENTS");
+                return;
+            }
+            
             for(int j = 0; j <  availAgents.numObjs; j++) {
                 AuctionAgent ag = (AuctionAgent) availAgents.objs[j];
                 double bid = ag.getBid(curTaskAuction);
+                System.err.println("Agent " + ag.getId() + " bid " + bid);
                 if (bid < smallestBid){
                     topBidders.clear();
                     topBidders.add(ag);

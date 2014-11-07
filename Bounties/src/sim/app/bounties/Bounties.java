@@ -330,8 +330,7 @@ public class Bounties extends SimState {
         for (int x = 0; x < numRobots; x++) {
             //GreedyBot bot = new GreedyBot();
 
-          
-           
+
             AuctionAgent bot = new LearningAuctionAgent(numTasks);
             robots[x] = bot;
             bot.setId(x);

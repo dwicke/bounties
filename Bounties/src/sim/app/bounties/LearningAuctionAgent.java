@@ -45,6 +45,7 @@ public class LearningAuctionAgent extends AuctionAgent {
             taskClasses[curTask.getID()].pop();
         }
         taskClasses[curTask.getID()].push(adjust);
+        assert taskClasses[curTask.getID()].numObjs <= historySize;
     }
     
     public double getCost(Task t) {
@@ -55,17 +56,20 @@ public class LearningAuctionAgent extends AuctionAgent {
     public double getAdjustment(Task t) {
         //return taskClasses[t.getID()];
         
-            if (taskClasses[t.getID()] == null) {
-                taskClasses[t.getID()] = new Bag();
-                taskClasses[t.getID()].push(0);
-                return 0;
-            }
-        
-        
-        double adj = 0;
-        for(int i = 0; i < historySize; i++){
-            adj += (double)taskClasses[curTask.getID()].objs[i] * historyWeights[i];
+
+        if (taskClasses[t.getID()] == null) {
+            taskClasses[t.getID()] = new Bag();
+            taskClasses[t.getID()].push((double)0.0);
+            return 0.0;
         }
+        assert taskClasses[curTask.getID()].numObjs <= historySize;
+        double adj = 0;
+        for(int i = 0; i < taskClasses[curTask.getID()].numObjs; i++){
+            adj += ( (double) (taskClasses[curTask.getID()].objs[i])) * historyWeights[i];
+        }
+
+        
+        
         return adj/weightSum;
     }
     
