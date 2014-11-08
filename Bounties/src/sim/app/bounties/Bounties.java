@@ -365,10 +365,14 @@ public class Bounties extends SimState {
         quads[3] = new Int2D(GRID_WIDTH - 1, 0);
         quads[2] = new Int2D(GRID_WIDTH - 1, GRID_HEIGHT - 1);
         
-        for (int x = 0; x < numBots; x++) {
-            
+        board = new Leaderboard(numTasks, Long.MAX_VALUE);
+        robots = new IRobot[numRobots];
+        robotgrid = new SparseGrid2D(GRID_WIDTH, GRID_HEIGHT);
+        
+        
+        for (int x = 0; x < numRobots; x++) {
+            //GreedyBot bot = new GreedyBot();
             NewSimpleRobot bot = new NewSimpleRobot();
-            
             robots[x] = bot;
             bot.setId(x);
             //int xloc = random.nextInt(GRID_WIDTH);
