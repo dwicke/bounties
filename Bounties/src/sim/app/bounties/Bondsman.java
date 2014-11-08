@@ -13,6 +13,7 @@ import sim.engine.SimState;
 import sim.engine.Steppable;
 import sim.util.Bag;
 import sim.util.Int2D;
+import sim.util.distribution.Poisson;
 
 /**
  * Makes the tasks and goals
@@ -28,6 +29,7 @@ public class Bondsman implements Steppable {
     private int numGoals = 1;
     Bounties bounties;
     private Jumpship jumpPolicy;
+    
     private double penaltyFactor[]; // each robot has a penalty factor what percentage of current bounty do they get
     
     public Bondsman(){
@@ -49,6 +51,7 @@ public class Bondsman implements Steppable {
         for (int i = 0; i < whosDoingWhatTaskID.length; i++) {
             whosDoingWhatTaskID[i] = -1;
         }
+        
     }
     
     
@@ -159,7 +162,12 @@ public class Bondsman implements Steppable {
         curTask.setLastFinished(robotID, timestamp);
         curTask.setAvailable(false); // whenever an agent finishes a task then make it unavailable
         curTask.setDone(true);
-        curTask.resetReward(); // start it back at 0
+        
+        
+        
+        curTask.resetReward((int)Math.abs(bounties.random.nextGaussian())*5000 + 1000); // this made a differnce a big one even more so when a bad robot is in the mix i think it does better than the 100 (works for simple and complex)
+        //curTask.resetReward((int)Math.abs(bounties.random.nextGaussian())*5000 + 100); // this accentuates it even more especially if one of the robots is a BadRobot
+        //curTask.resetReward();
         whosDoingWhatTaskID[robotID] = -1;
     }
     /**

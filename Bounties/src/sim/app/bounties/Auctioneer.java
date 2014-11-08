@@ -26,6 +26,7 @@ public class Auctioneer extends Bondsman {
         // ask for bids from each of the agents 
         // allocate the task to the agent with the smallest bid (pick randomly if tied for best)
         this.makeAvailable();// reset the tasks when done and ready
+        incrementBounty();// increment the bounties
         Bag availTasks = getAvailableTasks();
         availTasks.shuffle(state.random);
         Bag availAgents = getAvailableAgents();// only have to do this once and then remove the winner

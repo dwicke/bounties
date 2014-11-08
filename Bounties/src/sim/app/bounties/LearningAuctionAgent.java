@@ -16,14 +16,13 @@ public class LearningAuctionAgent extends AuctionAgent {
 
     Bag taskClasses[];
     double bid;
-    int adjHistLength = 3; // the number of past adjustments to keep (3 was recomended in paper)
+    int adjHistLength = 4; // the number of past adjustments to keep (3 was recomended in paper)
     double historyWeights[];
-    double weightSum;
     
     public LearningAuctionAgent(int numTaskClasses) {
         taskClasses = new Bag[numTaskClasses];// all are inited to 0 which is what an unknown task bid is.
-        historyWeights = new double[] {.2,.3,.5};// there must be as many weights as history length.
-        weightSum = 1.0;
+        historyWeights = new double[] {.2,.3,.5,.5};// there must be as many weights as history length.
+       
     }
     
     

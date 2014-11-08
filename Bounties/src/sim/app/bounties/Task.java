@@ -161,7 +161,8 @@ public class Task implements Real, Fixed2D{
         currentReward = reward;
     }
     public void incrementCurrentReward(){
-        currentReward+=requiredRobots;
+        if (currentReward < 10000000)
+            currentReward+=requiredRobots;
     }
     
     /**
@@ -209,6 +210,11 @@ public class Task implements Real, Fixed2D{
 
     void resetReward() {
         currentReward = defaultReward;
+        Arrays.fill(perAgentReward, defaultReward);//reset everyone's agent specific reward
+    }
+    
+    void resetReward(int reward) {
+        currentReward = reward;
         Arrays.fill(perAgentReward, defaultReward);//reset everyone's agent specific reward
     }
 

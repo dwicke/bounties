@@ -280,7 +280,7 @@ public class Bounties extends SimState {
         
         
         Jumpship js = new ResetJumpship();
-        bondsman = new Bondsman(numGoals, numTasks, js);//new Bondsman(numGoals, numTasks, js);
+        bondsman = new Bondsman(numGoals, numTasks, js);
         bondsman.setWorld(this);
         
         // make new grids
@@ -323,26 +323,24 @@ public class Bounties extends SimState {
         robotgrid = new SparseGrid2D(GRID_WIDTH, GRID_HEIGHT);
         
         // create the edge robots usually this should just be numRobots but we want a center so don't
-        createEdgeRobots(numRobots - 1);
+        
+        createEdgeRobots(numRobots);
         
         
         // Now make a BadRobot in the center
         
-        BadRobot br = new BadRobot();
-        robots[numRobots -1] = br;
-        br.setId(numRobots -1);
-        Int2D center = new Int2D(GRID_WIDTH / 2, GRID_HEIGHT / 2);
-        robotgrid.setObjectLocation(br, center);
-        robots[numRobots - 1].setRobotHome(center);
+        for (int i = numRobots; i < numRobots; i++) {
+            robots[i] = createBadBot(i);
+            schedule.scheduleRepeating(Schedule.EPOCH + i, 0, (Steppable)robots[i], 1);
+        }
+        
 
         //robotgrid/.setObjectLocation(bot, xloc, yloc);
         //robots[x].setRobotHome(new Int2D(xloc, yloc));
-        br.init(this);
+       
 
-        TeleportController t = new TeleportController();
-        t.setMyRobot(br);
-        robots[numRobots - 1].setRobotController(t);
-        schedule.scheduleRepeating(Schedule.EPOCH + numRobots - 1, 0, br, 1);
+        
+        
         
         
         
@@ -357,22 +355,30 @@ public class Bounties extends SimState {
     }
     
     
+    public BadRobot createBadBot(int badID) {
+        BadRobot br = new BadRobot();
+        br.setId(badID);
+        Int2D center = new Int2D(0, 0);//new Int2D(GRID_WIDTH / 2, GRID_HEIGHT / 2);
+        robotgrid.setObjectLocation(br, center);
+        br.setRobotHome(center);
+        br.init(this);
+        TeleportController t = new TeleportController();
+        t.setMyRobot(br);
+        br.setRobotController(t);
+        return br;
+    }
+   
     public void createEdgeRobots(int numBots) {
         
         Int2D quads[] = new Int2D[4];
         quads[0] = new Int2D(0, 0);
         quads[1] = new Int2D(0, GRID_HEIGHT -1);
         quads[3] = new Int2D(GRID_WIDTH - 1, 0);
-        quads[2] = new Int2D(GRID_WIDTH - 1, GRID_HEIGHT - 1);
+        quads[2] = new Int2D(GRID_WIDTH - 1, GRID_HEIGHT - 1);        
         
-        board = new Leaderboard(numTasks, Long.MAX_VALUE);
-        robots = new IRobot[numRobots];
-        robotgrid = new SparseGrid2D(GRID_WIDTH, GRID_HEIGHT);
-        
-        
-        for (int x = 0; x < numRobots; x++) {
+        for (int x = 0; x < numBots; x++) {
             //GreedyBot bot = new GreedyBot();
-            NewSimpleRobot bot = new NewSimpleRobot();
+            NewComplexRobot bot = new NewComplexRobot();
             robots[x] = bot;
             bot.setId(x);
             //int xloc = random.nextInt(GRID_WIDTH);

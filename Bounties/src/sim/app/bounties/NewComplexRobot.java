@@ -139,11 +139,19 @@ public class NewComplexRobot extends AbstractRobot implements Steppable {
             double value = 1.0/tval * pval*((Task)availTasks.objs[i]).getCurrentReward(this);
             System.err.println("1/t =  " + (1.0/tval) );
             System.err.println("agentid = " + id + " tval = " + tval + " pval = " + pval + " value = " + value + " max = " + max);
+            
+            if  (bondsman.whoseDoingTask(((Task)availTasks.objs[i])).size() > 0){
+                //value*=-1;
+            }
             if(value > max)
             {
                 max = value;
                 curTask = ((Task)availTasks.objs[i]);       
             }
+        }
+        if(curTask==null) {
+            bondsman.doingTask(id, -1);
+            return;
         }
         System.err.println("Task id = " + curTask.getID());
         
