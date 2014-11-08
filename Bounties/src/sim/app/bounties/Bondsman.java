@@ -67,7 +67,7 @@ public class Bondsman implements Steppable {
             t.setGoal((Goal)goals.objs[rand.nextInt(goals.numObjs)]);
             t.setRequiredRobots(rand.nextInt(1)+1);
             tasks.add(t);
-            
+            t.setFailureRate(10+rand.nextInt(100));
         }
         
         

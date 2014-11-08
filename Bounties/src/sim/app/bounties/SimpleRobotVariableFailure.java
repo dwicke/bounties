@@ -16,7 +16,7 @@ import sim.util.Bag;
  * 
  * @author drew
  */
-public class NewSimpleRobot extends AbstractRobot implements Steppable {
+public class SimpleRobotVariableFailure extends AbstractRobot implements Steppable {
     
     QTable timeTable; // time to do task
     QTable pTable; // probablility that I am successful at a task
@@ -90,7 +90,7 @@ public class NewSimpleRobot extends AbstractRobot implements Steppable {
             deadCount--;
             return;
         }*/
-        /*if(curTask!=null)
+        if(curTask!=null)
         if(0==state.random.nextInt(curTask.failureRate) && deadCount ==0){
             deadCount = deadLength;
             curTask = null;
@@ -102,7 +102,7 @@ public class NewSimpleRobot extends AbstractRobot implements Steppable {
          if(deadCount>0){
             deadCount--;
             return;
-        }*/
+        }
         if(state.schedule.getSteps() == 200000){
             System.err.println("real q-table");
             printQTable();

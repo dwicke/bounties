@@ -33,7 +33,7 @@ public class OptimalRobot extends AbstractRobot implements Steppable {
     double gamma = .05;
     double deadEpsilon = .0001;
     int deadCount = 0;
-    int deadLength = 2000;
+    int deadLength = 20;
     int dieEveryN = 20000;
     int twoDieEveryN = 40000;
     /**
@@ -80,7 +80,22 @@ public class OptimalRobot extends AbstractRobot implements Steppable {
             deadCount--;
             return;
         }*/
-            
+        if(curTask!=null)
+        if(0==state.random.nextInt(curTask.failureRate) && deadCount ==0){
+            deadCount = deadLength;
+             if(curTask!=null)
+                    curTask.setAvailable(true);
+            curTask = null;
+            bondsman.doingTask(id, -1);
+            jumpHome();
+           
+            numTimeSteps = 0;
+            decideTaskFailed = true;
+        }
+         if(deadCount>0){
+            deadCount--;
+            return;
+        }
             if(curTask == null) {
                 if(decideNextTask()) {
                     return; // failed to pick a task.
