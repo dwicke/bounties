@@ -38,6 +38,7 @@ public class NewSimpleRobot extends AbstractRobot implements Steppable {
     double tasksNotTrusted = 0;
     boolean hasOneUpdate = false;
     boolean hasRandom = false;
+    
     /**
      * Call this before scheduling the robots.
      * @param state the bounties state
@@ -46,7 +47,7 @@ public class NewSimpleRobot extends AbstractRobot implements Steppable {
         bountyState = ((Bounties)state);
         bondsman = bountyState.bondsman;
         timeTable = new QTable(bondsman.getTotalNumTasks(), 1, .1, .1, 1); //only model me
-        pTable = new QTable(bondsman.getTotalNumTasks(), 1, .1, .1, 1); //only model me
+        pTable = new QTable(bondsman.getTotalNumTasks(), 1, .2, .1, 1); //only model me
         debug("In init for id: " + id);
         debug("Qtable(row = task_id  col = robot_id) for id: " + id + " \n" + pTable.getQTableAsString());
         debug("Qtable(row = task_id  col = robot_id) for id: " + id + " \n" + timeTable.getQTableAsString());
@@ -71,6 +72,12 @@ public class NewSimpleRobot extends AbstractRobot implements Steppable {
     {
         hasOneUpdate = updateIt;
     }
+    /**
+     * whether or not there are trap tasks those that will be harder than should be.
+     * @param hasTraps 
+     */
+    
+    
     @Override
     public void step(SimState state) {
         // check if someone else finished the task I was working on
@@ -164,12 +171,15 @@ public class NewSimpleRobot extends AbstractRobot implements Steppable {
                 decideTaskFailed = true; // can't choose a task in the same timestep that I find out that I 
                 return; // can't start it in the same timestep
             }
-            /* // this is the test for if you become bad for this task
-            if(curTask!=null && curTask.badForWho == this.id){
-                numTimeSteps++;
-                if(bountyState.schedule.getSteps() % 20 != 0)
-                    return;
-            }*/
+            
+            if (hasTraps == true) {
+                // this is the test for if you become bad for this task
+               if(curTask!=null && curTask.badForWho == this.id){
+                   numTimeSteps++;
+                   if(bountyState.schedule.getSteps() % 20 != 0)
+                       return;
+               }
+            }
             if (gotoTask()){ // if i made it to the task then finish it and learn
 
 

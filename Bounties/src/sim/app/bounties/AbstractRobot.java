@@ -29,10 +29,13 @@ public class AbstractRobot implements IRobot {
     int rollingHistoryCounter = 0; // pointer to current spot in the list for history purposes
     int rewardCurrentTask; // the reward for the current task
     boolean canDie;
+    boolean hasTraps = false;
     public void init(SimState state) {
         // do nothing...
     }
-    
+    public void setHasTraps(boolean hasTraps) {
+        this.hasTraps = hasTraps;
+    }
     public int getRewardCurrentTask() {
         return rewardCurrentTask;
     }
