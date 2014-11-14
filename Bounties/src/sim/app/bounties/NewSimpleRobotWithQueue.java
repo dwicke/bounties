@@ -117,10 +117,11 @@ public class NewSimpleRobotWithQueue extends AbstractRobot implements Steppable 
             if (finishedTask()) {
                 learn(0.0, curTask.getLastAgentsWorkingOnTask()); // then learn from it
                 jumpHome(); // someone else finished the task so start again
+                taskList.remove(curTask);
                 curTask = null;
                 bondsman.doingTask(id, -1);
                 numTimeSteps = 0;
-                decideTaskFailed = decideNextTask();
+                decideTaskFailed = true;
                 return; // can't start it in the same timestep that i chose it since doesn't happen if I was the one who completed it
             }
 
@@ -131,6 +132,7 @@ public class NewSimpleRobotWithQueue extends AbstractRobot implements Steppable 
                 curTask.setLastFinished(id, bountyState.schedule.getSteps(), bondsman.whoseDoingTaskByID(curTask));
                 bondsman.finishTask(curTask, id, bountyState.schedule.getSteps());
                 learn(1.0, curTask.getLastAgentsWorkingOnTask());
+                taskList.remove(curTask);
                 curTask = null;
                 bondsman.doingTask(id, -1);
                 numTimeSteps = 0;
@@ -174,6 +176,10 @@ public class NewSimpleRobotWithQueue extends AbstractRobot implements Steppable 
             //curTask.addRobot(this);
         }
         if(curTask==null) return true;
+        
+        // now set the curTask to be the one with the highest priority
+        
+        
         return false;// then there was a task i could choose from
     }
     

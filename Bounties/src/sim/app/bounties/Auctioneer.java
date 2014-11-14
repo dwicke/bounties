@@ -21,20 +21,14 @@ public class Auctioneer extends Bondsman {
     int clearTime;
     boolean isPriority = false;
     
-    Auctioneer(int numGoals, int numTasks, Jumpship js) {
+    Auctioneer(int numGoals, int numTasks, Jumpship js, int clearTime, boolean isPriority) {
         super(numGoals,numTasks,js);
         clearingTimes = new int[numTasks];
-        clearTime = 5;
+        this.clearTime = clearTime;
+        this.isPriority = isPriority;
         Arrays.fill(clearingTimes, clearTime);
     }
     
-    public void setIsPriority(boolean priority) {
-        isPriority = priority;
-    }
-    
-    public void setClearTime(int clearTime) {
-        this.clearTime = clearTime;
-    }
 
     @Override
     public Bag getAvailableTasks() {
