@@ -46,7 +46,7 @@ public class NewSimpleRobot extends AbstractRobot implements Steppable {
         bountyState = ((Bounties)state);
         bondsman = bountyState.bondsman;
         timeTable = new QTable(bondsman.getTotalNumTasks(), 1, .1, .1, 1); //only model me
-        pTable = new QTable(bondsman.getTotalNumTasks(), 1, .2, .1, 1); //only model me
+        pTable = new QTable(bondsman.getTotalNumTasks(), 1, .1, .1, 1); //only model me
         debug("In init for id: " + id);
         debug("Qtable(row = task_id  col = robot_id) for id: " + id + " \n" + pTable.getQTableAsString());
         debug("Qtable(row = task_id  col = robot_id) for id: " + id + " \n" + timeTable.getQTableAsString());
@@ -254,15 +254,18 @@ public class NewSimpleRobot extends AbstractRobot implements Steppable {
             timeTable.update(curTask.getID(), 0, numTimeSteps);
             //System.err.println("p: r=1, id = " + id);
             pTable.update(curTask.getID(), 0, reward);
+
         }else{
            // System.err.println("t: r=0, id = " + id);
             //timeTable.printTable();
            // System.err.println("p: r=0, id = " + id);
             pTable.update(curTask.getID(), 0, reward);
+           
         }
         if(hasOneUpdate == true)
             pTable.oneUpdate(.001);
         
+        //pTable.oneUpdate(.001);
        // timeTable.meanUpdate(.0005);
        // pTable.meanUpdate(.025);   
 // System.err.println("Agent id = " + id + " qtable = " + pTable.getQTableAsString());
@@ -285,9 +288,11 @@ public class NewSimpleRobot extends AbstractRobot implements Steppable {
             double tval = timeTable.getQValue(((Task)availTasks.objs[i]).getID(), 0);
             double pval = pTable.getQValue(((Task)availTasks.objs[i]).getID(), 0);
             double value = 1.0/tval * pval*((Task)availTasks.objs[i]).getCurrentReward(this);
+            //if (bountyState.schedule.getSteps() > 50000){
             if  (bondsman.whoseDoingTask(((Task)availTasks.objs[i])).size() > 0){
                //value*=-1;
             }
+            //}
            // System.err.println("1/t =  " + (1.0/tval) );
            // System.err.println("agentid = " + id + " tval = " + tval + " pval = " + pval + " value = " + value + " max = " + max);
             if(value > max)
