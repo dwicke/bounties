@@ -6,7 +6,6 @@
 
 package sim.app.bounties;
 
-import java.util.PriorityQueue;
 import sim.engine.SimState;
 import sim.engine.Steppable;
 import sim.util.Bag;
