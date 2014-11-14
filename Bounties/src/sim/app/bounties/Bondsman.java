@@ -164,10 +164,11 @@ public class Bondsman implements Steppable {
         curTask.setDone(true);
         
         
+        //curTask.resetReward(bounties.random.nextInt(900) + 100);
         
-        curTask.resetReward((int)Math.abs(bounties.random.nextGaussian())*5000 + 1000); // this made a differnce a big one even more so when a bad robot is in the mix i think it does better than the 100 (works for simple and complex)
+        //curTask.resetReward((int)Math.abs(bounties.random.nextGaussian())*5000 + 1000); // this made a differnce a big one even more so when a bad robot is in the mix i think it does better than the 100 (works for simple and complex)
         //curTask.resetReward((int)Math.abs(bounties.random.nextGaussian())*5000 + 100); // this accentuates it even more especially if one of the robots is a BadRobot
-        //curTask.resetReward();
+        curTask.resetReward();
         whosDoingWhatTaskID[robotID] = -1;
     }
     /**

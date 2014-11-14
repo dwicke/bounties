@@ -171,6 +171,8 @@ public class Task implements Real, Fixed2D{
      * @return 
      */
     public int getCurrentReward(IRobot robot) {
+        //return defaultReward;
+       
         if (perAgentReward[robot.getId()] > defaultReward)
         {
             return perAgentReward[robot.getId()];
