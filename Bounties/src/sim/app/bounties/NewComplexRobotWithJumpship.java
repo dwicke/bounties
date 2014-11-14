@@ -93,7 +93,7 @@ public class NewComplexRobotWithJumpship extends AbstractRobot implements Steppa
                 jumpHome(); // someone else finished the task so start again
                 curTask = null;
                 numTimeSteps = 0;
-                decideTaskFailed = decideNextTask();
+                decideTaskFailed = true;
                 return; // can't start it in the same timestep that i chose it since doesn't happen if I was the one who completed it
             }
 
@@ -105,7 +105,7 @@ public class NewComplexRobotWithJumpship extends AbstractRobot implements Steppa
                 learn(1.0, curTask.getLastAgentsWorkingOnTask());
                 curTask = null;
                 numTimeSteps = 0;
-                decideTaskFailed = decideNextTask();
+                decideTaskFailed = true;
             }else if (!randomChosen && bountyState.schedule.getSteps()>200000) {
                 Task tempTask = curTask;
                 pTable.setAlpha(0);
@@ -133,7 +133,7 @@ public class NewComplexRobotWithJumpship extends AbstractRobot implements Steppa
         if(bondsman.getAvailableTasks().isEmpty()) {
             return true; // wasn't succesful
         }
-        if(epsilonChooseRandomTask > bountyState.random.nextDouble()){ // )
+        if(epsilonChooseRandomTask > bountyState.random.nextDouble() && false){ // )
             pickRandomTask();
         }else{
             pickTask();

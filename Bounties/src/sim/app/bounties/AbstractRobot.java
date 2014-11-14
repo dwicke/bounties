@@ -28,7 +28,7 @@ public class AbstractRobot implements IRobot {
     int[] timeOnTask = new int[historySize];
     int rollingHistoryCounter = 0; // pointer to current spot in the list for history purposes
     int rewardCurrentTask; // the reward for the current task
-    
+    boolean canDie;
     public void init(SimState state) {
         // do nothing...
     }
@@ -171,5 +171,10 @@ public class AbstractRobot implements IRobot {
     
     public void debug(String message) {
         //System.err.println(message);
+    }
+
+    @Override
+    public void setCanDie(boolean canDie) {
+       this.canDie = canDie;
     }
 }

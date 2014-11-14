@@ -5,6 +5,7 @@ import ec.util.MersenneTwisterFast;
 import java.awt.Color;
 import java.awt.Graphics2D;
 import java.util.Arrays;
+import sim.app.bounties.LogNormalDist.LogNormalDist;
 import sim.app.bounties.robot.darwin.agent.Real;
 import sim.engine.SimState;
 import sim.field.grid.SparseGrid2D;
@@ -46,9 +47,12 @@ public class Task implements Real, Fixed2D{
     private Bag lastAgentsWorkingOnTask; // these are the agents working on the task when someone finished it
     private int timeUntilRespawn = 0;
     private MersenneTwisterFast rand = null; 
+    int badForWho = -1;
+    public LogNormalDist incr ;
     Bounties hackItIn = null; //this is so we can hack in the graphics
     private Task() {}
     public Task(int numAgents, MersenneTwisterFast rand, Bounties hack) {
+        incr= new LogNormalDist(0,2,rand);
         perAgentReward = new int[numAgents];
         Arrays.fill(perAgentReward, defaultReward);
         currentReward = defaultReward;
@@ -106,16 +110,22 @@ public class Task implements Real, Fixed2D{
         done = val;
     }
     public void changeTaskLocation(){
-        int newX = initialLocation.x + (int)Math.round(((rand.nextGaussian()) * 5) - 2.5);
-        int newY = initialLocation.y + (int)Math.round(((rand.nextGaussian()) * 5) - 2.5);
+        if(rand.nextInt(10)==0){
+            badForWho = rand.nextInt(hackItIn.numRobots);
+        }//else{
+        //    badForWho = -1;
+        //}
+        int newX = initialLocation.x + (int)Math.round(((rand.nextGaussian()) * 5));
+        int newY = initialLocation.y + (int)Math.round(((rand.nextGaussian()) * 5));
         //System.err.println(initialLocation.x);
         realLocation = new Int2D(newX,newY);
         this.hackItIn.tasksGrid.setObjectLocation(this, realLocation);
     }
     public boolean isTaskReady(){//check to see if this is finally time to spawn.
-        if(isDone()==true) return true;
+        //if(isDone()==true) return true; // this makes it so that it spawns immediatly since done is true whenever the task is finished
+   
         timeUntilRespawn--;
-        return timeUntilRespawn==0;
+        return timeUntilRespawn<=0;//less than or equal to since timeUntilRespawn could be -1 if timeUntilRespawn was chosen to be 0
     }
     public int failureRate = 10;
     public void setFailureRate(int i){
@@ -149,7 +159,7 @@ public class Task implements Real, Fixed2D{
         return finishedTime;
     }
     public void makeRespawnTime(){
-        timeUntilRespawn = 10 + (int)(Math.round(rand.nextGaussian())*10-5);
+        timeUntilRespawn = rand.nextInt(20); // use uniform since we want them to come back within a reasonable time... //10 + (int)(Math.round(rand.nextGaussian())*10-5);
     }
     public void setAvailable(boolean available) {
         if(available == true){
@@ -165,7 +175,8 @@ public class Task implements Real, Fixed2D{
         currentReward = reward;
     }
     public void incrementCurrentReward(){
-        currentReward+=requiredRobots;
+        if (currentReward < 10000000 && isDone() == false)// don't increment while the task is done 
+            currentReward+=requiredRobots;
     }
     
     /**
@@ -213,6 +224,11 @@ public class Task implements Real, Fixed2D{
 
     void resetReward() {
         currentReward = defaultReward;
+        Arrays.fill(perAgentReward, defaultReward);//reset everyone's agent specific reward
+    }
+    
+    void resetReward(int reward) {
+        currentReward = reward;
         Arrays.fill(perAgentReward, defaultReward);//reset everyone's agent specific reward
     }
 

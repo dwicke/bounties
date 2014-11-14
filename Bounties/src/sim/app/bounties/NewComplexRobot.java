@@ -31,6 +31,13 @@ public class NewComplexRobot extends AbstractRobot implements Steppable {
     double epsilonChooseRandomTask = .1;
     boolean decideTaskFailed = false;
     Bag whoWasDoingWhenIDecided = new Bag();
+    boolean hasOneUp = false;
+    boolean isRand = false;
+    int deadCount = 0;
+    int deadLength = 20000;
+    int dieEveryN = 30000;
+    int twoDieEveryN = 60000;
+    
     /**
      * Call this before scheduling the robots.
      * @param state the bounties state
@@ -40,9 +47,9 @@ public class NewComplexRobot extends AbstractRobot implements Steppable {
         bondsman = bountyState.bondsman;
         timeTable = new QTable(bondsman.getTotalNumTasks(), 1, .1, .1, 1); //only model me
         pTable = new QTable(bondsman.getTotalNumTasks(), bountyState.numRobots, .1, .1, 1); //only model me
-        debug("In init for id: " + id);
-        debug("Qtable(row = task_id  col = robot_id) for id: " + id + " \n" + pTable.getQTableAsString());
-        debug("Qtable(row = task_id  col = robot_id) for id: " + id + " \n" + timeTable.getQTableAsString());
+        //debug("In init for id: " + id);
+        //debug("Qtable(row = task_id  col = robot_id) for id: " + id + " \n" + pTable.getQTableAsString());
+        //debug("Qtable(row = task_id  col = robot_id) for id: " + id + " \n" + timeTable.getQTableAsString());
         pickTask();
         numTimeSteps = 0;
     }
@@ -53,6 +60,31 @@ public class NewComplexRobot extends AbstractRobot implements Steppable {
             // if finished current task then learn
         // pick task
         // goto task
+        if(this.canDie) {
+            if(state.schedule.getSteps()!=0 && state.schedule.getSteps()%twoDieEveryN == 0){
+                if(id==0 || id == 1){
+                    deadCount = deadLength;
+                    bondsman.doingTask(id, -1);// don't do any task
+                    jumpHome();
+                    curTask = null;
+                    decideTaskFailed = true;
+                }
+
+            }else if(state.schedule.getSteps()!=0 && state.schedule.getSteps()%dieEveryN == 0){
+                if(id==0){
+                    deadCount = deadLength;
+                    bondsman.doingTask(id, -1);// don't do any task
+                    jumpHome();
+                    curTask = null;
+                    decideTaskFailed = true;
+                }
+
+            }
+            if(deadCount>0){
+                deadCount--;
+                return;
+            }
+        }
         if (decideTaskFailed) {
             decideTaskFailed = decideNextTask();
         } else {
@@ -62,7 +94,7 @@ public class NewComplexRobot extends AbstractRobot implements Steppable {
                 jumpHome(); // someone else finished the task so start again
                 curTask = null;
                 numTimeSteps = 0;
-                decideTaskFailed = decideNextTask();
+                decideTaskFailed = true;
                 return; // can't start it in the same timestep that i chose it since doesn't happen if I was the one who completed it
             }
 
@@ -74,7 +106,7 @@ public class NewComplexRobot extends AbstractRobot implements Steppable {
                 learn(1.0, curTask.getLastAgentsWorkingOnTask());
                 curTask = null;
                 numTimeSteps = 0;
-                decideTaskFailed = decideNextTask();
+                decideTaskFailed = true;
             }
         }
         
@@ -90,8 +122,15 @@ public class NewComplexRobot extends AbstractRobot implements Steppable {
         if(bondsman.getAvailableTasks().isEmpty()) {
             return true; // wasn't succesful
         }
-        
-        pickTask();
+        if(epsilonChooseRandomTask > bountyState.random.nextDouble() && isRand){// && false ){// && false){//&& false){ // ){
+            
+            pickRandomTask();
+            
+        }else{
+            pickTask();
+        }
+        numTimeSteps = 0;
+        if(curTask==null) return true;
         return false;// then there was a task i could choose from
     }
     
@@ -110,16 +149,20 @@ public class NewComplexRobot extends AbstractRobot implements Steppable {
         // so update my p and time tables
         
         if(reward == 1.0) {
-            System.err.println("numSteps = " + numTimeSteps);
+            //System.err.println("numSteps = " + numTimeSteps);
             timeTable.update(curTask.getID(), 0, numTimeSteps);
             for (int i = 0; i < curTask.getLastAgentsWorkingOnTask().numObjs; i++) {
                 pTable.update(curTask.getID(), ((int)curTask.getLastAgentsWorkingOnTask().objs[i]), reward);
             }
+            if (this.hasOneUp)
+                pTable.oneUpdate(.001);
             return;
         }
         pTable.update(curTask.getID(), curTask.getLastFinishedRobotID(), reward);
-        System.err.println("Agent id = " + id + " qtable = " + pTable.getQTableAsString());
-        System.err.println("Agent id = " + id + " qtable = " + timeTable.getQTableAsString());
+       if (this.hasOneUp)
+                pTable.oneUpdate(.001);
+       //System.err.println("Agent id = " + id + " qtable = " + pTable.getQTableAsString());
+        //System.err.println("Agent id = " + id + " qtable = " + timeTable.getQTableAsString());
         
     }
     
@@ -137,15 +180,23 @@ public class NewComplexRobot extends AbstractRobot implements Steppable {
             double tval = timeTable.getQValue(((Task)availTasks.objs[i]).getID(), 0);
             double pval = getPValue(((Task)availTasks.objs[i]));
             double value = 1.0/tval * pval*((Task)availTasks.objs[i]).getCurrentReward(this);
-            System.err.println("1/t =  " + (1.0/tval) );
-            System.err.println("agentid = " + id + " tval = " + tval + " pval = " + pval + " value = " + value + " max = " + max);
+           // System.err.println("1/t =  " + (1.0/tval) );
+           // System.err.println("agentid = " + id + " tval = " + tval + " pval = " + pval + " value = " + value + " max = " + max);
+            
+            if  (bondsman.whoseDoingTask(((Task)availTasks.objs[i])).size() > 0){
+                //value*=-1;
+            }
             if(value > max)
             {
                 max = value;
                 curTask = ((Task)availTasks.objs[i]);       
             }
         }
-        System.err.println("Task id = " + curTask.getID());
+        if(curTask==null) {
+            bondsman.doingTask(id, -1);
+            return;
+        }
+        //System.err.println("Task id = " + curTask.getID());
         
        
         updateStatistics(false,curTask.getID(),numTimeSteps);
@@ -215,6 +266,14 @@ public class NewComplexRobot extends AbstractRobot implements Steppable {
      */
     public void jumpHome() {
         bountyState.robotgrid.setObjectLocation(this,this.getRobotHome());// teleport home
+    }
+
+    void setHasOneUpdate(boolean hasOneUp) {
+        this.hasOneUp = hasOneUp;
+    }
+
+    void setHasRandom(boolean hasRandom) {
+        this.isRand = hasRandom;
     }
 
 }

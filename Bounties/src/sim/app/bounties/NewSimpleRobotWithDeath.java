@@ -16,7 +16,7 @@ import sim.util.Bag;
  * 
  * @author drew
  */
-public class NewSimpleRobot extends AbstractRobot implements Steppable {
+public class NewSimpleRobotWithDeath extends AbstractRobot implements Steppable {
     
     QTable timeTable; // time to do task
     QTable pTable; // probablility that I am successful at a task
@@ -31,13 +31,12 @@ public class NewSimpleRobot extends AbstractRobot implements Steppable {
     boolean decideTaskFailed = false;
     Bag whoWasDoingWhenIDecided = new Bag();
     int deadCount = 0;
-    int deadLength = 2000;
+    int deadLength = 20000;
     int dieEveryN = 30000;
     int twoDieEveryN = 60000;
     double totalTasksChosen = 0;
     double tasksNotTrusted = 0;
-    boolean hasOneUpdate = false;
-    boolean hasRandom = false;
+    
     /**
      * Call this before scheduling the robots.
      * @param state the bounties state
@@ -63,21 +62,13 @@ public class NewSimpleRobot extends AbstractRobot implements Steppable {
         numTimeSteps = 0;
     }
     
-    /**
-     * 
-     * @param updateIt true if should update false if not
-     */
-    public void setHasOneUpdate(boolean updateIt)
-    {
-        hasOneUpdate = updateIt;
-    }
     @Override
     public void step(SimState state) {
         // check if someone else finished the task I was working on
             // if finished current task then learn
         // pick task
         // goto task
-       /* if(state.schedule.getSteps()!=0 && state.schedule.getSteps()%twoDieEveryN == 0){
+        if(state.schedule.getSteps()!=0 && state.schedule.getSteps()%twoDieEveryN == 0){
             if(id==0 || id == 1){
                 deadCount = deadLength;
                 bondsman.doingTask(id, -1);// don't do any task
@@ -99,7 +90,7 @@ public class NewSimpleRobot extends AbstractRobot implements Steppable {
         if(deadCount>0){
             deadCount--;
             return;
-        }*/
+        }
         /*if(curTask!=null)
         if(0==state.random.nextInt(curTask.failureRate) && deadCount ==0){
             deadCount = deadLength;
@@ -121,34 +112,6 @@ public class NewSimpleRobot extends AbstractRobot implements Steppable {
             
             System.err.println(tasksNotTrusted/totalTasksChosen);
         }*/
-        
-        if(this.canDie) {
-            if(state.schedule.getSteps()!=0 && state.schedule.getSteps()%twoDieEveryN == 0){
-                if(id==0 || id == 1){
-                    deadCount = deadLength;
-                    bondsman.doingTask(id, -1);// don't do any task
-                    jumpHome();
-                    curTask = null;
-                    decideTaskFailed = true;
-                }
-
-            }else if(state.schedule.getSteps()!=0 && state.schedule.getSteps()%dieEveryN == 0){
-                if(id==0){
-                    deadCount = deadLength;
-                    bondsman.doingTask(id, -1);// don't do any task
-                    jumpHome();
-                    curTask = null;
-                    decideTaskFailed = true;
-                }
-
-            }
-            if(deadCount>0){
-                deadCount--;
-                return;
-            }
-        }
-        
-        
         if (decideTaskFailed) {
             decideTaskFailed = decideNextTask();
         } else {
@@ -215,7 +178,7 @@ public class NewSimpleRobot extends AbstractRobot implements Steppable {
         if(bondsman.getAvailableTasks().isEmpty()) {
             return true; // wasn't succesful
         }
-        if(epsilonChooseRandomTask > bountyState.random.nextDouble() && getHasRandom()){// && false ){// && false){//&& false){ // ){
+        if(epsilonChooseRandomTask > bountyState.random.nextDouble()){// && false ){// && false){//&& false){ // ){
             
             pickRandomTask();
             
@@ -260,8 +223,7 @@ public class NewSimpleRobot extends AbstractRobot implements Steppable {
            // System.err.println("p: r=0, id = " + id);
             pTable.update(curTask.getID(), 0, reward);
         }
-        if(hasOneUpdate == true)
-            pTable.oneUpdate(.001);
+        //pTable.oneUpdate(.001);
         
        // timeTable.meanUpdate(.0005);
        // pTable.meanUpdate(.025);   
@@ -359,14 +321,6 @@ public class NewSimpleRobot extends AbstractRobot implements Steppable {
      */
     public void jumpHome() {
         bountyState.robotgrid.setObjectLocation(this,this.getRobotHome());// teleport home
-    }
-
-    public void setHasRandom(boolean randomExpl) {
-        hasRandom = randomExpl;
-    }
-
-    public boolean getHasRandom() {
-        return hasRandom;
     }
 
 }

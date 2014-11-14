@@ -40,8 +40,8 @@ public class StatsPublisher implements Steppable{
     int previousID = 0;
     @Override
     public void step(SimState state) {
-        if(state.schedule.getSteps()== 190000 || state.schedule.getSteps()== 350000)
-            bagOfTotal.add(board.getTotalTicks());
+        //if(state.schedule.getSteps()== 190000 || state.schedule.getSteps()== 350000)
+        bagOfTotal.add(board.getTotalTicks());
         
         if( maxNumSteps - state.schedule.getSteps() < numberOfDecisionsToRecord)
         for(int i = 0; i<arrayOfBagsOfDecisions.length; i++){

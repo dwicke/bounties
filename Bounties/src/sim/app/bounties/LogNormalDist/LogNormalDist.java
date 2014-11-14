@@ -4,7 +4,7 @@
  * and open the template in the editor.
  */
 
-package sim.app.LogNormalDist;
+package sim.app.bounties.LogNormalDist;
 
 import ec.util.MersenneTwisterFast;
 

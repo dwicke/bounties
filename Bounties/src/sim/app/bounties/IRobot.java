@@ -28,4 +28,5 @@ public interface IRobot {
     public void setRobotHome(Int2D home); // the base 
     public Int2D getRobotHome();
     public void setRobotController(IController controller);
+    public void setCanDie(boolean canDie);
 }

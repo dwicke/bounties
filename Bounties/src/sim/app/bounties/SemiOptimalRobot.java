@@ -53,7 +53,7 @@ public class SemiOptimalRobot extends AbstractRobot implements Steppable {
     @Override
     public void step(SimState state) {
        
-        
+        /*
         if(state.schedule.getSteps()!=0 && state.schedule.getSteps()%twoDieEveryN == 0){
             if(id==0 || id == 1){
                 deadCount = deadLength;
@@ -80,7 +80,7 @@ public class SemiOptimalRobot extends AbstractRobot implements Steppable {
         if(deadCount>0){
             deadCount--;
             return;
-        }
+        }*/
             if(curTask == null) {
                 if(decideNextTask()) {
                     return; // failed to pick a task.
@@ -143,9 +143,12 @@ public class SemiOptimalRobot extends AbstractRobot implements Steppable {
 
             //need to figure out what "state" im in (who is already working on task + me)
 
-            
+            double dist = 0; // it is possible that the task's init pos is my home.
             // distance from home to task (since we are at home when we choose to take a task)
-            double dist = 1.0 / ((double) (((Task)availTasks.objs[i]).getInitialPosition()).manhattanDistance(this.home));
+            if (((double) (((Task)availTasks.objs[i]).getInitialPosition()).manhattanDistance(this.home)) != 0)
+            {
+                dist = 1.0 / ((double) (((Task)availTasks.objs[i]).getInitialPosition()).manhattanDistance(this.home));
+            }
             
             // need epsilon so will try something.
             double rewardPerDist = (dist+ 0.0025) * (((Task) availTasks.objs[i]).getCurrentReward(this)) ;

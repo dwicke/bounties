@@ -38,8 +38,8 @@ public class BountiesWithUI extends GUIState {
     }
 
     public BountiesWithUI() {
-        super(new Bounties("kelsey".hashCode()));
-        //super(new Bounties(System.currentTimeMillis()));
+        //super(new Bounties("kelsey".hashCode()));
+        super(new Bounties(System.currentTimeMillis()));
     }
 
     public BountiesWithUI(SimState state) {

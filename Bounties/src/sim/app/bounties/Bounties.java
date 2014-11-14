@@ -44,7 +44,10 @@ public class Bounties extends SimState {
     boolean rotateRobots  = false;
     boolean lastRotateValue = false;
     int offset = 0;
-    long maxRotateSteps = Long.MAX_VALUE;
+    long maxRotateSteps = 25000;
+    int willRotate = 0; // 0 don't rotate 1 will rotate
+    private int agentType = 0; // 0 - simple, 1 - simpleP, 2 - simpleR, 3 - complex, 4 - complexP, 5 - complexR, 6 - random, 7 - psuedoOptimal
+    private int willdie = 0; // 0 - won't die, 1 - will die
     
     
     public void setRotateRobots(boolean value){
@@ -259,11 +262,27 @@ public class Bounties extends SimState {
             dir = argumentForKey("-dir", myArgs);
         }
          
+    
+     
         if(myArgs !=null && keyExists("-rot", myArgs)) {
             maxRotateSteps = Long.parseLong(argumentForKey("-rot", myArgs));
         }
+        
+        // 0 don't rotate 1 will rotate
+        if(myArgs !=null && keyExists("-prot", myArgs)) {
+            willRotate = Integer.parseInt(argumentForKey("-prot", myArgs));
+        }
+        // 0 - simple, 1 - simpleP, 2 - simpleR, 3 - complex, 4 - complexP, 5 - complexR, 6 - random, 7 - psuedoOptimal
+        if(myArgs !=null && keyExists("-agt", myArgs)) {
+            agentType = Integer.parseInt(argumentForKey("-agt", myArgs));
+        }
+        // 0 - won't die, 1 - will die
+        if(myArgs !=null && keyExists("-die", myArgs)) {
+            willdie = Integer.parseInt(argumentForKey("-die", myArgs));
+        }
+        
         //maxRotateSteps= 25000;
-        maxRotateSteps = Long.MAX_VALUE;
+        //maxRotateSteps = Long.MAX_VALUE;
 //debug 
         prevRobotTabsCols = new double[numTasks];
         //debug
@@ -280,7 +299,7 @@ public class Bounties extends SimState {
         
         
         Jumpship js = new ResetJumpship();
-        bondsman = new Bondsman(numGoals, numTasks, js);//new Bondsman(numGoals, numTasks, js);
+        bondsman = new Bondsman(numGoals, numTasks, js);
         bondsman.setWorld(this);
         
         // make new grids
@@ -316,21 +335,110 @@ public class Bounties extends SimState {
         robotTabsCols = new double[numTasks];
         
         
-        Int2D quads[] = new Int2D[4];
-        quads[0] = new Int2D(0, 0);
-        quads[1] = new Int2D(0, GRID_HEIGHT -1);
-        quads[3] = new Int2D(GRID_WIDTH - 1, 0);
-        quads[2] = new Int2D(GRID_WIDTH - 1, GRID_HEIGHT - 1);
+        
         
         board = new Leaderboard(numTasks, Long.MAX_VALUE);
         robots = new IRobot[numRobots];
         robotgrid = new SparseGrid2D(GRID_WIDTH, GRID_HEIGHT);
         
+        // create the edge robots usually this should just be numRobots but we want a center so don't
         
-        for (int x = 0; x < numRobots; x++) {
+        createEdgeRobots(numRobots);
+        
+        
+        // Now make a BadRobot in the center
+        
+        for (int i = numRobots; i < numRobots; i++) {
+            robots[i] = createBadBot(i);
+            schedule.scheduleRepeating(Schedule.EPOCH + i, 0, (Steppable)robots[i], 1);
+        }
+        
+
+        //robotgrid/.setObjectLocation(bot, xloc, yloc);
+        //robots[x].setRobotHome(new Int2D(xloc, yloc));
+       
+
+        
+        
+        
+        
+        
+        StatsPublisher stats = new StatsPublisher(this, maxNumSteps,dir);
+        // now schedule the bondsman so that it can add more tasks as needed.
+        schedule.scheduleRepeating(Schedule.EPOCH+numRobots,0, bondsman, 1);
+        //schedule statistics gatherer
+        schedule.scheduleRepeating(Schedule.EPOCH+numRobots+1,0,stats,1);
+        if (willRotate == 1)
+            schedule.scheduleRepeating(Schedule.EPOCH+numRobots+2,0,new RotateBots(maxRotateSteps),1);
+        
+        
+    }
+    
+    
+    public BadRobot createBadBot(int badID) {
+        BadRobot br = new BadRobot();
+        br.setId(badID);
+        Int2D center = new Int2D(0, 0);//new Int2D(GRID_WIDTH / 2, GRID_HEIGHT / 2);
+        robotgrid.setObjectLocation(br, center);
+        br.setRobotHome(center);
+        br.init(this);
+        TeleportController t = new TeleportController();
+        t.setMyRobot(br);
+        br.setRobotController(t);
+        return br;
+    }
+   
+    public void createEdgeRobots(int numBots) {
+        
+        Int2D quads[] = new Int2D[4];
+        quads[0] = new Int2D(0, 0);
+        quads[1] = new Int2D(0, GRID_HEIGHT -1);
+        quads[3] = new Int2D(GRID_WIDTH - 1, 0);
+        quads[2] = new Int2D(GRID_WIDTH - 1, GRID_HEIGHT - 1);        
+        
+        for (int x = 0; x < numBots; x++) {
             //GreedyBot bot = new GreedyBot();
-            //OptimalRobot bot = new OptimalRobot();
-            SimpleRobotVariableFailure bot = new SimpleRobotVariableFailure();
+
+            //NewComplexRobotWithJumpship bot = new NewComplexRobotWithJumpship();
+            
+            IRobot bot = null;
+            
+             // 0 - simple, 1 - simpleP, 2 - simpleR, 3 - complex, 4 - complexP, 5 - complexR, 6 - random, 7 - psuedoOptimal
+            switch(agentType)        
+            {
+                case 0:
+                    bot = new NewSimpleRobot();
+                    break;
+                case 1:
+                    bot = new NewSimpleRobot();
+                    ((NewSimpleRobot)bot).setHasOneUpdate(true);
+                    break;
+                case 2:
+                    bot = new NewSimpleRobot();
+                    ((NewSimpleRobot)bot).setHasRandom(true);
+                    break;
+                case 3:
+                    bot = new NewComplexRobot();
+                    break;
+                case 4:
+                    bot = new NewComplexRobot();
+                    ((NewComplexRobot)bot).setHasOneUpdate(true);
+                    break;
+                case 5:
+                    bot = new NewComplexRobot();
+                    ((NewComplexRobot)bot).setHasRandom(true);
+                    break;
+                case 6:
+                    bot = new RandomRobot();
+                    break;
+                case 7:
+                    bot = new SemiOptimalRobot();
+                    break;
+                default:
+                    break;
+            }
+            
+            bot.setCanDie(willdie == 1);
             robots[x] = bot;
             bot.setId(x);
             //int xloc = random.nextInt(GRID_WIDTH);
@@ -346,19 +454,11 @@ public class Bounties extends SimState {
             TeleportController t = new TeleportController();
             t.setMyRobot(bot);
             robots[x].setRobotController(t);
-            schedule.scheduleRepeating(Schedule.EPOCH + x, 0, bot, 1);
+            schedule.scheduleRepeating(Schedule.EPOCH + x, 0, (Steppable)bot, 1);
             
         }
-        
-        StatsPublisher stats = new StatsPublisher(this, maxNumSteps,dir);
-        // now schedule the bondsman so that it can add more tasks as needed.
-        schedule.scheduleRepeating(Schedule.EPOCH+numRobots,0, bondsman, 1);
-        //schedule statistics gatherer
-        schedule.scheduleRepeating(Schedule.EPOCH+numRobots+1,0,stats,1);
-        schedule.scheduleRepeating(Schedule.EPOCH+numRobots+2,0,new RotateBots(maxRotateSteps),1);
-        
-        
     }
+    
     
     public class RotateBots implements Steppable {
 
@@ -375,6 +475,7 @@ public class Bounties extends SimState {
             if (numSteps % rotateStep == 0 && numSteps>0) {
                 rotated = true;
                 if(howManyTimes%2 == 0){
+                    howManyTimes++;
                     setRotateRobots(!lastRotateValue);
                 }else{
                     setRotateRobots(!lastRotateValue);
