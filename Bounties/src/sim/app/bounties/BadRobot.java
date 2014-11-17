@@ -88,10 +88,10 @@ public class BadRobot extends AbstractRobot implements Steppable {
                 decideTaskFailed = decideNextTask();
                 return; // can't start it in the same timestep that i chose it since doesn't happen if I was the one who completed it
             }
-            System.err.println("Stepping " + numTimeSteps + " my id " + id + " curTask = " + curTask);
+            //System.err.println("Stepping " + numTimeSteps + " my id " + id + " curTask = " + curTask);
             // make half as fast
-            if(numTimeSteps % 5 == 0) {
-                System.err.println("Stepping " + numTimeSteps + " my id " + id);
+            if(numTimeSteps % 20 == 0) {
+              //  System.err.println("Stepping " + numTimeSteps + " my id " + id);
                 if (gotoTask()) { // if i made it to the task then finish it and learn
                     jumpHome();
                     iFinished = true;
@@ -173,7 +173,7 @@ public class BadRobot extends AbstractRobot implements Steppable {
         while(curTask == null) {
             
             int ind = bountyState.random.nextInt(availTasks.numObjs);
-            if  (bondsman.whoseDoingTask(((Task)availTasks.objs[ind])).isEmpty()){
+            if  (bondsman.whoseDoingTask(((Task)availTasks.objs[ind])).numObjs == 0){
                 curTask = (Task)availTasks.objs[ind];
             }
             

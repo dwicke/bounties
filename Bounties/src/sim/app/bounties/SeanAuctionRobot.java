@@ -16,7 +16,7 @@ import sim.util.Bag;
  * 
  * @author drew
  */
-public class NewSimpleRobot extends AbstractRobot implements Steppable {
+public class SeanAuctionRobot extends AbstractRobot implements Steppable {
     
     
     Bag taskList; // the list of tasks that I will do
@@ -42,10 +42,7 @@ public class NewSimpleRobot extends AbstractRobot implements Steppable {
     boolean hasOneUpdate = false;
     boolean hasRandom = false;
     boolean isExclusive = false;
-    double pUpdateValue = .001;
-    public void setPUpdate(double value){
-        pUpdateValue = value;
-    }
+    boolean amDead = false;
     /**
      * Call this before scheduling the robots.
      * @param state the bounties state
@@ -139,6 +136,7 @@ public class NewSimpleRobot extends AbstractRobot implements Steppable {
                     jumpHome();
                     curTask = null;
                     decideTaskFailed = true;
+                    amDead = true;
                 }
 
             }else if(state.schedule.getSteps()!=0 && state.schedule.getSteps()%dieEveryN == 0){
@@ -148,6 +146,7 @@ public class NewSimpleRobot extends AbstractRobot implements Steppable {
                     jumpHome();
                     curTask = null;
                     decideTaskFailed = true;
+                    amDead = true;
                 }
 
             }
@@ -156,7 +155,7 @@ public class NewSimpleRobot extends AbstractRobot implements Steppable {
                 return;
             }
         }
-        
+        amDead = false;
         
         if (decideTaskFailed) {
             decideTaskFailed = decideNextTask();
@@ -173,7 +172,7 @@ public class NewSimpleRobot extends AbstractRobot implements Steppable {
                 return; // can't start it in the same timestep
             }
              // this is the test for if you become bad for this task
-            if(curTask!=null && curTask.badForWho == this.id && this.hasTraps == true){
+            if(curTask!=null && curTask.badForWho == this.id && hasTraps == true){
                 numTimeSteps++;
                 if(bountyState.schedule.getSteps() % 20 != 0)
                     return;
@@ -244,7 +243,7 @@ public class NewSimpleRobot extends AbstractRobot implements Steppable {
     public boolean finishedTask() {
         //curTask.subtractRobot(this);
        // if(curTask)
-        
+       //if(curTask==null) return false;
         return curTask.getLastFinishedTime() != lastSeenFinished;
         
     }
@@ -271,10 +270,8 @@ public class NewSimpleRobot extends AbstractRobot implements Steppable {
             pTable.update(curTask.getID(), 0, reward);
            
         }
-        if(hasOneUpdate == true){
-          //  System.err.println("pupdate value" + pUpdateValue);
-            pTable.oneUpdate(pUpdateValue); 
-        }
+        if(hasOneUpdate == true)
+            pTable.oneUpdate(.001);
         
         //pTable.oneUpdate(.001);
        // timeTable.meanUpdate(.0005);
@@ -283,18 +280,13 @@ public class NewSimpleRobot extends AbstractRobot implements Steppable {
         //System.err.println("Agent id = " + id + " qtable = " + timeTable.getQTableAsString());
         
     }
-    
-    /**
-     * Pick the current task to do.
-     */
-    public void pickTask() {
-        
+    public double[] getEvaluations(){
         Bag availTasks = bondsman.getAvailableTasks();
         
         //System.err.println("Num Avail Tasks == " + availTasks.numObjs);
-        curTask = null;
-        double max = 0; 
+        //curTask = null;
         //for (int j = 0; j < maxTaskLength - taskList.numObjs; j++) {
+        double[] evaluations = new double[availTasks.numObjs];
         for (int i = 0; i < availTasks.numObjs; i++) { // over all tasks
             /*
             if (bondsman.getClearTime(((Task)availTasks.objs[i]).getID()) > 0) {
@@ -305,38 +297,129 @@ public class NewSimpleRobot extends AbstractRobot implements Steppable {
             double pval = pTable.getQValue(((Task)availTasks.objs[i]).getID(), 0);
             double value = 1.0/tval * pval*((Task)availTasks.objs[i]).getCurrentReward(this);
             //if (bountyState.schedule.getSteps() > 50000){
-            if  (bondsman.whoseDoingTask(((Task)availTasks.objs[i])).size() > 0){
-                if(isExclusive == true)
+            if  (bondsman.whoseDoingTask(((Task)availTasks.objs[i])).size() > 0 || amDead == true){
+                //if(isExclusive == true)
                     value*=-1;
             }
+            evaluations[i] = value;
             //}
            // System.err.println("1/t =  " + (1.0/tval) );
            // System.err.println("agentid = " + id + " tval = " + tval + " pval = " + pval + " value = " + value + " max = " + max);
-            if(value > max)
-            {
-                max = value;
-                curTask = ((Task)availTasks.objs[i]);       
-            }
+
         }
         
+        return evaluations;
+        
+        
+     
+    }
+    /**
+     * Pick the current task to do.
+     */
+    public void pickTask() {
+        try{
+        Bag availTasks = (Bag)bondsman.getAvailableTasks().clone();
+        
+        //System.err.println("Num Avail Tasks == " + availTasks.numObjs);
+        curTask = null;
+        double max = 0; 
+        int robotWinner = -1;
+        int robotIndex = -1;
+        //for (int j = 0; j < maxTaskLength - taskList.numObjs; j++) {
+        IRobot[] bots = bountyState.getRobots().clone();
+        
+        int countGood = 0;
+        for (int i = 0; i < bots.length; i++) {
+            if(bots[i] instanceof SeanAuctionRobot) {
+                countGood++;
+            }else {
+                bots[i] = null;
+            }
+        }
+        IRobot [] goodBots = new IRobot[countGood];
+        int countAll = 0;
+        for (int i = 0; i < bots.length; i++) {
+            if(bots[i] instanceof SeanAuctionRobot) {
+                goodBots[countAll] = bots[i];
+                countAll++;
+            }else {
+                countGood++;
+            }
+        }
+        bots = goodBots;
+        
+        
+        int loopCount = 0;
+        double[][] evaluations = new double[bots.length][];
+        for(int a = 0; a<bots.length; a++){
+            if(bots[a]!=null && bots[a] instanceof SeanAuctionRobot)
+                evaluations[a] = ((SeanAuctionRobot)bots[a]).getEvaluations();
+        }
+        if(bots.length!=4)
+        System.err.println("bots length " + bots.length);
+        while(robotWinner != this.id && loopCount<bots.length){
+            max  = 0;
+            robotWinner = -1;
+            Task taskWon = null;
+            int taskIndex = -1;
+            robotIndex = -1;
+          //  System.err.println("inf loop pl0x");
+            //System.err.println("START");
+            for(int a = 0; a<bots.length; a++){
+                for (int i = 0; i < availTasks.numObjs; i++) { // over all tasks
+                  if(availTasks.objs[i] != null && bots[a]!=null && bots[a] instanceof SeanAuctionRobot){
+                     double temp = evaluations[a][i];
+                     //System.err.println("evaluation " + temp);
+                     if(temp > max){
+                         robotWinner = bots[a].getId();
+                         max = temp;
+                         robotIndex = a;
+                         taskWon = (Task)availTasks.objs[i];
+                         taskIndex = i;
+                     }
+                  }
+                }
+            }
+          if(robotWinner == this.id && max > 0){
+             // System.err.println(" got a cur task at index " + taskIndex);
+              curTask = taskWon;
+              break;
+          }else{
+              if(robotIndex != -1 ){
+
+                bots[robotIndex] = null;
+                availTasks.objs[taskIndex] = null;
+              }else{
+                 // System.err.println("okay NOW you can shit your pants " + availTasks.numObjs);
+              }
+          }
+          loopCount++;
+        }
+       // System.err.println("out of inf loop ty");
         
         
         if(curTask==null) {
+             //System.err.println("okay NOW you can shit your pants1 " + availTasks.numObjs);
             bondsman.doingTask(id, -1);
             return;
         }
         //System.err.println("Task id = " + curTask.getID());
-        if(bountyState.schedule.getSteps() >= 180000){
-            totalTasksChosen++;
-            if  (bondsman.whoseDoingTask(((Task)curTask)).size() > 0){
-                tasksNotTrusted++;
+        totalTasksChosen++;
+        if  (bondsman.whoseDoingTask(((Task)curTask)).size() > 0){
+            tasksNotTrusted++;
+            if(bountyState.schedule.getSteps() >= 200000){
+               // System.err.println("expected: " + curTask.initialLocation.toString() + " actual: " + curTask.realLocation.toString());
             }
         }
         updateStatistics(false,curTask.getID(),numTimeSteps);
         bondsman.doingTask(id, curTask.getID());
         //curTask.addRobot(this);
         // always set the lastSeenFinished
-        lastSeenFinished = curTask.getLastFinishedTime(); 
+        lastSeenFinished = curTask.getLastFinishedTime(); } 
+        catch (Exception e){
+            e.printStackTrace();
+            System.exit(0);
+        }
     }
     
     /**
@@ -373,7 +456,7 @@ public class NewSimpleRobot extends AbstractRobot implements Steppable {
      */
     public boolean gotoTask() {
         if(bountyState == null || curTask == null){
-          //  System.err.println("one was null " + bountyState + "  " + curTask);
+           System.err.println("one was null " + bountyState + "  " + curTask);
         }
         return gotoTaskPosition(bountyState, curTask);
     }

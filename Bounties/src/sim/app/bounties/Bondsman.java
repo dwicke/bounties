@@ -31,16 +31,41 @@ public class Bondsman implements Steppable {
     private Jumpship jumpPolicy;
     private LogNormalDist logNormalDist;
     private double penaltyFactor[]; // each robot has a penalty factor what percentage of current bounty do they get
+    private int clearingTimes[];
+    private int taskBeingWorkedOn[];
+    private int clearTime;
+    
     
     public Bondsman(){
     }
 
-    Bondsman(int numGoals, int numTasks, Jumpship js) {
+    Bondsman(int numGoals, int numTasks, Jumpship js, int clearTime) {
         this.numGoals = numGoals;
         this.numTasks = numTasks;
+        this.clearTime = clearTime;
+        clearingTimes = new int[numTasks];
+        Arrays.fill(clearingTimes, clearTime);
+        taskBeingWorkedOn = new int[numTasks];
         jumpPolicy = js;
     }
     
+    public void resetClearTime(int taskID) {
+        clearingTimes[taskID] = clearTime;
+    }
+    public int getClearTime(int taskID) {
+        return clearingTimes[taskID];
+    } 
+    
+    public void updateClearingTimes() {
+        for (int i = 0; i < clearingTimes.length; i++) {
+            if(clearingTimes[i] == 0 || taskBeingWorkedOn[i] == 1) { // we have to reset or someone is working on it 
+                clearingTimes[i] = clearTime;
+            }
+            else {
+                clearingTimes[i] = clearingTimes[i] - 1;
+            }
+        }
+    }
     
     public void setWorld(Bounties bounties) {
         this.bounties = bounties;
@@ -125,6 +150,7 @@ public class Bondsman implements Steppable {
                 if(((Task) tasks.objs[i]).isTaskReady()){
                     ((Task) tasks.objs[i]).setAvailable(true);
                     ((Task) tasks.objs[i]).setDone(false);
+                    taskBeingWorkedOn[((Task) tasks.objs[i]).getID()] = 0;
                 }
             }
         }
@@ -138,7 +164,7 @@ public class Bondsman implements Steppable {
         //((Bounties)state).getRobotTabsCols();
         makeAvailable();
         incrementBounty();// increment the bounties
-        
+        updateClearingTimes();
     }
 
     public void setNumTasks(int numTasks) {
@@ -162,7 +188,6 @@ public class Bondsman implements Steppable {
         curTask.setAvailable(false); // whenever an agent finishes a task then make it unavailable
         curTask.setDone(true);
         
-        
         //curTask.resetReward((int)logNormalDist.sample());
         //curTask.resetReward((int)Math.abs(bounties.random.nextGaussian())*5000 + 1000); // this made a differnce a big one even more so when a bad robot is in the mix i think it does better than the 100 (works for simple and complex)
         //curTask.resetReward((int)Math.abs(bounties.random.nextGaussian())*5000 + 100); // this accentuates it even more especially if one of the robots is a BadRobot
@@ -176,6 +201,8 @@ public class Bondsman implements Steppable {
      */
     public void doingTask(int robotID, int taskID) {
         whosDoingWhatTaskID[robotID] = taskID;
+        if (taskID != -1)
+            taskBeingWorkedOn[taskID] = 1;
     }
     /**
      * So if you were doing a task and you are switching

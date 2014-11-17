@@ -46,7 +46,7 @@ public class NewComplexRobot extends AbstractRobot implements Steppable {
         bountyState = ((Bounties)state);
         bondsman = bountyState.bondsman;
         timeTable = new QTable(bondsman.getTotalNumTasks(), 1, .1, .1, 1); //only model me
-        pTable = new QTable(bondsman.getTotalNumTasks(), bountyState.numRobots, .1, .1, 1); //only model me
+        pTable = new QTable(bondsman.getTotalNumTasks(), bountyState.numRobots, .2, .1, 1); //only model me
         //debug("In init for id: " + id);
         //debug("Qtable(row = task_id  col = robot_id) for id: " + id + " \n" + pTable.getQTableAsString());
         //debug("Qtable(row = task_id  col = robot_id) for id: " + id + " \n" + timeTable.getQTableAsString());

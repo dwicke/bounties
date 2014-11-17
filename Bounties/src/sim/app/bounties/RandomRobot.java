@@ -69,7 +69,7 @@ public class RandomRobot extends AbstractRobot implements Steppable {
             // if finished current task then learn
         // pick task
         // goto task
-        
+        if(this.canDie) {
         if(state.schedule.getSteps()!=0 && state.schedule.getSteps()%twoDieEveryN == 0){
             if(id==0 || id == 1){
                 deadCount = deadLength;
@@ -92,7 +92,7 @@ public class RandomRobot extends AbstractRobot implements Steppable {
         if(deadCount>0){
             deadCount--;
             return;
-        }
+        }}
         if (decideTaskFailed) {
             decideTaskFailed = decideNextTask();
         } else {

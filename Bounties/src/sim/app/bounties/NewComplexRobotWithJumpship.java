@@ -34,6 +34,7 @@ public class NewComplexRobotWithJumpship extends AbstractRobot implements Steppa
     int deadLength = 20000;
     int dieEveryN = 30000;
     int twoDieEveryN = 60000;
+    
     /**
      * Call this before scheduling the robots.
      * @param state the bounties state

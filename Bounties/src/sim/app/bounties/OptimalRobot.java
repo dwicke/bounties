@@ -52,8 +52,8 @@ public class OptimalRobot extends AbstractRobot implements Steppable {
     
     @Override
     public void step(SimState state) {
-       
-       /*if(state.schedule.getSteps()!=0 && state.schedule.getSteps()%twoDieEveryN == 0){
+       if(this.canDie) {
+       if(state.schedule.getSteps()!=0 && state.schedule.getSteps()%twoDieEveryN == 0){
             if(id==0 || id == 1){
                 deadCount = deadLength;
                 bondsman.doingTask(id, -1);// don't do any task
@@ -79,7 +79,7 @@ public class OptimalRobot extends AbstractRobot implements Steppable {
         if(deadCount>0){
             deadCount--;
             return;
-        }*/
+        }}
         if(curTask!=null)
         if(0==state.random.nextInt(curTask.failureRate) && deadCount ==0){
             deadCount = deadLength;

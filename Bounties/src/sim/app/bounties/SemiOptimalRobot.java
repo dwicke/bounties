@@ -53,7 +53,7 @@ public class SemiOptimalRobot extends AbstractRobot implements Steppable {
     @Override
     public void step(SimState state) {
        
-        /*
+        if(this.canDie) {
         if(state.schedule.getSteps()!=0 && state.schedule.getSteps()%twoDieEveryN == 0){
             if(id==0 || id == 1){
                 deadCount = deadLength;
@@ -80,7 +80,7 @@ public class SemiOptimalRobot extends AbstractRobot implements Steppable {
         if(deadCount>0){
             deadCount--;
             return;
-        }*/
+        }}
             if(curTask == null) {
                 if(decideNextTask()) {
                     return; // failed to pick a task.

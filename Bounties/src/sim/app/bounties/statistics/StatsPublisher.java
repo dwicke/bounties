@@ -36,11 +36,13 @@ public class StatsPublisher implements Steppable{
             arrayOfBagsOfDecisions[i] = new Bag();
         }
         System.out.println("numROBOTS " + board.getNumRobots());
+    
     }
     int previousID = 0;
     @Override
     public void step(SimState state) {
         //if(state.schedule.getSteps()== 190000 || state.schedule.getSteps()== 350000)
+        //IRobot[] robots = a.getRobots();
         bagOfTotal.add(board.getTotalTicks());
         
         if( maxNumSteps - state.schedule.getSteps() < numberOfDecisionsToRecord)
@@ -52,7 +54,7 @@ public class StatsPublisher implements Steppable{
         }
 
         if(state.schedule.getSteps() >= maxNumSteps-2){
-           try{ 
+           try{
             File file = new File(directoryName + "/" + "maxTicks" + state.seed() + ".bounties");
             file.getParentFile().mkdirs();   
             PrintWriter writer = new PrintWriter(file, "UTF-8");

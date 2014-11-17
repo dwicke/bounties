@@ -22,7 +22,7 @@ public class Auctioneer extends Bondsman {
     boolean isPriority = false;
     
     Auctioneer(int numGoals, int numTasks, Jumpship js, int clearTime, boolean isPriority) {
-        super(numGoals,numTasks,js);
+        super(numGoals,numTasks,js, clearTime);
         clearingTimes = new int[numTasks];
         this.clearTime = clearTime;
         this.isPriority = isPriority;

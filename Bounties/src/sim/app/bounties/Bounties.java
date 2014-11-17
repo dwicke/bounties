@@ -48,7 +48,7 @@ public class Bounties extends SimState {
     int willRotate = 0; // 0 don't rotate 1 will rotate
     private int agentType = 0; // 0 - simple, 1 - simpleP, 2 - simpleR, 3 - complex, 4 - complexP, 5 - complexR, 6 - random, 7 - psuedoOptimal
     private int willdie = 0; // 0 - won't die, 1 - will die
-    
+    private int hasTraps = 0;
     
     public void setRotateRobots(boolean value){
            
@@ -166,7 +166,6 @@ public class Bounties extends SimState {
     public void setAvgCount(int val) {
         if (val > 0) {
             rollingAverage = new double[val];
-            
         }
     }
     public void setNumGoals(int numGoals) {
@@ -250,9 +249,10 @@ public class Bounties extends SimState {
         }
         return null;
     }
+    double pUpdateValue = .001;
     public void start() {
         super.start();  // clear out the schedule
-        
+        int numBadRobot = 0;
         long maxNumSteps = Long.MAX_VALUE;
         if(myArgs !=null && keyExists("-for", myArgs)) {
             maxNumSteps = Long.parseLong(argumentForKey("-for", myArgs));
@@ -261,9 +261,7 @@ public class Bounties extends SimState {
         if(myArgs !=null && keyExists("-dir", myArgs)) {
             dir = argumentForKey("-dir", myArgs);
         }
-         
-    
-     
+
         if(myArgs !=null && keyExists("-rot", myArgs)) {
             maxRotateSteps = Long.parseLong(argumentForKey("-rot", myArgs));
         }
@@ -271,6 +269,7 @@ public class Bounties extends SimState {
         // 0 don't rotate 1 will rotate
         if(myArgs !=null && keyExists("-prot", myArgs)) {
             willRotate = Integer.parseInt(argumentForKey("-prot", myArgs));
+        
         }
         // 0 - simple, 1 - simpleP, 2 - simpleR, 3 - complex, 4 - complexP, 5 - complexR, 6 - random, 7 - psuedoOptimal
         if(myArgs !=null && keyExists("-agt", myArgs)) {
@@ -280,7 +279,22 @@ public class Bounties extends SimState {
         if(myArgs !=null && keyExists("-die", myArgs)) {
             willdie = Integer.parseInt(argumentForKey("-die", myArgs));
         }
+        if(myArgs !=null && keyExists("-bad", myArgs)) {
+            numBadRobot = Integer.parseInt(argumentForKey("-bad", myArgs));
+            
+        }
+        if(myArgs !=null && keyExists("-pval", myArgs)) {
+            pUpdateValue = Double.parseDouble(argumentForKey("-pval", myArgs));
+        }
+        if(myArgs !=null && keyExists("-ptrap", myArgs)) {
+            hasTraps = Integer.parseInt(argumentForKey("-ptrap", myArgs));
+        }
         
+        
+        
+        //willdie = 1;
+        //willRotate = 1;
+        numRobots+=numBadRobot;
         //maxRotateSteps= 25000;
         //maxRotateSteps = Long.MAX_VALUE;
 //debug 
@@ -299,7 +313,7 @@ public class Bounties extends SimState {
         
         
         Jumpship js = new ResetJumpship();
-        bondsman = new Bondsman(numGoals, numTasks, js);
+        bondsman = new Bondsman(numGoals, numTasks, js,0);
         bondsman.setWorld(this);
         
         // make new grids
@@ -343,12 +357,13 @@ public class Bounties extends SimState {
         
         // create the edge robots usually this should just be numRobots but we want a center so don't
         
-        createEdgeRobots(numRobots);
+        createEdgeRobots(numRobots,numBadRobot);
         
         
         // Now make a BadRobot in the center
         
-        for (int i = numRobots; i < numRobots; i++) {
+        for (int i = numRobots-numBadRobot; i < numRobots; i++) {
+            System.err.println("look here? " + i);
             robots[i] = createBadBot(i);
             schedule.scheduleRepeating(Schedule.EPOCH + i, 0, (Steppable)robots[i], 1);
         }
@@ -388,7 +403,7 @@ public class Bounties extends SimState {
         return br;
     }
    
-    public void createEdgeRobots(int numBots) {
+    public void createEdgeRobots(int numBots, int badRobots) {
         
         Int2D quads[] = new Int2D[4];
         quads[0] = new Int2D(0, 0);
@@ -396,7 +411,7 @@ public class Bounties extends SimState {
         quads[3] = new Int2D(GRID_WIDTH - 1, 0);
         quads[2] = new Int2D(GRID_WIDTH - 1, GRID_HEIGHT - 1);        
         
-        for (int x = 0; x < numBots; x++) {
+        for (int x = 0; x < numBots-badRobots; x++) {
             //GreedyBot bot = new GreedyBot();
 
             //NewComplexRobotWithJumpship bot = new NewComplexRobotWithJumpship();
@@ -434,11 +449,25 @@ public class Bounties extends SimState {
                 case 7:
                     bot = new SemiOptimalRobot();
                     break;
+                case 8:
+                    bot = new SeanAuctionRobot();
+                    break;
+                case 9:
+                    bot = new NewSimpleRobot();
+                    ((NewSimpleRobot)bot).isExclusive = true;
+                    break;
                 default:
                     break;
             }
+           //  bot = new SeanAuctionRobot();
+           // bot = new NewSimpleRobot();
+//            bot = new SeanAuctionRobot();
+            
+            ((AbstractRobot)bot).hasTraps = hasTraps == 1;
             
             bot.setCanDie(willdie == 1);
+            if(bot instanceof NewSimpleRobot)
+                (( NewSimpleRobot)bot).setPUpdate(pUpdateValue);
             robots[x] = bot;
             bot.setId(x);
             //int xloc = random.nextInt(GRID_WIDTH);
