@@ -174,7 +174,7 @@ public class SeanAuctionRobot extends AbstractRobot implements Steppable {
              // this is the test for if you become bad for this task
             if(curTask!=null && curTask.badForWho == this.id && hasTraps == true){
                 numTimeSteps++;
-                if(bountyState.schedule.getSteps() % 20 != 0)
+                if(bountyState.schedule.getSteps() % 10 != 0)
                     return;
             }
             if (gotoTask()){ // if i made it to the task then finish it and learn

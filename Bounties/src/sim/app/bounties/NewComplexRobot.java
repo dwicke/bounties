@@ -97,7 +97,11 @@ public class NewComplexRobot extends AbstractRobot implements Steppable {
                 decideTaskFailed = true;
                 return; // can't start it in the same timestep that i chose it since doesn't happen if I was the one who completed it
             }
-
+            if(curTask!=null && curTask.badForWho == this.id){ //&& this.hasTraps == true){
+                numTimeSteps++;
+                if(bountyState.schedule.getSteps() % 10 != 0)
+                    return;
+            }
             if (gotoTask()) { // if i made it to the task then finish it and learn
                 jumpHome();
                 iFinished = true;

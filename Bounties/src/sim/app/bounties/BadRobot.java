@@ -90,7 +90,7 @@ public class BadRobot extends AbstractRobot implements Steppable {
             }
             //System.err.println("Stepping " + numTimeSteps + " my id " + id + " curTask = " + curTask);
             // make half as fast
-            if(numTimeSteps % 20 == 0) {
+            if(numTimeSteps % 10 == 0) {
               //  System.err.println("Stepping " + numTimeSteps + " my id " + id);
                 if (gotoTask()) { // if i made it to the task then finish it and learn
                     jumpHome();

@@ -100,6 +100,17 @@ public class Bounties extends SimState {
         }
      return 10;
     }
+    public double getAverageStepping(){
+        double sumTasks = 0;
+        double sumBetrayed = 0;
+        for(IRobot a : robots){
+            NewSimpleRobot curBot = (NewSimpleRobot)a;
+            sumTasks += curBot.totalTasksChosen;
+            sumBetrayed +=  curBot.tasksNotTrusted;
+        }
+        return sumBetrayed/sumTasks;
+    }
+    
     public double getAverageTicks(){
         double sum =0;
         if(bondsman==null) return 0.0;
