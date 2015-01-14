@@ -33,7 +33,9 @@ public class AbstractRobot implements IRobot {
     public void init(SimState state) {
         // do nothing...
     }
-    
+    public void setHasTraps(boolean hasTraps) {
+        this.hasTraps = hasTraps;
+    }
     public int getRewardCurrentTask() {
         return rewardCurrentTask;
     }

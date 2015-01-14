@@ -46,7 +46,7 @@ public class NewComplexRobot extends AbstractRobot implements Steppable {
         bountyState = ((Bounties)state);
         bondsman = bountyState.bondsman;
         timeTable = new QTable(bondsman.getTotalNumTasks(), 1, .1, .1, 1); //only model me
-        pTable = new QTable(bondsman.getTotalNumTasks(), bountyState.numRobots, .2, .1, 1); //only model me
+        pTable = new QTable(bondsman.getTotalNumTasks(), bountyState.numRobots, .1, .1, 1); //only model me
         //debug("In init for id: " + id);
         //debug("Qtable(row = task_id  col = robot_id) for id: " + id + " \n" + pTable.getQTableAsString());
         //debug("Qtable(row = task_id  col = robot_id) for id: " + id + " \n" + timeTable.getQTableAsString());
@@ -97,11 +97,16 @@ public class NewComplexRobot extends AbstractRobot implements Steppable {
                 decideTaskFailed = true;
                 return; // can't start it in the same timestep that i chose it since doesn't happen if I was the one who completed it
             }
-            if(curTask!=null && curTask.badForWho == this.id){ //&& this.hasTraps == true){
-                numTimeSteps++;
-                if(bountyState.schedule.getSteps() % 10 != 0)
-                    return;
+            
+            if (hasTraps == true) {
+                // this is the test for if you become bad for this task
+               if(curTask!=null && curTask.badForWho == this.id){
+                   numTimeSteps++;
+                   if(bountyState.schedule.getSteps() % 20 != 0)
+                       return;
+               }
             }
+
             if (gotoTask()) { // if i made it to the task then finish it and learn
                 jumpHome();
                 iFinished = true;
