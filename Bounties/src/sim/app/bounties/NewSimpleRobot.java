@@ -1,4 +1,3 @@
-
 /*
  * To change this license header, choose License Headers in Project Properties.
  * To change this template file, choose Tools | Templates
@@ -19,6 +18,9 @@ import sim.util.Bag;
  */
 public class NewSimpleRobot extends AbstractRobot implements Steppable {
     
+    
+    Bag taskList; // the list of tasks that I will do
+    int maxTaskLength = 1;// the number of tasks that I can commit to.
     QTable timeTable; // time to do task
     QTable pTable; // probablility that I am successful at a task
     int numTimeSteps; // the number of timesteps since someone completed a task
@@ -32,19 +34,24 @@ public class NewSimpleRobot extends AbstractRobot implements Steppable {
     boolean decideTaskFailed = false;
     Bag whoWasDoingWhenIDecided = new Bag();
     int deadCount = 0;
-    int deadLength = 2000;
+    int deadLength = 20000;
     int dieEveryN = 30000;
     int twoDieEveryN = 60000;
     double totalTasksChosen = 0;
     double tasksNotTrusted = 0;
     boolean hasOneUpdate = false;
     boolean hasRandom = false;
-    
+    boolean isExclusive = false;
+    double pUpdateValue = .001;
+    public void setPUpdate(double value){
+        pUpdateValue = value;
+    }
     /**
      * Call this before scheduling the robots.
      * @param state the bounties state
      */
     public void init(SimState state) {
+        taskList = new Bag();
         bountyState = ((Bounties)state);
         bondsman = bountyState.bondsman;
         timeTable = new QTable(bondsman.getTotalNumTasks(), 1, .1, .1, 1); //only model me
@@ -73,12 +80,6 @@ public class NewSimpleRobot extends AbstractRobot implements Steppable {
     {
         hasOneUpdate = updateIt;
     }
-    /**
-     * whether or not there are trap tasks those that will be harder than should be.
-     * @param hasTraps 
-     */
-    
-    
     @Override
     public void step(SimState state) {
         // check if someone else finished the task I was working on
@@ -162,24 +163,20 @@ public class NewSimpleRobot extends AbstractRobot implements Steppable {
         } else {
             numTimeSteps++;
             if (finishedTask()) {
-                
-                
                 learn(0.0, curTask.getLastAgentsWorkingOnTask()); // then learn from it
                 jumpHome(); // someone else finished the task so start again
+                taskList.remove(curTask);
                 curTask = null;
                 bondsman.doingTask(id, -1);
                 numTimeSteps = 0;
                 decideTaskFailed = true; // can't choose a task in the same timestep that I find out that I 
                 return; // can't start it in the same timestep
             }
-            
-            if (hasTraps == true) {
-                // this is the test for if you become bad for this task
-               if(curTask!=null && curTask.badForWho == this.id){
-                   numTimeSteps++;
-                   if(bountyState.schedule.getSteps() % 20 != 0)
-                       return;
-               }
+             // this is the test for if you become bad for this task
+            if(curTask!=null && curTask.badForWho == this.id && this.hasTraps == true){
+                numTimeSteps++;
+                if(bountyState.schedule.getSteps() % 10 != 0)
+                    return;
             }
             if (gotoTask()){ // if i made it to the task then finish it and learn
 
@@ -189,6 +186,7 @@ public class NewSimpleRobot extends AbstractRobot implements Steppable {
                 curTask.setLastFinished(id, bountyState.schedule.getSteps(), bondsman.whoseDoingTaskByID(curTask));
                 bondsman.finishTask(curTask, id, bountyState.schedule.getSteps());
                 learn(1.0, curTask.getLastAgentsWorkingOnTask());
+                taskList.remove(curTask);
                 curTask = null;
                 bondsman.doingTask(id, -1);
                 numTimeSteps = 0;
@@ -273,8 +271,10 @@ public class NewSimpleRobot extends AbstractRobot implements Steppable {
             pTable.update(curTask.getID(), 0, reward);
            
         }
-        if(hasOneUpdate == true)
-            pTable.oneUpdate(.001);
+        if(hasOneUpdate == true){
+          //  System.err.println("pupdate value" + pUpdateValue);
+            pTable.oneUpdate(pUpdateValue); 
+        }
         
         //pTable.oneUpdate(.001);
        // timeTable.meanUpdate(.0005);
@@ -294,14 +294,20 @@ public class NewSimpleRobot extends AbstractRobot implements Steppable {
         //System.err.println("Num Avail Tasks == " + availTasks.numObjs);
         curTask = null;
         double max = 0; 
+        //for (int j = 0; j < maxTaskLength - taskList.numObjs; j++) {
         for (int i = 0; i < availTasks.numObjs; i++) { // over all tasks
-
+            /*
+            if (bondsman.getClearTime(((Task)availTasks.objs[i]).getID()) > 0) {
+                continue; // don't bother
+            }
+            */
             double tval = timeTable.getQValue(((Task)availTasks.objs[i]).getID(), 0);
             double pval = pTable.getQValue(((Task)availTasks.objs[i]).getID(), 0);
             double value = 1.0/tval * pval*((Task)availTasks.objs[i]).getCurrentReward(this);
             //if (bountyState.schedule.getSteps() > 50000){
             if  (bondsman.whoseDoingTask(((Task)availTasks.objs[i])).size() > 0){
-               //value*=-1;
+                if(isExclusive == true)
+                    value*=-1;
             }
             //}
            // System.err.println("1/t =  " + (1.0/tval) );
@@ -312,16 +318,18 @@ public class NewSimpleRobot extends AbstractRobot implements Steppable {
                 curTask = ((Task)availTasks.objs[i]);       
             }
         }
+        
+        
+        
         if(curTask==null) {
             bondsman.doingTask(id, -1);
             return;
         }
         //System.err.println("Task id = " + curTask.getID());
-        totalTasksChosen++;
-        if  (bondsman.whoseDoingTask(((Task)curTask)).size() > 0){
-            tasksNotTrusted++;
-            if(bountyState.schedule.getSteps() >= 200000){
-               // System.err.println("expected: " + curTask.initialLocation.toString() + " actual: " + curTask.realLocation.toString());
+        if(bountyState.schedule.getSteps() >= 180000){
+            totalTasksChosen++;
+            if  (bondsman.whoseDoingTask(((Task)curTask)).size() > 0){
+                tasksNotTrusted++;
             }
         }
         updateStatistics(false,curTask.getID(),numTimeSteps);
@@ -386,4 +394,3 @@ public class NewSimpleRobot extends AbstractRobot implements Steppable {
     }
 
 }
-

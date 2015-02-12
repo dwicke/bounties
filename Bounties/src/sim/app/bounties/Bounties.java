@@ -46,12 +46,10 @@ public class Bounties extends SimState {
     int offset = 0;
     long maxRotateSteps = 25000;
     int willRotate = 0; // 0 don't rotate 1 will rotate
-    private int agentType = 0; // 0 - simple, 1 - simpleP, 2 - simpleR, 3 - complex, 4 - complexP, 5 - complexR, 6 - random, 7 - psuedoOptimal, 8 - learn auction, 9 - naiiveAuction
+    private int agentType = 0; // 0 - simple, 1 - simpleP, 2 - simpleR, 3 - complex, 4 - complexP, 5 - complexR, 6 - random, 7 - psuedoOptimal
     private int willdie = 0; // 0 - won't die, 1 - will die
-
-    private int isBondsman = 1; // 0 - auctioneer 1 - bondsman
     private int hasTraps = 0;
-
+    
     public void setRotateRobots(boolean value){
            
         
@@ -284,7 +282,7 @@ public class Bounties extends SimState {
             willRotate = Integer.parseInt(argumentForKey("-prot", myArgs));
         
         }
-        // 0 - simple, 1 - simpleP, 2 - simpleR, 3 - complex, 4 - complexP, 5 - complexR, 6 - random, 7 - psuedoOptimal, 8 - learn auction, 9 - naiiveAuction
+        // 0 - simple, 1 - simpleP, 2 - simpleR, 3 - complex, 4 - complexP, 5 - complexR, 6 - random, 7 - psuedoOptimal
         if(myArgs !=null && keyExists("-agt", myArgs)) {
             agentType = Integer.parseInt(argumentForKey("-agt", myArgs));
         }
@@ -292,25 +290,16 @@ public class Bounties extends SimState {
         if(myArgs !=null && keyExists("-die", myArgs)) {
             willdie = Integer.parseInt(argumentForKey("-die", myArgs));
         }
-
-        // 0 - auctioneer 1 - bondsman
-        if(myArgs !=null && keyExists("-pbond", myArgs)) {
-            isBondsman = Integer.parseInt(argumentForKey("-pbond", myArgs));
+        if(myArgs !=null && keyExists("-bad", myArgs)) {
+            numBadRobot = Integer.parseInt(argumentForKey("-bad", myArgs));
+            
         }
-        int clearTime = 0;
-        if(myArgs !=null && keyExists("-clearT", myArgs)) {
-            clearTime = Integer.parseInt(argumentForKey("-clearT", myArgs));
+        if(myArgs !=null && keyExists("-pval", myArgs)) {
+            pUpdateValue = Double.parseDouble(argumentForKey("-pval", myArgs));
         }
-        int isPriority = 0;
-        if(myArgs !=null && keyExists("-pPri", myArgs)) {
-            isPriority = Integer.parseInt(argumentForKey("-pPri", myArgs));
+        if(myArgs !=null && keyExists("-ptrap", myArgs)) {
+            hasTraps = Integer.parseInt(argumentForKey("-ptrap", myArgs));
         }
-        hasTraps = 0;
-        if(myArgs !=null && keyExists("-ptraps", myArgs)) {
-            isPriority = Integer.parseInt(argumentForKey("-ptraps", myArgs));
-        }
-        
-
         
         
         
@@ -335,13 +324,7 @@ public class Bounties extends SimState {
         
         
         Jumpship js = new ResetJumpship();
-
-        if(isBondsman == 1)
-            bondsman = new Bondsman(numGoals, numTasks, js);
-        else if (isBondsman == 0)
-             bondsman = new Auctioneer(numGoals, numTasks, js, clearTime,isPriority==1);
-        
-
+        bondsman = new Bondsman(numGoals, numTasks, js,0);
         bondsman.setWorld(this);
         
         // make new grids
@@ -446,7 +429,7 @@ public class Bounties extends SimState {
             
             IRobot bot = null;
             
-             // 0 - simple, 1 - simpleP, 2 - simpleR, 3 - complex, 4 - complexP, 5 - complexR, 6 - random, 7 - psuedoOptimal, 8 - learn auction, 9 - naiiveAuction
+             // 0 - simple, 1 - simpleP, 2 - simpleR, 3 - complex, 4 - complexP, 5 - complexR, 6 - random, 7 - psuedoOptimal
             switch(agentType)        
             {
                 case 0:
@@ -478,10 +461,11 @@ public class Bounties extends SimState {
                     bot = new SemiOptimalRobot();
                     break;
                 case 8:
-                    bot = new LearningAuctionAgent(numTasks);
+                    bot = new SeanAuctionRobot();
                     break;
                 case 9:
-                    bot = new NaiiveAuctionAgent(numTasks);
+                    bot = new NewSimpleRobot();
+                    ((NewSimpleRobot)bot).isExclusive = true;
                     break;
                 default:
                     break;
@@ -491,10 +475,6 @@ public class Bounties extends SimState {
 //            bot = new SeanAuctionRobot();
             
             ((AbstractRobot)bot).hasTraps = hasTraps == 1;
-            
-            if (hasTraps == 1) {
-                ((AbstractRobot)bot).hasTraps = true;
-            }
             
             bot.setCanDie(willdie == 1);
             if(bot instanceof NewSimpleRobot)
