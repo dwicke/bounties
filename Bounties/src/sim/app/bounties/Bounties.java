@@ -430,6 +430,7 @@ public class Bounties extends SimState {
             IRobot bot = null;
             
              // 0 - simple, 1 - simpleP, 2 - simpleR, 3 - complex, 4 - complexP, 5 - complexR, 6 - random, 7 - psuedoOptimal
+            //agentType = 3;
             switch(agentType)        
             {
                 case 0:
@@ -475,7 +476,7 @@ public class Bounties extends SimState {
 //            bot = new SeanAuctionRobot();
             
             ((AbstractRobot)bot).hasTraps = hasTraps == 1;
-            
+            //willdie = 1;
             bot.setCanDie(willdie == 1);
             if(bot instanceof NewSimpleRobot)
                 (( NewSimpleRobot)bot).setPUpdate(pUpdateValue);
