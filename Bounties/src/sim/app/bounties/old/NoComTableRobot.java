@@ -4,8 +4,14 @@
  * and open the template in the editor.
  */
 
-package sim.app.bounties;
+package sim.app.bounties.old;
 
+import sim.app.bounties.AbstractRobot;
+import sim.app.bounties.Bondsman;
+import sim.app.bounties.Bounties;
+import sim.app.bounties.IRobot;
+import sim.app.bounties.QTable;
+import sim.app.bounties.Task;
 import sim.engine.SimState;
 import sim.engine.Steppable;
 import sim.util.Bag;
@@ -26,7 +32,7 @@ import sim.util.Bag;
  * 
  * @author drew
  */
-public class MeanTableLeaderRobotWithDeath extends AbstractRobot implements Steppable {
+public class NoComTableRobot extends AbstractRobot implements Steppable {
     
     QTable myQtable;
     int numTimeSteps; // the number of timesteps since someone completed a task
@@ -36,24 +42,15 @@ public class MeanTableLeaderRobotWithDeath extends AbstractRobot implements Step
     Bondsman bondsman;
     double epsilon = .0025;
     boolean randomChosen = false;
-    double epsilonChooseRandomTask = .1;
+    double epsilonChooseRandomTask = .2;
     boolean decideTaskFailed = false;
     Bag whoWasDoingWhenIDecided = new Bag();
-    double gamma = .05;
-    double deadEpsilon = .0001;
-    double leaderboardRate = .3;
-    int deadCount = 0;
-    int deadLength = 2000;
-    int dieEveryN = 5000;
-    int twoDieEveryN = 10000;
-    Leaderboard board;
     /**
      * Call this before scheduling the robots.
      * @param state the bounties state
      */
     public void init(SimState state) {
         bountyState = ((Bounties)state);
-       // board = bountyState.bounties;
         bondsman = bountyState.bondsman;
         myQtable = new QTable(bondsman.getTotalNumTasks(), bondsman.getTotalNumRobots(), .1, .1);// focus on current reward
         debug("In init for id: " + id);
@@ -68,50 +65,26 @@ public class MeanTableLeaderRobotWithDeath extends AbstractRobot implements Step
             // if finished current task then learn
         // pick task
         // goto task
-        if(state.schedule.getSteps()!=0 && state.schedule.getSteps()%twoDieEveryN == 0){
-            if(id==0 || id == 1){
-                deadCount = deadLength;
-                bondsman.doingTask(id, -1);// don't do any task
-                jumpHome();
-                curTask = null;
-                decideTaskFailed = true;
-            }
-            
-        }else if(state.schedule.getSteps()!=0 && state.schedule.getSteps()%dieEveryN == 0){
-            if(id==0){
-                deadCount = deadLength;
-                bondsman.doingTask(id, -1);// don't do any task
-                jumpHome();
-                curTask = null;
-                decideTaskFailed = true;// need to be able to pick a task.
-            }
-            
-        }
-        if(deadCount>0){
-            deadCount--;
-            return;
-        }
         if (decideTaskFailed) {
             decideTaskFailed = decideNextTask();
         } else {
             numTimeSteps++;
-            if (finishedTask()) {
-                learn(0.0, curTask.getLastAgentsWorkingOnTask()); // then learn from it
-                jumpHome(); // someone else finished the task so start again
-                curTask = null;
-                numTimeSteps = 0;
-                decideTaskFailed = decideNextTask();
-                return; // can't start it in the same timestep that i chose it since doesn't happen if I was the one who completed it
-            } else if (!randomChosen) {
-                pickTask(); // There will always be a task to choose from if i am here.
-            }
+            
 
             if (gotoTask()) { // if i made it to the task then finish it and learn
+                if (finishedTask()) {
+                    learn(0.0, curTask.getLastAgentsWorkingOnTask()); // then learn from it
+                    jumpHome(); // someone else finished the task so start again
+                    curTask = null;
+                    numTimeSteps = 0;
+                    decideTaskFailed = decideNextTask();
+                    return; // can't start it in the same timestep that i chose it since doesn't happen if I was the one who completed it
+                } 
                 jumpHome();
                 iFinished = true;
                 curTask.setLastFinished(id, bountyState.schedule.getSteps(), bondsman.whoseDoingTaskByID(curTask));
                 bondsman.finishTask(curTask, id, bountyState.schedule.getSteps());
-                board.setLeader(curTask.getID(), id, 1.0 / (double)numTimeSteps, bountyState.schedule.getSteps());
+                
                 learn(1.0 / (double)numTimeSteps, curTask.getLastAgentsWorkingOnTask());
                 curTask = null;
                 numTimeSteps = 0;
@@ -147,25 +120,18 @@ public class MeanTableLeaderRobotWithDeath extends AbstractRobot implements Step
      * @return true if finished false otherwise
      */
     public boolean finishedTask() {
-        return curTask.getLastFinishedTime() != lastSeenFinished;
+        return curTask.getLastFinishedTime() != lastSeenFinished ;
     }
     /**
      * Learn given the reward and the current task
      * @param reward the reward 
      */
     public void learn(double reward, Bag agentsWorking) { 
-        if(agentsWorking.size() == 1)
-             myQtable.update(curTask.getID(), this.id, (double)reward);
-        else{
-            for(int i = 0; i < agentsWorking.size(); i++){
-                int aID = (int) agentsWorking.objs[i];
-                if(aID != this.id)
-                myQtable.update(curTask.getID(), aID, (double)reward);
-            }
-            // myQtable.update(curTask.getID(), this.id, (double)reward);
-            myQtable.lesserUpdate(curTask.getID(), this.id, (double)reward);
+        
+        for(int i = 0; i < agentsWorking.size(); i++){
+            int aID = (int) agentsWorking.objs[i];
+            myQtable.update(curTask.getID(), aID, (double)reward);
         }
-        myQtable.meanUpdate(gamma);
         /* for(int i = 0; i < whoWasDoingWhenIDecided.size(); i++){
             int aID = ((IRobot)whoWasDoingWhenIDecided.objs[i]).getId();
             myQtable.update(curTask.getID(), aID, (double)reward);
@@ -192,7 +158,7 @@ public class MeanTableLeaderRobotWithDeath extends AbstractRobot implements Step
             
             double qValue = minQTableCalculation(peopleWorkingOnTaski,i);
             // need epsilon so will try something.
-            double cur = (epsilon + ((1 - leaderboardRate) * qValue + leaderboardRate * board.getLeaderRate(((Task)availTasks.objs[i]).getID()))) * (((Task) availTasks.objs[i]).getCurrentReward(this));
+            double cur = (epsilon + qValue) * (((Task) availTasks.objs[i]).getCurrentReward(this));
            debug("Cur = " + cur + " taskID = " + ((Task) availTasks.objs[i]).getID() + " curent reward = " + (((Task) availTasks.objs[i]).getCurrentReward(this)) + " q-value = " + qValue);
             if (cur > max) {
                 whoWasDoingWhenIDecided = peopleWorkingOnTaski;
@@ -223,14 +189,7 @@ public class MeanTableLeaderRobotWithDeath extends AbstractRobot implements Step
      */
     public void jumpship(Task newTask) {
         
-        if (bondsman.changeTask(this, curTask, newTask, bountyState) == true) {
-                // then I successfully jumped ship! so learn
-              //  learn(0, bondsman.whoseDoingTaskByID(curTask));
-                curTask = newTask;
-                updateStatistics(true,curTask.getID(),numTimeSteps);
-            } else {
-                updateStatistics(false,curTask.getID(),numTimeSteps);
-            }
+       //nope, not with no communication
     }
     
     public void pickRandomTask() {

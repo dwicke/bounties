@@ -40,6 +40,7 @@ public class SemiOptimalRobot extends AbstractRobot implements Steppable {
      * Call this before scheduling the robots.
      * @param state the bounties state
      */
+    @Override
     public void init(SimState state) {
         bountyState = ((Bounties)state);
         bondsman = bountyState.bondsman;

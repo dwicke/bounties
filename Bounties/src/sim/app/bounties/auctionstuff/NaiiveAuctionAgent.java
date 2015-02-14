@@ -3,8 +3,10 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package sim.app.bounties;
+package sim.app.bounties.auctionstuff;
 
+import sim.app.bounties.Task;
+import sim.app.bounties.auctionstuff.AuctionAgent;
 import sim.util.Bag;
 import sim.util.Int2D;
 

@@ -6,9 +6,9 @@
 package sim.app.bounties;
 
 
-import sim.app.bounties.jumpship.DefaultJumpship;
+
+
 import sim.app.bounties.jumpship.Jumpship;
-import sim.app.bounties.jumpship.LonelyJumpship;
 import sim.app.bounties.jumpship.ResetJumpship;
 import sim.app.bounties.statistics.StatsPublisher;
 import sim.display.Console;
@@ -35,7 +35,7 @@ public class Bounties extends SimState {
     public Bondsman bondsman;
     public int numRobots = 4;
     public static String[] myArgs;
-    Leaderboard board;
+    
     public IRobot robots[];// index into this array corresponds to its id
     
     int numTasks = 20;
@@ -212,35 +212,7 @@ public class Bounties extends SimState {
     
     //debug thing again
     boolean firstTimeThrough = true;
-    public double[] getRobotTabsCols() {
-        // loop over the tasks and then the robots
-        robotTabsCols = new double[numTasks];
-        
-        boolean debugFail = false;
-        if (robots != null) {
-            System.err.printf("sums: ");
-            for (int i = 0; i < getNumTasks(); i++) {
-               
-                robotTabsCols[i] = 0;
-                for (int j = 0; j < getNumRobots(); j++) {
-                    robotTabsCols[i] += ((JointTaskQRobot)robots[j]).myQtable.getQValue(i, 0);
-                }
-                if(!firstTimeThrough)
-                if(prevRobotTabsCols[i]-robotTabsCols[i] < -1){
-                    debugFail = true;
-                }
-                System.err.printf("%.02f ",robotTabsCols[i]);
-                prevRobotTabsCols[i] = robotTabsCols[i];
-            }
-            firstTimeThrough = false;
-        }
-        
-        System.err.println();
-        if(debugFail){
-            //System.exit(0);
-        }
-        return robotTabsCols;
-    }
+    
     static boolean keyExists(String key, String[] args) {
         
         for (String arg : args) {
@@ -362,7 +334,7 @@ public class Bounties extends SimState {
         
         
         
-        board = new Leaderboard(numTasks, Long.MAX_VALUE);
+        
         robots = new IRobot[numRobots];
         robotgrid = new SparseGrid2D(GRID_WIDTH, GRID_HEIGHT);
         
@@ -471,9 +443,6 @@ public class Bounties extends SimState {
                 default:
                     break;
             }
-           //  bot = new SeanAuctionRobot();
-           // bot = new NewSimpleRobot();
-//            bot = new SeanAuctionRobot();
             
             ((AbstractRobot)bot).hasTraps = hasTraps == 1;
             //willdie = 1;

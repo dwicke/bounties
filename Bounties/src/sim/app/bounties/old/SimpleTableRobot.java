@@ -4,8 +4,13 @@
  * and open the template in the editor.
  */
 
-package sim.app.bounties;
+package sim.app.bounties.old;
 
+import sim.app.bounties.AbstractRobot;
+import sim.app.bounties.Bondsman;
+import sim.app.bounties.Bounties;
+import sim.app.bounties.QTable;
+import sim.app.bounties.Task;
 import sim.engine.SimState;
 import sim.engine.Steppable;
 import sim.util.Bag;
@@ -26,7 +31,7 @@ import sim.util.Bag;
  * 
  * @author drew
  */
-public class TableRobot extends AbstractRobot implements Steppable {
+public class SimpleTableRobot extends AbstractRobot implements Steppable {
     
     QTable myQtable;
     int numTimeSteps; // the number of timesteps since someone completed a task
@@ -38,7 +43,7 @@ public class TableRobot extends AbstractRobot implements Steppable {
     boolean randomChosen = false;
     double epsilonChooseRandomTask = .1;
     boolean decideTaskFailed = false;
-    Bag whoWasDoingWhenIDecided = new Bag();
+        
     /**
      * Call this before scheduling the robots.
      * @param state the bounties state
@@ -46,7 +51,7 @@ public class TableRobot extends AbstractRobot implements Steppable {
     public void init(SimState state) {
         bountyState = ((Bounties)state);
         bondsman = bountyState.bondsman;
-        myQtable = new QTable(bondsman.getTotalNumTasks(), bondsman.getTotalNumRobots(), .1, .1);// focus on current reward
+        myQtable = new QTable(bondsman.getTotalNumTasks(), 1, .1, .1);// focus on current reward
         debug("In init for id: " + id);
         debug("Qtable(row = task_id  col = robot_id) for id: " + id + " \n" + myQtable.getQTableAsString());
         pickRandomTask();
@@ -79,7 +84,7 @@ public class TableRobot extends AbstractRobot implements Steppable {
                 iFinished = true;
                 curTask.setLastFinished(id, bountyState.schedule.getSteps(), bondsman.whoseDoingTaskByID(curTask));
                 bondsman.finishTask(curTask, id, bountyState.schedule.getSteps());
-                learn(1.0 / (double)numTimeSteps, curTask.getLastAgentsWorkingOnTask());
+                learn(1.0, curTask.getLastAgentsWorkingOnTask());
                 curTask = null;
                 numTimeSteps = 0;
                 decideTaskFailed = decideNextTask();
@@ -121,19 +126,8 @@ public class TableRobot extends AbstractRobot implements Steppable {
      * @param reward the reward 
      */
     public void learn(double reward, Bag agentsWorking) { 
-        agentsWorking = whoWasDoingWhenIDecided;
-         if(agentsWorking.size() == 1)
-             myQtable.update(curTask.getID(), this.id, (double)reward);
-        else{
-            for(int i = 0; i < agentsWorking.size(); i++){
-                int aID = (int) ((AbstractRobot)agentsWorking.objs[i]).getId();
-                if(aID != this.id)
-                myQtable.update(curTask.getID(), aID, (double)reward);
-            }
-            // myQtable.update(curTask.getID(), this.id, (double)reward);
-            myQtable.update(curTask.getID(), this.id, (double)reward);
-        }
         
+            myQtable.update(curTask.getID(), 0, (double)reward);
     }
     
     /**
@@ -158,7 +152,6 @@ public class TableRobot extends AbstractRobot implements Steppable {
             double cur = (epsilon + qValue) * (((Task) availTasks.objs[i]).getCurrentReward(this));
            debug("Cur = " + cur + " taskID = " + ((Task) availTasks.objs[i]).getID() + " curent reward = " + (((Task) availTasks.objs[i]).getCurrentReward(this)) + " q-value = " + qValue);
             if (cur > max) {
-                whoWasDoingWhenIDecided = peopleWorkingOnTaski;
                 bestTaskIndex = i;
                 max = cur;
             }
@@ -185,10 +178,9 @@ public class TableRobot extends AbstractRobot implements Steppable {
      * @param newTask the task i am jumping to from curTask
      */
     public void jumpship(Task newTask) {
-        
         if (bondsman.changeTask(this, curTask, newTask, bountyState) == true) {
                 // then I successfully jumped ship! so learn
-              //  learn(0, bondsman.whoseDoingTaskByID(curTask));
+                learn(0, bondsman.whoseDoingTaskByID(curTask));
                 curTask = newTask;
                 updateStatistics(true,curTask.getID(),numTimeSteps);
             } else {
@@ -196,8 +188,9 @@ public class TableRobot extends AbstractRobot implements Steppable {
             }
     }
     
-    public void pickRandomTask(){
+    public void pickRandomTask() {
         // pick randomly
+        
         curTask = (Task)bondsman.getAvailableTasks().objs[bountyState.random.nextInt(bondsman.getAvailableTasks().size())];
         bondsman.doingTask(id, curTask.getID());
         lastSeenFinished = curTask.getLastFinishedTime();
@@ -207,13 +200,8 @@ public class TableRobot extends AbstractRobot implements Steppable {
     double minQTableCalculation(Bag peopleOnTask, int taskID){
         //System.out.println(peopleOnTask.objs);
         //System.out.println(peopleOnTask.objs[0]);
-        double max =  myQtable.getQValue(taskID, ((IRobot)peopleOnTask.objs[0]).getId());
-        for(int i = 1; i<peopleOnTask.size(); i++){
-            double foo = myQtable.getQValue(taskID, ((IRobot)peopleOnTask.objs[i]).getId());
-            if(foo>max){
-                max = foo;
-            }
-        }
+        double max =  myQtable.getQValue(taskID, 0);
+        
         return max;
     }
     

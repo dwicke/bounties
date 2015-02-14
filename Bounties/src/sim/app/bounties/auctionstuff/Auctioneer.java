@@ -3,10 +3,12 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package sim.app.bounties;
+package sim.app.bounties.auctionstuff;
 
 import java.util.Arrays;
 import java.util.Comparator;
+import sim.app.bounties.Bondsman;
+import sim.app.bounties.Task;
 import sim.app.bounties.jumpship.Jumpship;
 import sim.engine.SimState;
 import sim.util.Bag;

@@ -5,6 +5,11 @@
  */
 package sim.app.bounties;
 
+import sim.app.bounties.AbstractRobot;
+import sim.app.bounties.Bondsman;
+import sim.app.bounties.Bounties;
+import sim.app.bounties.QTable;
+import sim.app.bounties.Task;
 import sim.engine.SimState;
 import sim.engine.Steppable;
 import sim.util.Bag;

@@ -4,8 +4,11 @@
  * and open the template in the editor.
  */
 
-package sim.app.bounties;
+package sim.app.bounties.old;
 
+import sim.app.bounties.AbstractRobot;
+import sim.app.bounties.Bounties;
+import sim.app.bounties.Task;
 import sim.engine.SimState;
 import sim.engine.Steppable;
 import sim.util.Bag;

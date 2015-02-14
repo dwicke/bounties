@@ -4,14 +4,19 @@
  * and open the template in the editor.
  */
 
-package sim.app.bounties;
+package sim.app.bounties.old;
 
+import sim.app.bounties.old.JumpshipRobot;
 import java.awt.Color;
 import sim.engine.SimState;
 import sim.engine.Steppable;
 import sim.util.Bag;
 import sim.util.Int2D;
 import java.util.Comparator;
+import sim.app.bounties.AbstractRobot;
+import sim.app.bounties.Bondsman;
+import sim.app.bounties.Bounties;
+import sim.app.bounties.Task;
 /**
  * This robot has the ability to jump ship after some timestep t of trying to do
  * a task.
