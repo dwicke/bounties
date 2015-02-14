@@ -5,7 +5,7 @@
  */
 package sim.app.bounties.auctionstuff;
 
-import sim.app.bounties.AbstractRobot;
+import sim.app.bounties.agent.AbstractRobot;
 import sim.app.bounties.Bounties;
 import sim.app.bounties.Task;
 import sim.engine.SimState;

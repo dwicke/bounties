@@ -3,9 +3,13 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package sim.app.bounties;
+package sim.app.bounties.agent;
 
 import java.awt.Color;
+import sim.app.bounties.DarwinController;
+import sim.app.bounties.IController;
+import sim.app.bounties.Task;
+import sim.app.bounties.VirtualController;
 import sim.app.bounties.robot.darwin.agent.Real;
 import sim.engine.SimState;
 import sim.util.Bag;
@@ -24,12 +28,12 @@ public class AbstractRobot implements IRobot {
     IController realControl;
     Task curTask;
     Int2D home;
-    int[] decisionsMade = new int[historySize];
+    public int[] decisionsMade = new int[historySize];
     int[] timeOnTask = new int[historySize];
     int rollingHistoryCounter = 0; // pointer to current spot in the list for history purposes
     int rewardCurrentTask; // the reward for the current task
     boolean canDie;
-    boolean hasTraps = false;
+    public boolean hasTraps = false;
     public void init(SimState state) {
         // do nothing...
     }

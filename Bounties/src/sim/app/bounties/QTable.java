@@ -252,7 +252,7 @@ public class QTable implements java.io.Serializable {
         return qtable[state][action]/sum;
     }
 
-    void printTable() {
+    public void printTable() {
         
         for (int i = 0; i < qtable.length; i++) {
             StringBuilder build = new StringBuilder();
@@ -264,7 +264,7 @@ public class QTable implements java.io.Serializable {
         }
     }
     
-    String getQTableAsString() {
+    public String getQTableAsString() {
         StringBuilder build = new StringBuilder();
         for (int i = 0; i < qtable.length; i++) {
             

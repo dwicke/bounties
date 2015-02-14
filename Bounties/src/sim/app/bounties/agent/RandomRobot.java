@@ -4,8 +4,11 @@
  * and open the template in the editor.
  */
 
-package sim.app.bounties;
+package sim.app.bounties.agent;
 
+import sim.app.bounties.Bondsman;
+import sim.app.bounties.Bounties;
+import sim.app.bounties.Task;
 import sim.engine.SimState;
 import sim.engine.Steppable;
 import sim.util.Bag;
@@ -13,13 +16,22 @@ import sim.util.Bag;
 /**
  * Main things:
  * 
- * picks task by max money/time
+ * You will teleport home when:
+ * 1. you finish the task
+ * 2. someone else finishes the task
+ * 
+ * At the end of each step you will have at least made progress toward your current task
+ * 
+ * Before and after the current step you will not have a null curTask
+ * unless there are not enough available tasks and then you will each
+ * timestep check and call decideTask().
+ * 
  * 
  * @author drew
  */
-public class OptimalRobot extends AbstractRobot implements Steppable {
+public class RandomRobot extends AbstractRobot implements Steppable {
     
-    QTable myQtable;
+    
     int numTimeSteps; // the number of timesteps since someone completed a task
     long lastSeenFinished; // the timestep the current task was at
     boolean iFinished = false; // true if I finish the cur task
@@ -27,15 +39,19 @@ public class OptimalRobot extends AbstractRobot implements Steppable {
     Bondsman bondsman;
     double epsilon = .0025;
     boolean randomChosen = false;
-    double epsilonChooseRandomTask = .1;
+    double epsilonChooseRandomTask = 1;
     boolean decideTaskFailed = false;
     Bag whoWasDoingWhenIDecided = new Bag();
-    double gamma = .05;
-    double deadEpsilon = .0001;
+    
+    
     int deadCount = 0;
-    int deadLength = 20;
-    int dieEveryN = 20000;
-    int twoDieEveryN = 40000;
+    int deadLength = 20000;
+    int dieEveryN = 30000;
+    int twoDieEveryN = 60000;
+    double totalTasksChosen = 0;
+    double tasksNotTrusted = 0;
+    
+    
     /**
      * Call this before scheduling the robots.
      * @param state the bounties state
@@ -43,23 +59,22 @@ public class OptimalRobot extends AbstractRobot implements Steppable {
     public void init(SimState state) {
         bountyState = ((Bounties)state);
         bondsman = bountyState.bondsman;
-        myQtable = new QTable(bondsman.getTotalNumTasks(), bondsman.getTotalNumRobots(), .1, .1);// focus on current reward
-        debug("In init for id: " + id);
-        debug("Qtable(row = task_id  col = robot_id) for id: " + id + " \n" + myQtable.getQTableAsString());
-        decideNextTask();
+        pickRandomTask();
         numTimeSteps = 0;
     }
     
     @Override
     public void step(SimState state) {
-       if(this.canDie) {
-       if(state.schedule.getSteps()!=0 && state.schedule.getSteps()%twoDieEveryN == 0){
+        // check if someone else finished the task I was working on
+            // if finished current task then learn
+        // pick task
+        // goto task
+        if(this.canDie) {
+        if(state.schedule.getSteps()!=0 && state.schedule.getSteps()%twoDieEveryN == 0){
             if(id==0 || id == 1){
                 deadCount = deadLength;
                 bondsman.doingTask(id, -1);// don't do any task
                 jumpHome();
-                if(curTask!=null)
-                    curTask.setAvailable(true);
                 curTask = null;
                 decideTaskFailed = true;
             }
@@ -69,8 +84,6 @@ public class OptimalRobot extends AbstractRobot implements Steppable {
                 deadCount = deadLength;
                 bondsman.doingTask(id, -1);// don't do any task
                 jumpHome();
-                if(curTask!=null)
-                    curTask.setAvailable(true);
                 curTask = null;
                 decideTaskFailed = true;
             }
@@ -80,28 +93,19 @@ public class OptimalRobot extends AbstractRobot implements Steppable {
             deadCount--;
             return;
         }}
-        if(curTask!=null)
-        if(0==state.random.nextInt(curTask.failureRate) && deadCount ==0){
-            deadCount = deadLength;
-             if(curTask!=null)
-                    curTask.setAvailable(true);
-            curTask = null;
-            bondsman.doingTask(id, -1);
-            jumpHome();
-           
-            numTimeSteps = 0;
-            decideTaskFailed = true;
-        }
-         if(deadCount>0){
-            deadCount--;
-            return;
-        }
-            if(curTask == null) {
-                if(decideNextTask()) {
-                    return; // failed to pick a task.
-                }
-            }
+        if (decideTaskFailed) {
+            decideTaskFailed = decideNextTask();
+        } else {
             numTimeSteps++;
+            if (finishedTask()) {
+                
+                jumpHome(); // someone else finished the task so start again
+                curTask = null;
+                numTimeSteps = 0;
+                decideTaskFailed = true;
+                return; // can't start it in the same timestep that i chose it since doesn't happen if I was the one who completed it
+            }
+
             if (gotoTask()) { // if i made it to the task then finish it and learn
                 jumpHome();
                 iFinished = true;
@@ -109,8 +113,9 @@ public class OptimalRobot extends AbstractRobot implements Steppable {
                 bondsman.finishTask(curTask, id, bountyState.schedule.getSteps());
                 curTask = null;
                 numTimeSteps = 0;
+                decideTaskFailed = true;
             }
-        
+        }
         
     }
     
@@ -124,48 +129,29 @@ public class OptimalRobot extends AbstractRobot implements Steppable {
         if(bondsman.getAvailableTasks().isEmpty()) {
             return true; // wasn't succesful
         }
-        randomChosen = false;
-        pickTask();
+        randomChosen = true;
+        pickRandomTask();
         return false;// then there was a task i could choose from
     }
     
-    
-   
-    
     /**
-     * Pick the current task to do.
+     * Returns whether the task was finished by someone else
+     * @return true if finished false otherwise
      */
-    public void pickTask() {
-        
-        Bag availTasks = bondsman.getAvailableTasks();
-      
-     
-        double max = -1; 
-
-        for (int i = 0; i < availTasks.numObjs; i++) { // over all tasks
-
-            //need to figure out what "state" im in (who is already working on task + me)
-
-            
-            // distance from home to task (since we are at home when we choose to take a task)
-            double dist = 1.0 / ((double) (bountyState.tasksGrid.getObjectLocation((Task)availTasks.objs[i])).manhattanDistance(this.home));
-            
-            // need epsilon so will try something.
-            double rewardPerDist = dist * (((Task) availTasks.objs[i]).getCurrentReward(this));
-           
-            if (rewardPerDist > max) {
-                curTask = ((Task)availTasks.objs[i]);
-                max = rewardPerDist;
-            }
-            
-        }
-        bondsman.doingTask(this.id, curTask.getID());
-        curTask.setAvailable(false);
-        
+    public boolean finishedTask() {
+        return curTask.getLastFinishedTime() != lastSeenFinished;
     }
     
-   
-  
+    
+    public void pickRandomTask() {
+        // pick randomly
+        
+        curTask = (Task)bondsman.getAvailableTasks().objs[bountyState.random.nextInt(bondsman.getAvailableTasks().size())];
+        bondsman.doingTask(id, curTask.getID());
+        lastSeenFinished = curTask.getLastFinishedTime();
+        updateStatistics(false,curTask.getID(),numTimeSteps);
+    }
+    
     
     /**
      * Move toward the curTask

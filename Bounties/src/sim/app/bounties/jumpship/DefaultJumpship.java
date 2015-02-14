@@ -6,7 +6,7 @@
 
 package sim.app.bounties.jumpship;
 
-import sim.app.bounties.IRobot;
+import sim.app.bounties.agent.IRobot;
 import sim.app.bounties.Task;
 import sim.engine.SimState;
 

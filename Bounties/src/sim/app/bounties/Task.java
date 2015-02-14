@@ -1,6 +1,7 @@
 package sim.app.bounties;
 
 //import ec.util.MersenneTwister;
+import sim.app.bounties.agent.IRobot;
 import ec.util.MersenneTwisterFast;
 import java.awt.Color;
 import java.awt.Graphics2D;
@@ -47,7 +48,7 @@ public class Task implements Real, Fixed2D{
     private Bag lastAgentsWorkingOnTask; // these are the agents working on the task when someone finished it
     private int timeUntilRespawn = 0;
     private MersenneTwisterFast rand = null; 
-    int badForWho = -1;
+    public int badForWho = -1;
     public LogNormalDist incr ;
     Bounties hackItIn = null; //this is so we can hack in the graphics
     private Task() {}

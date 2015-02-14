@@ -5,6 +5,7 @@
  */
 package sim.app.bounties;
 
+import sim.app.bounties.agent.IRobot;
 import sim.app.bounties.robot.darwin.agent.Real;
 import sim.engine.SimState;
 import sim.util.Int2D;

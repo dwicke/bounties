@@ -3,12 +3,16 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package sim.app.bounties;
+package sim.app.bounties.agent;
 
-import sim.app.bounties.AbstractRobot;
+import sim.app.bounties.agent.AbstractRobot;
+import sim.app.bounties.Bondsman;
 import sim.app.bounties.Bondsman;
 import sim.app.bounties.Bounties;
+import sim.app.bounties.Bounties;
 import sim.app.bounties.QTable;
+import sim.app.bounties.QTable;
+import sim.app.bounties.Task;
 import sim.app.bounties.Task;
 import sim.engine.SimState;
 import sim.engine.Steppable;

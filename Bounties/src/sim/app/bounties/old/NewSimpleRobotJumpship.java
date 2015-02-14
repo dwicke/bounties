@@ -6,7 +6,7 @@
 
 package sim.app.bounties.old;
 
-import sim.app.bounties.AbstractRobot;
+import sim.app.bounties.agent.AbstractRobot;
 import sim.app.bounties.Bondsman;
 import sim.app.bounties.Bounties;
 import sim.app.bounties.QTable;

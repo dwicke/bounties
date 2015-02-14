@@ -5,8 +5,12 @@
  * and open the template in the editor.
  */
 
-package sim.app.bounties;
+package sim.app.bounties.agent;
 
+import sim.app.bounties.Bondsman;
+import sim.app.bounties.Bounties;
+import sim.app.bounties.QTable;
+import sim.app.bounties.Task;
 import sim.engine.SimState;
 import sim.engine.Steppable;
 import sim.util.Bag;
@@ -272,11 +276,11 @@ public class NewComplexRobot extends AbstractRobot implements Steppable {
         bountyState.robotgrid.setObjectLocation(this,this.getRobotHome());// teleport home
     }
 
-    void setHasOneUpdate(boolean hasOneUp) {
+    public void setHasOneUpdate(boolean hasOneUp) {
         this.hasOneUp = hasOneUp;
     }
 
-    void setHasRandom(boolean hasRandom) {
+    public void setHasRandom(boolean hasRandom) {
         this.isRand = hasRandom;
     }
 

@@ -6,6 +6,7 @@
 
 package sim.app.bounties;
 
+import sim.app.bounties.agent.IRobot;
 import ec.util.MersenneTwisterFast;
 import java.util.Arrays;
 import sim.app.bounties.jumpship.Jumpship;
@@ -183,7 +184,7 @@ public class Bondsman implements Steppable {
         return numTasks;
     }
     
-    void finishTask(Task curTask, int robotID, long timestamp) {
+    public void finishTask(Task curTask, int robotID, long timestamp) {
         curTask.setLastFinished(robotID, timestamp);
         curTask.setAvailable(false); // whenever an agent finishes a task then make it unavailable
         curTask.setDone(true);

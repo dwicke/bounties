@@ -8,6 +8,14 @@ package sim.app.bounties;
 
 
 
+import sim.app.bounties.agent.SemiOptimalRobot;
+import sim.app.bounties.agent.BadRobot;
+import sim.app.bounties.agent.IRobot;
+import sim.app.bounties.agent.AbstractRobot;
+import sim.app.bounties.agent.NewSimpleRobot;
+import sim.app.bounties.agent.NewComplexRobot;
+import sim.app.bounties.agent.RandomRobot;
+import sim.app.bounties.agent.SeanAuctionRobot;
 import sim.app.bounties.jumpship.Jumpship;
 import sim.app.bounties.jumpship.ResetJumpship;
 import sim.app.bounties.statistics.StatsPublisher;

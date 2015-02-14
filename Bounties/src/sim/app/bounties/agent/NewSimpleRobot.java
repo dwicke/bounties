@@ -4,8 +4,12 @@
  * and open the template in the editor.
  */
 
-package sim.app.bounties;
+package sim.app.bounties.agent;
 
+import sim.app.bounties.Bondsman;
+import sim.app.bounties.Bounties;
+import sim.app.bounties.QTable;
+import sim.app.bounties.Task;
 import sim.engine.SimState;
 import sim.engine.Steppable;
 import sim.util.Bag;
@@ -37,11 +41,13 @@ public class NewSimpleRobot extends AbstractRobot implements Steppable {
     int deadLength = 20000;
     int dieEveryN = 30000;
     int twoDieEveryN = 60000;
-    double totalTasksChosen = 0;
-    double tasksNotTrusted = 0;
-    boolean hasOneUpdate = false;
-    boolean hasRandom = false;
-    boolean isExclusive = false;
+    
+    public double totalTasksChosen = 0;
+    public double tasksNotTrusted = 0;
+    public boolean hasOneUpdate = false;
+    public boolean hasRandom = false;
+
+    public boolean isExclusive = false;
     double pUpdateValue = .001;
     public void setPUpdate(double value){
         pUpdateValue = value;
@@ -83,54 +89,10 @@ public class NewSimpleRobot extends AbstractRobot implements Steppable {
     @Override
     public void step(SimState state) {
         // check if someone else finished the task I was working on
-            // if finished current task then learn
+        // if finished current task then learn
         // pick task
         // goto task
-       /* if(state.schedule.getSteps()!=0 && state.schedule.getSteps()%twoDieEveryN == 0){
-            if(id==0 || id == 1){
-                deadCount = deadLength;
-                bondsman.doingTask(id, -1);// don't do any task
-                jumpHome();
-                curTask = null;
-                decideTaskFailed = true;
-            }
-            
-        }else if(state.schedule.getSteps()!=0 && state.schedule.getSteps()%dieEveryN == 0){
-            if(id==0){
-                deadCount = deadLength;
-                bondsman.doingTask(id, -1);// don't do any task
-                jumpHome();
-                curTask = null;
-                decideTaskFailed = true;
-            }
-            
-        }
-        if(deadCount>0){
-            deadCount--;
-            return;
-        }*/
-        /*if(curTask!=null)
-        if(0==state.random.nextInt(curTask.failureRate) && deadCount ==0){
-            deadCount = deadLength;
-            curTask = null;
-            bondsman.doingTask(id, -1);
-            jumpHome();
-            numTimeSteps = 0;
-            decideTaskFailed = true;
-        }
-         if(deadCount>0){
-            deadCount--;
-            return;
-        }*/
-        /*if(state.schedule.getSteps() == 200000){
-            System.err.println("real q-table");
-            printQTable();
-            System.err.println("expectd q-table");
-            printExpectedQTable();
-            
-            System.err.println(tasksNotTrusted/totalTasksChosen);
-        }*/
-        
+       
         if(this.canDie) {
             if(state.schedule.getSteps()!=0 && state.schedule.getSteps()%twoDieEveryN == 0){
                 if(id==0 || id == 1){

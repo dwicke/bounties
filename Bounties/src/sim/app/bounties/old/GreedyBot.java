@@ -13,7 +13,7 @@ import sim.engine.Steppable;
 import sim.util.Bag;
 import sim.util.Int2D;
 import java.util.Comparator;
-import sim.app.bounties.AbstractRobot;
+import sim.app.bounties.agent.AbstractRobot;
 import sim.app.bounties.Bondsman;
 import sim.app.bounties.Bounties;
 import sim.app.bounties.Task;

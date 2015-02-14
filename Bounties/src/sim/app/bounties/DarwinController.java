@@ -1,6 +1,7 @@
 package sim.app.bounties;
 
 
+import sim.app.bounties.agent.IRobot;
 import sim.app.bounties.robot.darwin.agent.Darwin;
 import sim.app.bounties.robot.darwin.agent.Darwins;
 import sim.app.bounties.robot.darwin.agent.Real;

@@ -6,6 +6,7 @@
 
 package sim.app.bounties;
 
+import sim.app.bounties.agent.IRobot;
 import java.awt.Graphics2D;
 import sim.portrayal.DrawInfo2D;
 import sim.portrayal.simple.OvalPortrayal2D;

@@ -8,7 +8,7 @@ package sim.app.bounties.statistics;
 
 import java.io.File;
 import java.io.PrintWriter;
-import sim.app.bounties.AbstractRobot;
+import sim.app.bounties.agent.AbstractRobot;
 import sim.app.bounties.Bounties;
 import sim.app.bounties.Task;
 import sim.engine.SimState;
