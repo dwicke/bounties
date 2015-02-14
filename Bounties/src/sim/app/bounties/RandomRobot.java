@@ -28,7 +28,7 @@ import sim.util.Bag;
  */
 public class RandomRobot extends AbstractRobot implements Steppable {
     
-    QTable myQtable;
+    
     int numTimeSteps; // the number of timesteps since someone completed a task
     long lastSeenFinished; // the timestep the current task was at
     boolean iFinished = false; // true if I finish the cur task
@@ -56,9 +56,6 @@ public class RandomRobot extends AbstractRobot implements Steppable {
     public void init(SimState state) {
         bountyState = ((Bounties)state);
         bondsman = bountyState.bondsman;
-        myQtable = new QTable(bondsman.getTotalNumTasks(), bondsman.getTotalNumRobots(), .1, .1);// focus on current reward
-        debug("In init for id: " + id);
-        debug("Qtable(row = task_id  col = robot_id) for id: " + id + " \n" + myQtable.getQTableAsString());
         pickRandomTask();
         numTimeSteps = 0;
     }
@@ -98,14 +95,12 @@ public class RandomRobot extends AbstractRobot implements Steppable {
         } else {
             numTimeSteps++;
             if (finishedTask()) {
-                learn(0.0, curTask.getLastAgentsWorkingOnTask()); // then learn from it
+                
                 jumpHome(); // someone else finished the task so start again
                 curTask = null;
                 numTimeSteps = 0;
                 decideTaskFailed = true;
                 return; // can't start it in the same timestep that i chose it since doesn't happen if I was the one who completed it
-            } else if (!randomChosen) {
-                pickTask(); // There will always be a task to choose from if i am here.
             }
 
             if (gotoTask()) { // if i made it to the task then finish it and learn
@@ -113,7 +108,6 @@ public class RandomRobot extends AbstractRobot implements Steppable {
                 iFinished = true;
                 curTask.setLastFinished(id, bountyState.schedule.getSteps(), bondsman.whoseDoingTaskByID(curTask));
                 bondsman.finishTask(curTask, id, bountyState.schedule.getSteps());
-                learn(1.0 / (double)numTimeSteps, curTask.getLastAgentsWorkingOnTask());
                 curTask = null;
                 numTimeSteps = 0;
                 decideTaskFailed = true;
@@ -132,14 +126,8 @@ public class RandomRobot extends AbstractRobot implements Steppable {
         if(bondsman.getAvailableTasks().isEmpty()) {
             return true; // wasn't succesful
         }
-        
-        if (bountyState.random.nextDouble() < epsilonChooseRandomTask) {
-            randomChosen = true;
-            pickRandomTask();
-        } else {
-            randomChosen = false;
-            pickTask();
-        }
+        randomChosen = true;
+        pickRandomTask();
         return false;// then there was a task i could choose from
     }
     
@@ -150,82 +138,7 @@ public class RandomRobot extends AbstractRobot implements Steppable {
     public boolean finishedTask() {
         return curTask.getLastFinishedTime() != lastSeenFinished;
     }
-    /**
-     * Learn given the reward and the current task
-     * @param reward the reward 
-     */
-    public void learn(double reward, Bag agentsWorking) { 
-        
-        for(int i = 0; i < agentsWorking.size(); i++){
-            int aID = (int) agentsWorking.objs[i];
-            myQtable.update(curTask.getID(), aID, (double)reward);
-        }
-        /* for(int i = 0; i < whoWasDoingWhenIDecided.size(); i++){
-            int aID = ((IRobot)whoWasDoingWhenIDecided.objs[i]).getId();
-            myQtable.update(curTask.getID(), aID, (double)reward);
-        }*/
-        
-    }
     
-    /**
-     * Pick the current task to do.
-     */
-    public void pickTask() {
-        
-        Bag availTasks = bondsman.getAvailableTasks();
-        int bestTaskIndex = 0;
-     
-        double max = -1; 
-        Bag peopleWorkingOnTaski = null;
-        for (int i = 0; i < availTasks.numObjs; i++) { // over all tasks
-
-            //need to figure out what "state" im in (who is already working on task + me)
-            peopleWorkingOnTaski = bondsman.whoseDoingTask((Task)availTasks.objs[i]);
-            peopleWorkingOnTaski.add(this);
-            
-            
-            double qValue = minQTableCalculation(peopleWorkingOnTaski,i);
-            // need epsilon so will try something.
-            double cur = (epsilon + qValue) * (((Task) availTasks.objs[i]).getCurrentReward(this));
-           debug("Cur = " + cur + " taskID = " + ((Task) availTasks.objs[i]).getID() + " curent reward = " + (((Task) availTasks.objs[i]).getCurrentReward(this)) + " q-value = " + qValue);
-            if (cur > max) {
-                whoWasDoingWhenIDecided = peopleWorkingOnTaski;
-                bestTaskIndex = i;
-                max = cur;
-            }
-        }
-        
-        
-        Task newTask = ((Task)(availTasks.objs[bestTaskIndex]));
-        
-        if (curTask == null || curTask.getID() == newTask.getID()) {
-            // then i am not jumping ship and i need a new task
-            curTask = newTask;
-            updateStatistics(false,curTask.getID(),numTimeSteps);
-        } else {
-            // then I am jumping ship
-            jumpship(newTask);
-        }
-        bondsman.doingTask(id, curTask.getID());
-        // always set the lastSeenFinished
-        lastSeenFinished = curTask.getLastFinishedTime(); 
-    }
-    
-    /**
-     * do necessary things to jumpship
-     * @param newTask the task i am jumping to from curTask
-     */
-    public void jumpship(Task newTask) {
-        
-        if (bondsman.changeTask(this, curTask, newTask, bountyState) == true) {
-                // then I successfully jumped ship! so learn
-              //  learn(0, bondsman.whoseDoingTaskByID(curTask));
-                curTask = newTask;
-                updateStatistics(true,curTask.getID(),numTimeSteps);
-            } else {
-                updateStatistics(false,curTask.getID(),numTimeSteps);
-            }
-    }
     
     public void pickRandomTask() {
         // pick randomly
@@ -236,18 +149,6 @@ public class RandomRobot extends AbstractRobot implements Steppable {
         updateStatistics(false,curTask.getID(),numTimeSteps);
     }
     
-    double minQTableCalculation(Bag peopleOnTask, int taskID){
-        //System.out.println(peopleOnTask.objs);
-        //System.out.println(peopleOnTask.objs[0]);
-        double max =  myQtable.getQValue(taskID, ((IRobot)peopleOnTask.objs[0]).getId());
-        for(int i = 1; i<peopleOnTask.size(); i++){
-            double foo = myQtable.getQValue(taskID, ((IRobot)peopleOnTask.objs[i]).getId());
-            if(foo<max){
-                max = foo;
-            }
-        }
-        return max;
-    }
     
     /**
      * Move toward the curTask
