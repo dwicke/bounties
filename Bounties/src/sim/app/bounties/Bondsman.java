@@ -40,7 +40,7 @@ public class Bondsman implements Steppable {
     public Bondsman(){
     }
 
-    Bondsman(int numGoals, int numTasks, Jumpship js, int clearTime) {
+    public Bondsman(int numGoals, int numTasks, Jumpship js, int clearTime) {
         this.numGoals = numGoals;
         this.numTasks = numTasks;
         this.clearTime = clearTime;

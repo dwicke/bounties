@@ -7,7 +7,7 @@ import java.awt.Color;
 import java.awt.Graphics2D;
 import java.util.Arrays;
 import sim.app.bounties.LogNormalDist.LogNormalDist;
-import sim.app.bounties.robot.darwin.agent.Real;
+import com.gmu.robot.darwin.agent.Real;
 import sim.engine.SimState;
 import sim.field.grid.SparseGrid2D;
 import sim.portrayal.DrawInfo2D;
