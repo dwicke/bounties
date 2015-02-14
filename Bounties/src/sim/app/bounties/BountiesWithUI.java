@@ -5,6 +5,9 @@
  */
 package sim.app.bounties;
 
+import sim.app.bounties.portrayal.GoalPortrayal;
+import sim.app.bounties.portrayal.TaskPortrayal;
+import sim.app.bounties.portrayal.RobotPortrayal;
 import sim.app.bounties.agent.IRobot;
 import sim.engine.*;
 import sim.display.*;

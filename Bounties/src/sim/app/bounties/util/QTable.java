@@ -1,4 +1,4 @@
-package sim.app.bounties;
+package sim.app.bounties.util;
 
 import ec.util.MersenneTwisterFast;
 

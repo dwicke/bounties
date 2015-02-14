@@ -8,7 +8,7 @@ package sim.app.bounties.agent;
 
 import sim.app.bounties.Bondsman;
 import sim.app.bounties.Bounties;
-import sim.app.bounties.QTable;
+import sim.app.bounties.util.QTable;
 import sim.app.bounties.Task;
 import sim.engine.SimState;
 import sim.engine.Steppable;

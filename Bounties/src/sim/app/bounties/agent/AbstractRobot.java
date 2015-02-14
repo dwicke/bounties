@@ -6,10 +6,10 @@
 package sim.app.bounties.agent;
 
 import java.awt.Color;
-import sim.app.bounties.DarwinController;
-import sim.app.bounties.IController;
+import sim.app.bounties.control.DarwinController;
+import sim.app.bounties.control.IController;
 import sim.app.bounties.Task;
-import sim.app.bounties.VirtualController;
+import sim.app.bounties.control.VirtualController;
 import sim.app.bounties.util.Real;
 import sim.engine.SimState;
 import sim.util.Bag;

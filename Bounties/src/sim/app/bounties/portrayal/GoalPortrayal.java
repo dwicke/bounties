@@ -4,9 +4,10 @@
  * and open the template in the editor.
  */
 
-package sim.app.bounties;
+package sim.app.bounties.portrayal;
 
 import java.awt.Graphics2D;
+import sim.app.bounties.Goal;
 import sim.portrayal.DrawInfo2D;
 import sim.portrayal.simple.OvalPortrayal2D;
 import sim.portrayal.simple.RectanglePortrayal2D;

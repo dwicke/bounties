@@ -4,8 +4,9 @@
  * and open the template in the editor.
  */
 
-package sim.app.bounties;
+package sim.app.bounties.control;
 
+import sim.app.bounties.Bounties;
 import sim.app.bounties.util.Real;
 import sim.engine.SimState;
 

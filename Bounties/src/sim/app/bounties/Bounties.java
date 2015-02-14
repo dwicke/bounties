@@ -8,6 +8,7 @@ package sim.app.bounties;
 
 
 
+import sim.app.bounties.control.TeleportController;
 import sim.app.bounties.agent.SemiOptimalRobot;
 import sim.app.bounties.agent.BadRobot;
 import sim.app.bounties.agent.IRobot;

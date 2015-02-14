@@ -247,11 +247,11 @@ public class Task implements Real, Fixed2D{
         return true;
     }
 
-    Color getNotAvailableColor() {
+    public Color getNotAvailableColor() {
         return notAvailableColor;
     }
 
-    Color getAvailableColor() {
+    public Color getAvailableColor() {
         return availableColor;
     }
 

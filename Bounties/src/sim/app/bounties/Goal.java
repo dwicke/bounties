@@ -70,7 +70,7 @@ public class Goal implements Real, Fixed2D, sim.portrayal.Orientable2D {
         return 0;
     }
 
-    Color getGoalColor() {
+    public Color getGoalColor() {
         return goalColor;
     }
     
