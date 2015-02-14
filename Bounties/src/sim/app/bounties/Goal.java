@@ -7,7 +7,7 @@
 package sim.app.bounties;
 
 import java.awt.Color;
-import com.gmu.robot.darwin.agent.Real;
+import sim.app.bounties.util.Real;
 import sim.field.grid.SparseGrid2D;
 import sim.portrayal.Fixed2D;
 import sim.util.Double2D;

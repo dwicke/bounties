@@ -4,9 +4,9 @@ package sim.app.bounties;
 import sim.app.bounties.agent.IRobot;
 import com.gmu.robot.darwin.agent.Darwin;
 import com.gmu.robot.darwin.agent.Darwins;
-import com.gmu.robot.darwin.agent.Real;
 import com.gmu.robot.darwin.behaviors.Motions;
 import com.gmu.robot.darwin.comm.DarwinParser;
+import sim.app.bounties.util.Real;
 import sim.engine.SimState;
 import sim.util.Int2D;
 
