@@ -15,4 +15,5 @@ import sim.util.Bag;
 public interface DecisionValuator {
     public Task decideNextTask(Task availableTasks[]);
     public void learn(Task curTask, double reward, Bag agentsWorking, int numTimeSteps);
+    public void setIsDead(boolean isDead);
 }

@@ -13,11 +13,7 @@ import sim.app.bounties.util.QTable;
  *
  * @author drew
  */
-public abstract class LearningValuator implements DecisionValuator{
-    MersenneTwisterFast random;
-    double epsilonChooseRandomTask;
-    int agentID;
-    boolean hasOneUp;
+public abstract class LearningValuator extends DefaultValuator implements DecisionValuator {
     
     QTable timeTable; // time to do task
     QTable pTable; // probablility that I am successful at a task
@@ -27,27 +23,19 @@ public abstract class LearningValuator implements DecisionValuator{
     double pTableLearningRate = .2;
     double pTableDiscountBeta = .1;
     double initValue = 1;
+    boolean hasOneUp;
     
     
     public LearningValuator(MersenneTwisterFast random, double epsilonChooseRandomTask, 
             int agentID, boolean hasOneUp, int numTasks, int numRobots){
-        this.random = random;
-        this.epsilonChooseRandomTask = epsilonChooseRandomTask;
-        this.agentID = agentID;
+        super(random, epsilonChooseRandomTask, agentID);
         this.hasOneUp = hasOneUp;
         timeTable = new QTable(numTasks, 1, tTableLearningRate, tTableDiscountBeta, initValue); 
         pTable = new QTable(numTasks, numRobots, pTableLearningRate, pTableDiscountBeta, initValue);
     }
-    @Override
-    public Task decideNextTask(Task availableTasks[]) {
-        if(epsilonChooseRandomTask > random.nextDouble()){
-            return (Task)availableTasks[random.nextInt(availableTasks.length)];
-            
-        }else{
-            return pickTask(availableTasks);
-        }
-    }
     
+    
+    @Override
     Task pickTask(Task availableTasks[]) {
         double max = -1;
         Task curTask = null;

@@ -76,6 +76,7 @@ public class Agent implements IAgent, Steppable {
                     jumpHome();
                     curTask = null;
                     decideTaskFailed = true;
+                    decider.setIsDead(true);
                 }
 
             }else if(state.schedule.getSteps()!=0 && state.schedule.getSteps()%dieEveryN == 0){
@@ -85,14 +86,19 @@ public class Agent implements IAgent, Steppable {
                     jumpHome();
                     curTask = null;
                     decideTaskFailed = true;
+                    decider.setIsDead(true);
                 }
 
             }
             if(deadCount>0){
                 deadCount--;
                 return;
+            }else {
+                decider.setIsDead(false);// i'm no longer dead so can make decisions
             }
         }
+        
+        
         if (decideTaskFailed) {
             if(!bondsman.getAvailableTasks().isEmpty()) {
                 // get the next task
