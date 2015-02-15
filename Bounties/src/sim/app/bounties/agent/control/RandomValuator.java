@@ -5,10 +5,28 @@
  */
 package sim.app.bounties.agent.control;
 
+import ec.util.MersenneTwisterFast;
+import sim.app.bounties.Task;
+import sim.util.Bag;
+
 /**
  *
  * @author drew
  */
-public class RandomValuator {
+public class RandomValuator extends DefaultValuator{
+
+    public RandomValuator(MersenneTwisterFast random, int agentID) {
+        super(random, 1, agentID);
+    }
+
+    @Override
+    Task pickTask(Task[] availableTasks) {
+        throw new IllegalStateException("a RandomValuator should never call pickTask");
+    }
+
+    @Override
+    public void learn(Task curTask, double reward, Bag agentsWorking, int numTimeSteps) {
+        // don't learn...
+    }
     
 }

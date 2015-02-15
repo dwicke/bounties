@@ -7,8 +7,6 @@ package sim.app.bounties.agent.control;
 
 import ec.util.MersenneTwisterFast;
 import sim.app.bounties.Task;
-import sim.app.bounties.agent.IAgent;
-import sim.app.bounties.agent.SeanAuctionRobot;
 import sim.util.Bag;
 
 /**
