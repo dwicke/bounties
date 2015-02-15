@@ -3,7 +3,7 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package sim.app.bounties.agent.control;
+package sim.app.bounties.agent.valuator;
 
 import sim.app.bounties.Task;
 import sim.util.Bag;

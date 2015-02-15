@@ -9,7 +9,7 @@ import java.awt.Color;
 import sim.app.bounties.Bondsman;
 import sim.app.bounties.Bounties;
 import sim.app.bounties.Task;
-import sim.app.bounties.agent.control.DecisionValuator;
+import sim.app.bounties.agent.valuator.DecisionValuator;
 import sim.app.bounties.control.DarwinController;
 import sim.app.bounties.control.IController;
 import sim.app.bounties.control.VirtualController;

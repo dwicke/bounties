@@ -8,10 +8,17 @@ package sim.app.bounties;
 
 
 
+import sim.app.bounties.agent.valuator.BadValuator;
+import sim.app.bounties.agent.valuator.DecisionValuator;
+import sim.app.bounties.agent.valuator.RandomValuator;
+import sim.app.bounties.agent.valuator.SemiOptimalValuator;
+import sim.app.bounties.agent.valuator.LearningValuator;
+import sim.app.bounties.agent.valuator.SimpleValuator;
+import sim.app.bounties.agent.valuator.SeanAuctionValuator;
+import sim.app.bounties.agent.valuator.ComplexValuator;
 import sim.app.bounties.agent.Agent;
 import sim.app.bounties.control.TeleportController;
 import sim.app.bounties.agent.IAgent;
-import sim.app.bounties.agent.control.*;
 import sim.app.bounties.jumpship.Jumpship;
 import sim.app.bounties.jumpship.ResetJumpship;
 import sim.app.bounties.statistics.StatsPublisher;
