@@ -6,7 +6,7 @@
 
 package sim.app.bounties.jumpship;
 
-import sim.app.bounties.agent.IRobot;
+import sim.app.bounties.agent.IAgent;
 import sim.app.bounties.Task;
 import sim.engine.SimState;
 
@@ -24,5 +24,5 @@ public interface Jumpship {
      * @param state the state of the world
      * @return whether the robot can successfully jumpship
      */
-    public boolean jumpship(IRobot robot, Task curTask, Task newTask, SimState state);
+    public boolean jumpship(IAgent robot, Task curTask, Task newTask, SimState state);
 }

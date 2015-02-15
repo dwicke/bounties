@@ -7,7 +7,7 @@
 package sim.app.bounties.jumpship;
 
 import sim.app.bounties.Bounties;
-import sim.app.bounties.agent.IRobot;
+import sim.app.bounties.agent.IAgent;
 import sim.app.bounties.Task;
 import sim.engine.SimState;
 
@@ -30,7 +30,7 @@ public class RatePenaltyJumpship implements Jumpship {
     }
 
     @Override
-    public boolean jumpship(IRobot robot, Task curTask, Task newTask, SimState state) {
+    public boolean jumpship(IAgent robot, Task curTask, Task newTask, SimState state) {
         boolean succ = this.parent.jumpship(robot, curTask, newTask, state);
         if (succ == true) {
             

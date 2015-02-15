@@ -6,7 +6,7 @@
 
 package sim.app.bounties.portrayal;
 
-import sim.app.bounties.agent.IRobot;
+import sim.app.bounties.agent.IAgent;
 import java.awt.Graphics2D;
 import sim.portrayal.DrawInfo2D;
 import sim.portrayal.simple.OvalPortrayal2D;
@@ -18,9 +18,9 @@ import sim.portrayal.simple.OvalPortrayal2D;
 public class RobotPortrayal extends OvalPortrayal2D{
         private static final long serialVersionUID = 1;
 
-    IRobot model;
+    IAgent model;
     
-    public RobotPortrayal(IRobot model) {
+    public RobotPortrayal(IAgent model) {
         this.model = model;
     }
     

@@ -6,7 +6,7 @@
 
 package sim.app.bounties.control;
 
-import sim.app.bounties.agent.IRobot;
+import sim.app.bounties.agent.IAgent;
 import sim.app.bounties.util.Real;
 import sim.engine.SimState;
 import sim.util.Int2D;
@@ -20,5 +20,6 @@ public interface IController {
     public boolean gotoPosition(final SimState state, Int2D position);
     public boolean gotoGoalPosition(final SimState state, Real position);
     public boolean gotoTaskPosition(final SimState state, Real position);
-    public void setMyRobot(IRobot robot);
+    public boolean setPosition(final SimState state, Int2D position);
+    public void setMyRobot(IAgent robot);
 }

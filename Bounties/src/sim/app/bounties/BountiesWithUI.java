@@ -8,7 +8,7 @@ package sim.app.bounties;
 import sim.app.bounties.portrayal.GoalPortrayal;
 import sim.app.bounties.portrayal.TaskPortrayal;
 import sim.app.bounties.portrayal.RobotPortrayal;
-import sim.app.bounties.agent.IRobot;
+import sim.app.bounties.agent.IAgent;
 import sim.engine.*;
 import sim.display.*;
 import sim.portrayal.grid.*;
@@ -88,7 +88,7 @@ public class BountiesWithUI extends GUIState {
 
         robotPortrayal.setField(bounties.robotgrid);
         for(int i = 0; i < bounties.robotgrid.allObjects.numObjs; i++) {
-            IRobot ir = (IRobot) bounties.robotgrid.allObjects.objs[i];
+            IAgent ir = (IAgent) bounties.robotgrid.allObjects.objs[i];
             robotPortrayal.setPortrayalForObject(bounties.robotgrid.allObjects.objs[i], 
                     new MovablePortrayal2D(new LabelledPortrayal2D(new RobotPortrayal(ir), "id: " + ir.getId())));
         }

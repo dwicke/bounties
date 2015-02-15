@@ -12,14 +12,13 @@ import sim.app.bounties.Task;
 import sim.app.bounties.control.VirtualController;
 import sim.app.bounties.util.Real;
 import sim.engine.SimState;
-import sim.util.Bag;
 import sim.util.Int2D;
 
 /**
  *
  * @author drew
  */
-public class AbstractRobot implements IRobot {
+public class AbstractRobot implements IAgent {
     int historySize = 100;
     boolean realRobot = false;
     boolean hasTaskItem = false;
@@ -141,24 +140,7 @@ public class AbstractRobot implements IRobot {
     public boolean getIsRealRobot() {
         return realRobot;
     }
-/*
-    @Override// seems like dead code
-    public void setIsRealRobot(boolean isReal) { 
-        if (isReal != realRobot) {
-            if (isReal && realControl != null) {
-                control = realControl;// don't reinit it.
-            } else if (!isReal) {
-                realControl = control;
-                control = new VirtualController();
-            } else {// isReal = true and we have never been real and 
-                control = new DarwinController(id);
-                realControl = control;
-            }
-            realRobot = isReal;
-            control.setMyRobot(this);
-        }
-    }
-*/
+
     @Override
     public void setRobotHome(Int2D home) {
         this.home = home;

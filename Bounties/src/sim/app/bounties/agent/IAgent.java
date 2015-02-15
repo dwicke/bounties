@@ -15,7 +15,7 @@ import sim.util.Int2D;
  *
  * @author drew
  */
-public interface IRobot {
+public interface IAgent {
     public void init(SimState state);
     public boolean getHasTaskItem();
     public Color getHasTaskColor();

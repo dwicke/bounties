@@ -6,7 +6,7 @@
 
 package sim.app.bounties;
 
-import sim.app.bounties.agent.IRobot;
+import sim.app.bounties.agent.IAgent;
 import ec.util.MersenneTwisterFast;
 import java.util.Arrays;
 import sim.app.bounties.jumpship.Jumpship;
@@ -212,7 +212,7 @@ public class Bondsman implements Steppable {
      * @param newTaskID 
      * @return true if changed.
      */
-    public boolean changeTask(IRobot robot, Task oldTask, Task newTask, SimState state) {
+    public boolean changeTask(IAgent robot, Task oldTask, Task newTask, SimState state) {
         if (jumpPolicy.jumpship(robot,oldTask, newTask, state)) {
             whosDoingWhatTaskID[robot.getId()] = newTask.getID();
             return true;
@@ -225,7 +225,7 @@ public class Bondsman implements Steppable {
     public Bag whoseDoingTask(Task b) {
         Bag robots = new Bag();
         // only jumpship robots use this.
-        IRobot[] allRobots = (IRobot[]) bounties.getRobots();
+        IAgent[] allRobots = (IAgent[]) bounties.getRobots();
         for (int i = 0; i < bounties.numRobots; i++) {
             if (whosDoingWhatTaskID[i] == b.getID()){
                 robots.add(allRobots[i]);
@@ -237,7 +237,7 @@ public class Bondsman implements Steppable {
     public Bag whoseDoingTaskByID(Task b) {
         Bag robots = new Bag();
         // only jumpship robots use this.
-        IRobot[] allRobots = (IRobot[]) bounties.getRobots();
+        IAgent[] allRobots = (IAgent[]) bounties.getRobots();
         for (int i = 0; i < bounties.numRobots; i++) {
             if (whosDoingWhatTaskID[i] == b.getID()){
                 robots.add(allRobots[i].getId());
@@ -246,15 +246,15 @@ public class Bondsman implements Steppable {
         return robots;
     }
     
-    public int getBondsmanAdjustedBounty(Task task, IRobot bot) {
+    public int getBondsmanAdjustedBounty(Task task, IAgent bot) {
         return (int) (task.getCurrentReward(bot) * penaltyFactor[bot.getId()]);
     }
     
-    public void setPenaltyFactor(IRobot bot, double rate) {
+    public void setPenaltyFactor(IAgent bot, double rate) {
         penaltyFactor[bot.getId()] = rate;
     }
     
-    public double getPenaltyFactor(IRobot bot) {
+    public double getPenaltyFactor(IAgent bot) {
         return penaltyFactor[bot.getId()];
     }
     

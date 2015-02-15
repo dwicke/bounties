@@ -6,7 +6,7 @@
 package sim.app.bounties.control;
 
 import sim.app.bounties.Bounties;
-import sim.app.bounties.agent.IRobot;
+import sim.app.bounties.agent.IAgent;
 import sim.app.bounties.util.Real;
 import sim.engine.SimState;
 import sim.util.Int2D;
@@ -17,10 +17,10 @@ import sim.util.Int2D;
  */
 public class VirtualController implements IController {
 
-    IRobot me;
+    IAgent me;
     
     @Override
-    public void setMyRobot(IRobot robot) {
+    public void setMyRobot(IAgent robot) {
         me = robot;
     }
     
@@ -58,5 +58,12 @@ public class VirtualController implements IController {
     @Override
     public boolean gotoTaskPosition(final SimState state, Real position) {
         return gotoPosition(state, position.getLocation());
+    }
+
+    @Override
+    public boolean setPosition(SimState state, Int2D position) {
+        final Bounties af = (Bounties) state;
+        af.robotgrid.setObjectLocation(me,position);
+        return true;
     }
 }

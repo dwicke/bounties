@@ -330,7 +330,7 @@ public class SeanAuctionRobot extends AbstractRobot implements Steppable {
         int robotWinner = -1;
         int robotIndex = -1;
         //for (int j = 0; j < maxTaskLength - taskList.numObjs; j++) {
-        IRobot[] bots = bountyState.getRobots().clone();
+        IAgent[] bots = bountyState.getRobots().clone();
         
         int countGood = 0;
         for (int i = 0; i < bots.length; i++) {
@@ -340,7 +340,7 @@ public class SeanAuctionRobot extends AbstractRobot implements Steppable {
                 bots[i] = null;
             }
         }
-        IRobot [] goodBots = new IRobot[countGood];
+        IAgent [] goodBots = new IAgent[countGood];
         int countAll = 0;
         for (int i = 0; i < bots.length; i++) {
             if(bots[i] instanceof SeanAuctionRobot) {

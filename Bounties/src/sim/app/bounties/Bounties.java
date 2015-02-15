@@ -11,7 +11,7 @@ package sim.app.bounties;
 import sim.app.bounties.control.TeleportController;
 import sim.app.bounties.agent.SemiOptimalRobot;
 import sim.app.bounties.agent.BadRobot;
-import sim.app.bounties.agent.IRobot;
+import sim.app.bounties.agent.IAgent;
 import sim.app.bounties.agent.AbstractRobot;
 import sim.app.bounties.agent.NewSimpleRobot;
 import sim.app.bounties.agent.NewComplexRobot;
@@ -45,7 +45,7 @@ public class Bounties extends SimState {
     public int numRobots = 4;
     public static String[] myArgs;
     
-    public IRobot robots[];// index into this array corresponds to its id
+    public IAgent robots[];// index into this array corresponds to its id
     
     int numTasks = 20;
     int numGoals = 1;    
@@ -77,7 +77,7 @@ public class Bounties extends SimState {
             //GreedyBot bot = new GreedyBot();
 
             
-            IRobot bot = robots[x];
+            IAgent bot = robots[x];
             //int xloc = random.nextInt(GRID_WIDTH);
             //int yloc = random.nextInt(GRID_HEIGHT);
             
@@ -112,7 +112,7 @@ public class Bounties extends SimState {
     public double getAverageStepping(){
         double sumTasks = 0;
         double sumBetrayed = 0;
-        for(IRobot a : robots){
+        for(IAgent a : robots){
             NewSimpleRobot curBot = (NewSimpleRobot)a;
             sumTasks += curBot.totalTasksChosen;
             sumBetrayed +=  curBot.tasksNotTrusted;
@@ -166,7 +166,7 @@ public class Bounties extends SimState {
         return 0;
 //getTasks
     }
-    public IRobot[] getRobots() {
+    public IAgent[] getRobots() {
         return robots;
     }
     // some properties
@@ -344,7 +344,7 @@ public class Bounties extends SimState {
         
         
         
-        robots = new IRobot[numRobots];
+        robots = new IAgent[numRobots];
         robotgrid = new SparseGrid2D(GRID_WIDTH, GRID_HEIGHT);
         
         // create the edge robots usually this should just be numRobots but we want a center so don't
@@ -408,7 +408,7 @@ public class Bounties extends SimState {
 
             //NewComplexRobotWithJumpship bot = new NewComplexRobotWithJumpship();
             
-            IRobot bot = null;
+            IAgent bot = null;
             
              // 0 - simple, 1 - simpleP, 2 - simpleR, 3 - complex, 4 - complexP, 5 - complexR, 6 - random, 7 - psuedoOptimal
             //agentType = 3;

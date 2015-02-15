@@ -1,7 +1,7 @@
 package sim.app.bounties;
 
 //import ec.util.MersenneTwister;
-import sim.app.bounties.agent.IRobot;
+import sim.app.bounties.agent.IAgent;
 import ec.util.MersenneTwisterFast;
 import java.awt.Color;
 import java.util.Arrays;
@@ -82,12 +82,12 @@ public class Task implements Real, Fixed2D{
      * 
      * 
      */
-    public void addRobot(IRobot a){
+    public void addRobot(IAgent a){
         if(presentRobots.contains((Object)a))
             return;
         presentRobots.add(a);
     }
-    public void subtractRobot(IRobot a){
+    public void subtractRobot(IAgent a){
         presentRobots.remove((Object)a);
     }
     public boolean isEnoughRobots(){
@@ -180,7 +180,7 @@ public class Task implements Real, Fixed2D{
      * @param robot
      * @return 
      */
-    public int getCurrentReward(IRobot robot) {
+    public int getCurrentReward(IAgent robot) {
         //return defaultReward;
        
         if (perAgentReward[robot.getId()] > defaultReward)
@@ -190,7 +190,7 @@ public class Task implements Real, Fixed2D{
         return getCurrentReward();
     }
     
-    public void setCurrentReward(IRobot robot, int reward) {
+    public void setCurrentReward(IAgent robot, int reward) {
         perAgentReward[robot.getId()] = reward;
     }
     

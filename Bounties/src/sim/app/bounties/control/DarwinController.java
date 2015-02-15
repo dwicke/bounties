@@ -1,7 +1,7 @@
 package sim.app.bounties.control;
 
 
-import sim.app.bounties.agent.IRobot;
+import sim.app.bounties.agent.IAgent;
 import com.gmu.robot.darwin.agent.Darwin;
 import com.gmu.robot.darwin.agent.Darwins;
 import com.gmu.robot.darwin.behaviors.Motions;
@@ -18,7 +18,7 @@ import sim.util.Int2D;
 public class DarwinController implements IController{
 
     
-    IRobot me;
+    IAgent me;
     int id;
     static Darwins[] available = new Darwins[4];
         {
@@ -147,8 +147,13 @@ public class DarwinController implements IController{
     }
 
     @Override
-    public void setMyRobot(IRobot robot) {
+    public void setMyRobot(IAgent robot) {
         me = robot;
+    }
+
+    @Override
+    public boolean setPosition(SimState state, Int2D position) {
+        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
     
 }
