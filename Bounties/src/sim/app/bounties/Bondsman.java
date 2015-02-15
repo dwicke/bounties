@@ -73,8 +73,8 @@ public class Bondsman implements Steppable {
     public void setWorld(Bounties bounties) {
         this.bounties = bounties;
         logNormalDist = new LogNormalDist(8,1,bounties.random);
-        whosDoingWhatTaskID = new int[this.bounties.numRobots];
-        penaltyFactor = new double[this.bounties.numRobots];
+        whosDoingWhatTaskID = new int[this.bounties.numAgents];
+        penaltyFactor = new double[this.bounties.numAgents];
         Arrays.fill(penaltyFactor, 1);
         // set everyone to do task -1 since not doing anytask
         for (int i = 0; i < whosDoingWhatTaskID.length; i++) {
@@ -92,7 +92,7 @@ public class Bondsman implements Steppable {
     public Bag initTasks(Int2D field, MersenneTwisterFast rand) {
         tasks.clear();
         for (int i = 0; i < numTasks; i++) {
-            Task t = new Task(this.bounties.numRobots, rand, this.bounties);
+            Task t = new Task(this.bounties.numAgents, rand, this.bounties);
             t.setID(i);
             //t.setCurrentReward(1);// this isn't used.
             t.setLoc(new Int2D(rand.nextInt(field.x), rand.nextInt(field.y)));
@@ -135,7 +135,7 @@ public class Bondsman implements Steppable {
         return tasks.size();
     }
     public int getTotalNumRobots() {
-        return bounties.numRobots;
+        return bounties.numAgents;
     }
     public Bag getAvailableTasks() {
         Bag avail = new Bag();
@@ -231,8 +231,8 @@ public class Bondsman implements Steppable {
     public Bag whoseDoingTask(Task b) {
         Bag robots = new Bag();
         // only jumpship robots use this.
-        IAgent[] allRobots = (IAgent[]) bounties.getRobots();
-        for (int i = 0; i < bounties.numRobots; i++) {
+        IAgent[] allRobots = (IAgent[]) bounties.getAgents();
+        for (int i = 0; i < bounties.numAgents; i++) {
             if (whosDoingWhatTaskID[i] == b.getID()){
                 robots.add(allRobots[i]);
             }
@@ -243,8 +243,8 @@ public class Bondsman implements Steppable {
     public Bag whoseDoingTaskByID(Task b) {
         Bag robots = new Bag();
         // only jumpship robots use this.
-        IAgent[] allRobots = (IAgent[]) bounties.getRobots();
-        for (int i = 0; i < bounties.numRobots; i++) {
+        IAgent[] allRobots = (IAgent[]) bounties.getAgents();
+        for (int i = 0; i < bounties.numAgents; i++) {
             if (whosDoingWhatTaskID[i] == b.getID()){
                 robots.add(allRobots[i].getId());
             }

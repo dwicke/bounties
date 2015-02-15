@@ -8,9 +8,9 @@ package sim.app.bounties.statistics;
 
 import java.io.File;
 import java.io.PrintWriter;
-import sim.app.bounties.agent.AbstractRobot;
 import sim.app.bounties.Bounties;
 import sim.app.bounties.Task;
+import sim.app.bounties.agent.Agent;
 import sim.engine.SimState;
 import sim.engine.Steppable;
 import sim.util.Bag;
@@ -31,11 +31,11 @@ public class StatsPublisher implements Steppable{
         this.board = a;
         this.maxNumSteps = maxNumSteps;
         directoryName = dir;
-        arrayOfBagsOfDecisions = new Bag[board.getNumRobots()];
+        arrayOfBagsOfDecisions = new Bag[board.getNumAgents()];
         for(int i = 0; i<arrayOfBagsOfDecisions.length; i++){
             arrayOfBagsOfDecisions[i] = new Bag();
         }
-        System.out.println("numROBOTS " + board.getNumRobots());
+        System.out.println("numROBOTS " + board.getNumAgents());
     
     }
     int previousID = 0;
@@ -47,7 +47,7 @@ public class StatsPublisher implements Steppable{
         
         if( maxNumSteps - state.schedule.getSteps() < numberOfDecisionsToRecord)
         for(int i = 0; i<arrayOfBagsOfDecisions.length; i++){
-            int lastDecision = ((AbstractRobot)board.getRobots()[i]).getLastDecision();
+            int lastDecision = ((Agent)board.getAgents()[i]).getLastDecision();
             if(previousID != lastDecision)
                 arrayOfBagsOfDecisions[i].add(lastDecision);
            // System.err.println("key word" +  arrayOfBagsOfDecisions[i].objs[0]);

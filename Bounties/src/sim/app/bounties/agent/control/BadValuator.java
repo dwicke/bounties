@@ -17,8 +17,8 @@ import sim.util.Bag;
 public class BadValuator extends DefaultValuator{
 
     Bondsman bondsman;
-    public BadValuator(MersenneTwisterFast random, double epsilonChooseRandomTask, int agentID, Bondsman bondsman) {
-        super(random, epsilonChooseRandomTask, agentID);
+    public BadValuator(MersenneTwisterFast random, int agentID, Bondsman bondsman) {
+        super(random, 0, agentID);
         this.bondsman = bondsman;
     }
 

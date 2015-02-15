@@ -107,7 +107,7 @@ public class Task implements Real, Fixed2D{
     }
     public void changeTaskLocation(){
         if(rand.nextInt(10)==0){
-            badForWho = rand.nextInt(hackItIn.numRobots);
+            badForWho = rand.nextInt(hackItIn.numAgents);
         }//else{
         //    badForWho = -1;
         //}

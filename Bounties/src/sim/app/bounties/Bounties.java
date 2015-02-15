@@ -8,15 +8,10 @@ package sim.app.bounties;
 
 
 
+import sim.app.bounties.agent.Agent;
 import sim.app.bounties.control.TeleportController;
-import sim.app.bounties.agent.SemiOptimalRobot;
-import sim.app.bounties.agent.BadRobot;
 import sim.app.bounties.agent.IAgent;
-import sim.app.bounties.agent.AbstractRobot;
-import sim.app.bounties.agent.NewSimpleRobot;
-import sim.app.bounties.agent.NewComplexRobot;
-import sim.app.bounties.agent.RandomRobot;
-import sim.app.bounties.agent.SeanAuctionRobot;
+import sim.app.bounties.agent.control.*;
 import sim.app.bounties.jumpship.Jumpship;
 import sim.app.bounties.jumpship.ResetJumpship;
 import sim.app.bounties.statistics.StatsPublisher;
@@ -42,10 +37,10 @@ public class Bounties extends SimState {
     public double[] rollingAverage = new double[1000];
     int avgCount = 0;
     public Bondsman bondsman;
-    public int numRobots = 4;
+    public int numAgents = 4;
     public static String[] myArgs;
     
-    public IAgent robots[];// index into this array corresponds to its id
+    public IAgent[] agents;// index into this array corresponds to its id
     
     int numTasks = 20;
     int numGoals = 1;    
@@ -58,6 +53,8 @@ public class Bounties extends SimState {
     private int agentType = 0; // 0 - simple, 1 - simpleP, 2 - simpleR, 3 - complex, 4 - complexP, 5 - complexR, 6 - random, 7 - psuedoOptimal
     private int willdie = 0; // 0 - won't die, 1 - will die
     private int hasTraps = 0;
+    private double epsilonChooseRandomTask = 0.0;
+    
     
     public void setRotateRobots(boolean value){
            
@@ -73,11 +70,11 @@ public class Bounties extends SimState {
             lastRotateValue = value;
             offset++;
         }
-        for (int x = 0; x < numRobots; x++) {
+        for (int x = 0; x < numAgents; x++) {
             //GreedyBot bot = new GreedyBot();
 
             
-            IAgent bot = robots[x];
+            IAgent bot = agents[x];
             //int xloc = random.nextInt(GRID_WIDTH);
             //int yloc = random.nextInt(GRID_HEIGHT);
             
@@ -95,30 +92,8 @@ public class Bounties extends SimState {
     public Console getConsole() {
         return con;
     }
-    public double getStatistics(){
-        //System.err.println("fun " + ((Robot)robots[1]).decisionsMade[0]);
-        try{
-            
-            if(robots !=null && robots[0]!=null && ((AbstractRobot)robots[0]).decisionsMade!=null)
-                return Math.abs(((AbstractRobot)robots[0]).decisionsMade[0]);
-            
-        }catch(Exception e){
-            
-            e.printStackTrace();
-            System.exit(0);
-        }
-     return 10;
-    }
-    public double getAverageStepping(){
-        double sumTasks = 0;
-        double sumBetrayed = 0;
-        for(IAgent a : robots){
-            NewSimpleRobot curBot = (NewSimpleRobot)a;
-            sumTasks += curBot.totalTasksChosen;
-            sumBetrayed +=  curBot.tasksNotTrusted;
-        }
-        return sumBetrayed/sumTasks;
-    }
+
+
     
     public double getAverageTicks(){
         double sum =0;
@@ -166,17 +141,17 @@ public class Bounties extends SimState {
         return 0;
 //getTasks
     }
-    public IAgent[] getRobots() {
-        return robots;
+    public IAgent[] getAgents() {
+        return agents;
     }
     // some properties
-    public int getNumRobots() {
-        return numRobots;
+    public int getNumAgents() {
+        return numAgents;
     }
 
-    public void setNumRobots(int val) {
+    public void setNumAgents(int val) {
         if (val > 0) {
-            numRobots = val;
+            numAgents = val;
         }
     }
     public int getAvgCount() {
@@ -286,7 +261,7 @@ public class Bounties extends SimState {
         
         //willdie = 1;
         //willRotate = 1;
-        numRobots+=numBadRobot;
+        numAgents+=numBadRobot;
         //maxRotateSteps= 25000;
         //maxRotateSteps = Long.MAX_VALUE;
 //debug 
@@ -347,20 +322,20 @@ public class Bounties extends SimState {
         
         
         
-        robots = new IAgent[numRobots];
+        agents = new IAgent[numAgents];
         robotgrid = new SparseGrid2D(GRID_WIDTH, GRID_HEIGHT);
         
         // create the edge robots usually this should just be numRobots but we want a center so don't
         
-        createEdgeRobots(numRobots,numBadRobot);
+        createEdgeRobots(numAgents,numBadRobot);
         
         
         // Now make a BadRobot in the center
         
-        for (int i = numRobots-numBadRobot; i < numRobots; i++) {
+        for (int i = numAgents-numBadRobot; i < numAgents; i++) {
             System.err.println("look here? " + i);
-            robots[i] = createBadBot(i);
-            schedule.scheduleRepeating(Schedule.EPOCH + i, 0, (Steppable)robots[i], 1);
+            agents[i] = createBadBot(i);
+            schedule.scheduleRepeating(Schedule.EPOCH + i, 0, (Steppable)agents[i], 1);
         }
         
 
@@ -375,19 +350,20 @@ public class Bounties extends SimState {
         
         StatsPublisher stats = new StatsPublisher(this, maxNumSteps,dir);
         // now schedule the bondsman so that it can add more tasks as needed.
-        schedule.scheduleRepeating(Schedule.EPOCH+numRobots,0, bondsman, 1);
+        schedule.scheduleRepeating(Schedule.EPOCH+numAgents,0, bondsman, 1);
         //schedule statistics gatherer
-        schedule.scheduleRepeating(Schedule.EPOCH+numRobots+1,0,stats,1);
+        schedule.scheduleRepeating(Schedule.EPOCH+numAgents+1,0,stats,1);
         if (willRotate == 1)
-            schedule.scheduleRepeating(Schedule.EPOCH+numRobots+2,0,new RotateBots(maxRotateSteps),1);
+            schedule.scheduleRepeating(Schedule.EPOCH+numAgents+2,0,new RotateBots(maxRotateSteps),1);
         
         
     }
     
     
-    public BadRobot createBadBot(int badID) {
-        BadRobot br = new BadRobot();
+    public Agent createBadBot(int badID) {
+        Agent br = new Agent();
         br.setId(badID);
+        br.setDecisionValuator(new BadValuator(random, badID, bondsman));
         Int2D center = new Int2D(0, 0);//new Int2D(GRID_WIDTH / 2, GRID_HEIGHT / 2);
         robotgrid.setObjectLocation(br, center);
         br.setRobotHome(center);
@@ -407,75 +383,67 @@ public class Bounties extends SimState {
         quads[2] = new Int2D(GRID_WIDTH - 1, GRID_HEIGHT - 1);        
         
         for (int x = 0; x < numBots-badRobots; x++) {
-            //GreedyBot bot = new GreedyBot();
-
-            //NewComplexRobotWithJumpship bot = new NewComplexRobotWithJumpship();
             
-            IAgent bot = null;
+            IAgent bot = new Agent();
+            DecisionValuator valuator = null;
             
              // 0 - simple, 1 - simpleP, 2 - simpleR, 3 - complex, 4 - complexP, 5 - complexR, 6 - random, 7 - psuedoOptimal
             //agentType = 3;
             switch(agentType)        
             {
-                case 0:
-                    bot = new NewSimpleRobot();
+                case 0:// Simple
+                    valuator = new SimpleValuator(random, 0, x, false, numTasks, numAgents);
                     break;
-                case 1:
-                    bot = new NewSimpleRobot();
-                    ((NewSimpleRobot)bot).setHasOneUpdate(true);
+                case 1:// simple with one update
+                    valuator = new SimpleValuator(random, 0, x, true, numTasks, numAgents);
                     break;
-                case 2:
-                    bot = new NewSimpleRobot();
-                    ((NewSimpleRobot)bot).setHasRandom(true);
+                case 2:// simple with random exploration
+                    valuator = new SimpleValuator(random, epsilonChooseRandomTask, x, false, numTasks, numAgents);
                     break;
-                case 3:
-                    bot = new NewComplexRobot();
+                case 3:// complex
+                    valuator = new ComplexValuator(random, 0, x, false, numTasks, numAgents);
                     break;
-                case 4:
-                    bot = new NewComplexRobot();
-                    ((NewComplexRobot)bot).setHasOneUpdate(true);
+                case 4:// complex with one update
+                    valuator = new ComplexValuator(random, 0, x, true, numTasks, numAgents);
                     break;
-                case 5:
-                    bot = new NewComplexRobot();
-                    ((NewComplexRobot)bot).setHasRandom(true);
+                case 5:// complex with random exploration
+                    valuator = new ComplexValuator(random, epsilonChooseRandomTask, x, false, numTasks, numAgents);
                     break;
-                case 6:
-                    bot = new RandomRobot();
+                case 6:// randomly chosen task
+                    valuator = new RandomValuator(random, x);
                     break;
-                case 7:
-                    bot = new SemiOptimalRobot();
+                case 7:// semi optimal 
+                    valuator = new SemiOptimalValuator(random, epsilonChooseRandomTask, x, quads[x%4]);
                     break;
-                case 8:
-                    bot = new SeanAuctionRobot();
+                case 8:// sean auction
+                    valuator = new SeanAuctionValuator(random, epsilonChooseRandomTask, x, false, numTasks, numAgents);
                     break;
-                case 9:
-                    bot = new NewSimpleRobot();
-                    ((NewSimpleRobot)bot).isExclusive = true;
+                case 9:// simple exclusive valuator (need this until exclusivity is moved into bondsman)
+                    valuator = new SimpleValuator(random, 0, x, false, numTasks, numAgents);
                     break;
                 default:
                     break;
             }
             
-            ((AbstractRobot)bot).hasTraps = hasTraps == 1;
-            //willdie = 1;
+            ((Agent)bot).hasTraps = hasTraps == 1;
+            
             bot.setCanDie(willdie == 1);
-            if(bot instanceof NewSimpleRobot)
-                (( NewSimpleRobot)bot).setPUpdate(pUpdateValue);
-            robots[x] = bot;
+            if(valuator instanceof LearningValuator)
+                (( LearningValuator)valuator).setOneUpdateGamma(pUpdateValue);
+            agents[x] = bot;
             bot.setId(x);
             //int xloc = random.nextInt(GRID_WIDTH);
             //int yloc = random.nextInt(GRID_HEIGHT);
             
             robotgrid.setObjectLocation(bot, quads[x%4]);
-            robots[x].setRobotHome(quads[x%4]);
+            agents[x].setRobotHome(quads[x%4]);
             
-            //robotgrid/.setObjectLocation(bot, xloc, yloc);
-            //robots[x].setRobotHome(new Int2D(xloc, yloc));
+            
             bot.init(this);
             
             TeleportController t = new TeleportController();
             t.setMyRobot(bot);
-            robots[x].setRobotController(t);
+            agents[x].setRobotController(t);
             schedule.scheduleRepeating(Schedule.EPOCH + x, 0, (Steppable)bot, 1);
             
         }

@@ -17,7 +17,7 @@ import sim.util.Int2D;
 public class OptimalValuator extends DefaultValuator{
 
     Int2D home;
-    public OptimalValuator(MersenneTwisterFast random, double epsilonChooseRandomTask, int agentID, Int2D home) {
+    public OptimalValuator(MersenneTwisterFast random, int agentID, Int2D home) {
         super(random, 0, agentID);
         this.home = home;
     }

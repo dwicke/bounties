@@ -25,15 +25,17 @@ public abstract class LearningValuator extends DefaultValuator implements Decisi
     double initValue = 1;
     boolean hasOneUp;
     
-    
     public LearningValuator(MersenneTwisterFast random, double epsilonChooseRandomTask, 
             int agentID, boolean hasOneUp, int numTasks, int numRobots){
         super(random, epsilonChooseRandomTask, agentID);
         this.hasOneUp = hasOneUp;
         timeTable = new QTable(numTasks, 1, tTableLearningRate, tTableDiscountBeta, initValue); 
-        pTable = new QTable(numTasks, numRobots, pTableLearningRate, pTableDiscountBeta, initValue);
+        pTable = new QTable(numTasks, numRobots, pTableLearningRate, pTableDiscountBeta, initValue);        
     }
     
+    public void setOneUpdateGamma(double oneUpdateGamma) {
+        this.oneUpdateGamma = oneUpdateGamma;
+    }
     
     @Override
     Task pickTask(Task availableTasks[]) {
