@@ -61,6 +61,18 @@ public class Agent implements IAgent, Steppable {
         decider = dv;
     }
     
+        /**
+     * Call this before scheduling the robots.
+     * @param state the bounties state
+     */
+    public void init(SimState state) {
+        bountyState = ((Bounties)state);
+        bondsman = bountyState.bondsman;
+        decider.decideNextTask((Task[]) bondsman.getAvailableTasks().objs);
+        numTimeSteps = 0;
+        bondsman.doingTask(id, curTask.getID());
+    }
+    
     
     @Override
     public void step(SimState state) {
@@ -167,9 +179,6 @@ public class Agent implements IAgent, Steppable {
     }
     
     
-    public void init(SimState state) {
-        // do nothing...
-    }
     public void setHasTraps(boolean hasTraps) {
         this.hasTraps = hasTraps;
     }
