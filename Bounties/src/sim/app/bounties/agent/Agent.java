@@ -9,6 +9,7 @@ import java.awt.Color;
 import sim.app.bounties.Bondsman;
 import sim.app.bounties.Bounties;
 import sim.app.bounties.Task;
+import sim.app.bounties.agent.control.DecisionValuator;
 import sim.app.bounties.control.DarwinController;
 import sim.app.bounties.control.IController;
 import sim.app.bounties.control.VirtualController;
@@ -54,6 +55,11 @@ public class Agent implements IAgent, Steppable {
     int deadLength = 20000;
     int dieEveryN = 30000;
     int twoDieEveryN = 60000;
+    DecisionValuator decider;
+    
+    public void setDecisionValuator(DecisionValuator dv) {
+        decider = dv;
+    }
     
     
     @Override
@@ -88,11 +94,23 @@ public class Agent implements IAgent, Steppable {
             }
         }
         if (decideTaskFailed) {
-            decideTaskFailed = decideNextTask();
+            if(!bondsman.getAvailableTasks().isEmpty()) {
+                // get the next task
+                curTask = decider.decideNextTask((Task[])bondsman.getAvailableTasks().objs);
+                decideTaskFailed = (curTask == null);
+                if(decideTaskFailed == false) {
+                    // then we picked a task so do the book keeping
+                    numTimeSteps = 0;
+                    updateStatistics(false,curTask.getID());
+                    bondsman.doingTask(id, curTask.getID());
+                    lastSeenFinished = curTask.getLastFinishedTime(); 
+                }
+            }
+            //decideTaskFailed = decideNextTask();
         } else {
             numTimeSteps++;
             if (finishedTask()) {
-                learn(0.0, curTask.getLastAgentsWorkingOnTask()); // then learn from it
+                decider.learn(curTask, 0.0, curTask.getLastAgentsWorkingOnTask(),numTimeSteps); // then learn from it
                 jumpHome(); // someone else finished the task so start again
                 curTask = null;
                 numTimeSteps = 0;
@@ -109,7 +127,7 @@ public class Agent implements IAgent, Steppable {
                 iFinished = true;
                 curTask.setLastFinished(id, bountyState.schedule.getSteps(), bondsman.whoseDoingTaskByID(curTask));
                 bondsman.finishTask(curTask, id, bountyState.schedule.getSteps());
-                learn(1.0, curTask.getLastAgentsWorkingOnTask());
+                decider.learn(curTask, 1.0, curTask.getLastAgentsWorkingOnTask(), numTimeSteps);
                 curTask = null;
                 numTimeSteps = 0;
                 decideTaskFailed = true;
@@ -188,13 +206,13 @@ public class Agent implements IAgent, Steppable {
         return hasTaskItem;
     }
     // there will be one history array for decisions, if the task is negitive it means you jumped ship, positive means you completed
-    public void updateStatistics(boolean jumpedShip, int taskID, int totalTimeOnTask){
+    public void updateStatistics(boolean jumpedShip, int taskID){
        int multiplier = 1;
        if(jumpedShip)
            multiplier = -1;
       // System.out.println("updated decisionsMade at " + rollingHistoryCounter + " with 10");
        decisionsMade[rollingHistoryCounter] = taskID*multiplier;
-       timeOnTask[rollingHistoryCounter] = totalTimeOnTask;
+      // timeOnTask[rollingHistoryCounter] = totalTimeOnTask;
        rollingHistoryCounter = (rollingHistoryCounter +1 )%historySize;
     }
     public int getLastDecision(){
@@ -240,7 +258,7 @@ public class Agent implements IAgent, Steppable {
     }
     @Override
     public boolean getIsRealRobot() {
-        return realRobot;
+        return false;
     }
     
     
