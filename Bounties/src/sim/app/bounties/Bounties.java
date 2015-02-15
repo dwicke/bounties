@@ -305,7 +305,7 @@ public class Bounties extends SimState {
         
         
         Jumpship js = new ResetJumpship();
-        bondsman = new Bondsman(numGoals, numTasks, js,0);
+        bondsman = new Bondsman(numGoals, numTasks, js,0, agentType == 9);// agent type 9 is exclusive simple must change soon this is bad
         bondsman.setWorld(this);
         
         // make new grids

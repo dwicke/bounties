@@ -35,12 +35,13 @@ public class Bondsman implements Steppable {
     private int clearingTimes[];
     private int taskBeingWorkedOn[];
     private int clearTime;
+    private boolean isExclusive;
     
     
     public Bondsman(){
     }
 
-    public Bondsman(int numGoals, int numTasks, Jumpship js, int clearTime) {
+    public Bondsman(int numGoals, int numTasks, Jumpship js, int clearTime, boolean isExclusive) {
         this.numGoals = numGoals;
         this.numTasks = numTasks;
         this.clearTime = clearTime;
@@ -48,6 +49,7 @@ public class Bondsman implements Steppable {
         Arrays.fill(clearingTimes, clearTime);
         taskBeingWorkedOn = new int[numTasks];
         jumpPolicy = js;
+        this.isExclusive = isExclusive;
     }
     
     public void resetClearTime(int taskID) {
@@ -138,11 +140,15 @@ public class Bondsman implements Steppable {
     public Bag getAvailableTasks() {
         Bag avail = new Bag();
         for (int i = 0; i < tasks.size(); i++) {
-            if (((Task) tasks.objs[i]).getIsAvailable()) {
+            if (((Task) tasks.objs[i]).getIsAvailable() && (isExclusive == false || whoseDoingTask((Task) tasks.objs[i]).isEmpty())) {
                 avail.add(tasks.objs[i]);
             }
         }
         return avail;
+    }
+    
+    public void setIsExclusive(boolean isExlucsive) {
+        this.isExclusive = isExlucsive;
     }
     
     public void makeAvailable() {
