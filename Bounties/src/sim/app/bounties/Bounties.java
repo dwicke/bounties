@@ -388,6 +388,7 @@ public class Bounties extends SimState {
         quads[1] = new Int2D(0, GRID_HEIGHT -1);
         quads[3] = new Int2D(GRID_WIDTH - 1, 0);
         quads[2] = new Int2D(GRID_WIDTH - 1, GRID_HEIGHT - 1);        
+        Bag auctionVals = new Bag();
         
         for (int x = 0; x < numBots-badRobots; x++) {
             
@@ -424,6 +425,7 @@ public class Bounties extends SimState {
                     break;
                 case 8:// sean auction
                     valuator = new SeanAuctionValuator(random, epsilonChooseRandomTask, x, false, numTasks, numAgents);
+                    auctionVals.add(valuator);
                     break;
                 case 9:// simple exclusive valuator (need this until exclusivity is moved into bondsman)
                     valuator = new SimpleValuator(random, 0, x, false, numTasks, numAgents);
@@ -446,7 +448,7 @@ public class Bounties extends SimState {
             agents[x].setRobotHome(quads[x%4]);
             
             
-            bot.init(this);
+           // bot.init(this);
             
             TeleportController t = new TeleportController();
             t.setMyRobot(bot);
@@ -454,6 +456,16 @@ public class Bounties extends SimState {
             schedule.scheduleRepeating(Schedule.EPOCH + x, 0, (Steppable)bot, 1);
             
         }
+        
+        // first ensure the auction bots know who the other auction bots are
+        for(Object ob : auctionVals.objs) {
+            ((SeanAuctionValuator)ob).setAuctionCompetitors((SeanAuctionValuator[])auctionVals.objs);
+        }
+        
+        for (int i = 0; i < numBots-badRobots; i++) {
+            agents[i].init(this);
+        }
+        
     }
     
     
