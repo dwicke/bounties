@@ -23,10 +23,9 @@ public class SimpleValuator extends LearningValuator implements DecisionValuator
     double getPValue(Task availTask) {
         return pTable.getQValue(availTask.getID(), 0);
     }
-
-    @Override
-    public void learn(Task curTask, double reward, Bag agentsWorking, int numTimeSteps) {
-         if(reward == 1.0) {
+    
+    private void learn(Task curTask, double reward, int numTimeSteps) {
+        if(reward == 1.0) {
             timeTable.update(curTask.getID(), 0, numTimeSteps);
             pTable.update(curTask.getID(), 0, reward);
         }else{
@@ -34,7 +33,11 @@ public class SimpleValuator extends LearningValuator implements DecisionValuator
         }
         if (this.hasOneUp)
                 pTable.oneUpdate(oneUpdateGamma);
-        
+    }
+
+    @Override
+    public void learn(Task curTask, double reward, Bag agentsWorking, int numTimeSteps) {
+         learn(curTask, reward, numTimeSteps);// I don't use agentsWorking.
     }
 
 }
