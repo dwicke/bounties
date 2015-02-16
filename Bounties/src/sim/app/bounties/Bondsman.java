@@ -14,7 +14,6 @@ import sim.engine.SimState;
 import sim.engine.Steppable;
 import sim.util.Bag;
 import sim.util.Int2D;
-import sim.util.distribution.Poisson;
 import sim.app.bounties.LogNormalDist.LogNormalDist;
 /**
  * Makes the tasks and goals
