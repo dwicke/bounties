@@ -10,10 +10,7 @@ import sim.app.bounties.Bondsman;
 import sim.app.bounties.Bounties;
 import sim.app.bounties.Task;
 import sim.app.bounties.agent.valuator.DecisionValuator;
-import sim.app.bounties.control.DarwinController;
 import sim.app.bounties.control.IController;
-import sim.app.bounties.control.VirtualController;
-import sim.app.bounties.util.QTable;
 import sim.app.bounties.util.Real;
 import sim.engine.SimState;
 import sim.engine.Steppable;
@@ -41,16 +38,10 @@ public class Agent implements IAgent, Steppable {
     public boolean hasTraps = false;
     int numTimeSteps; // the number of timesteps since someone completed a task
     long lastSeenFinished; // the timestep the current task was at
-    boolean iFinished = false; // true if I finish the cur task
     Bounties bountyState;
     Bondsman bondsman;
-    double epsilon = .0025;
-    boolean randomChosen = false;
-    double epsilonChooseRandomTask = .1;
     boolean decideTaskFailed = false;
     Bag whoWasDoingWhenIDecided = new Bag();
-    boolean hasOneUp = false;
-    boolean isRand = false;
     int deadCount = 0;
     int deadLength = 20000;
     int dieEveryN = 30000;
@@ -142,7 +133,6 @@ public class Agent implements IAgent, Steppable {
             }
             if (gotoTask()) { // if i made it to the task then finish it and learn
                 jumpHome();
-                iFinished = true;
                 curTask.setLastFinished(id, bountyState.schedule.getSteps(), bondsman.whoseDoingTaskByID(curTask));
                 bondsman.finishTask(curTask, id, bountyState.schedule.getSteps());
                 decider.learn(curTask, 1.0, curTask.getLastAgentsWorkingOnTask(), numTimeSteps);

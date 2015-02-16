@@ -1,6 +1,5 @@
 package sim.app.bounties;
 
-//import ec.util.MersenneTwister;
 import sim.app.bounties.agent.IAgent;
 import ec.util.MersenneTwisterFast;
 import java.awt.Color;
