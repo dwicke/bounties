@@ -11,9 +11,10 @@ TODO:
   - [x] Start over if jumpship
   - [x] Once you commit then that is the bounty you get if you jumpship and come back to it.
   - [x] Can't jumpship if no one else is working on the task
-- [ ] Experiement scenarios like rotating the agents' home base and measuring how long they take to adapt
-- [ ] Learning Algorithms
-  - [ ] Q(<task, agent type>) (state takes other agents into account not just the task) and a better update function
+- [x] Experiement scenarios like rotating the agents' home base and measuring how long they take to adapt
+- [x] Learning Algorithms
+  - [x] Simple algorithm
+  - [x] Complex algorithm 
   - [ ] Use a leader board and then incorporate the statistics into the learning
 
 - [x] Set up the agent's for the experiment in each of the corners
