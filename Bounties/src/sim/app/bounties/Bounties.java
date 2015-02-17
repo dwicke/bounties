@@ -108,11 +108,11 @@ public class Bounties extends SimState {
         Bag tasks = bondsman.getTasks();
         if(tasks==null) return -1;
         double count = 0;
-        for(int i = 0; i< tasks.objs.length; i++){
-            if(tasks.objs[i] !=null){ // shouldnt really be null normally.....
-                sum+=((Task)tasks.objs[i]).getCurrentReward();
+        for(Object ob: tasks){
+           // if(tasks.objs[i] !=null){ // shouldnt really be null normally.....
+                sum+=((Task)ob).getCurrentReward();
                 count++;
-            }
+           // }
         }
 
          return sum/count;
@@ -122,11 +122,11 @@ public class Bounties extends SimState {
         if(bondsman==null) return 0.0;
         Bag tasks = bondsman.getTasks();
         if(tasks==null) return -1;
-        for(int i = 0; i< tasks.objs.length; i++){
-            if(tasks.objs[i] !=null){ // shouldnt really be null normally.....
-                sum+=((Task)tasks.objs[i]).getCurrentReward();
+        for(Object ob: tasks){
+           // if(tasks.objs[i] !=null){ // shouldnt really be null normally.....
+                sum+=((Task)ob).getCurrentReward();
                
-            }
+           // }
         }
         return sum;
     }
@@ -459,7 +459,7 @@ public class Bounties extends SimState {
         
         // first ensure the auction bots know who the other auction bots are
         for(Object ob : auctionVals.objs) {
-            ((SeanAuctionValuator)ob).setAuctionCompetitors((SeanAuctionValuator[])auctionVals.objs);
+            ((SeanAuctionValuator)ob).setAuctionCompetitors((SeanAuctionValuator[])auctionVals.toArray());
         }
         
         for (int i = 0; i < numBots-badRobots; i++) {
