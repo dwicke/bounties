@@ -59,7 +59,7 @@ public class Agent implements IAgent, Steppable {
     public void init(SimState state) {
         bountyState = ((Bounties)state);
         bondsman = bountyState.bondsman;
-        decider.decideNextTask((Task[]) bondsman.getAvailableTasks().objs);
+        decider.decideNextTask((Task[]) bondsman.getAvailableTasks().toArray());
         numTimeSteps = 0;
         bondsman.doingTask(id, curTask.getID());
     }
@@ -105,7 +105,7 @@ public class Agent implements IAgent, Steppable {
         if (decideTaskFailed) {
             if(!bondsman.getAvailableTasks().isEmpty()) {
                 // get the next task
-                curTask = decider.decideNextTask((Task[])bondsman.getAvailableTasks().objs);
+                curTask = decider.decideNextTask((Task[])bondsman.getAvailableTasks().toArray());
                 decideTaskFailed = (curTask == null);
                 if(decideTaskFailed == false) {
                     // then we picked a task so do the book keeping
