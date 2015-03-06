@@ -22,17 +22,14 @@ import sim.app.bounties.LogNormalDist.LogNormalDist;
 public class Bondsman implements Steppable {
         private static final long serialVersionUID = 1;
 
-    private Bag tasks = new Bag();
-    private Bag goals = new Bag();
+    protected Bag tasks = new Bag();
     private int whosDoingWhatTaskID[];
     private int numTasks = 50;
     private int numGoals = 1;
     Bounties bounties;
-    private Jumpship jumpPolicy;
-    private LogNormalDist logNormalDist;
     private double penaltyFactor[]; // each robot has a penalty factor what percentage of current bounty do they get
     private int clearingTimes[];
-    private int taskBeingWorkedOn[];
+    protected int taskBeingWorkedOn[];
     private int clearTime;
     private boolean isExclusive;
     
@@ -47,7 +44,6 @@ public class Bondsman implements Steppable {
         clearingTimes = new int[numTasks];
         Arrays.fill(clearingTimes, clearTime);
         taskBeingWorkedOn = new int[numTasks];
-        jumpPolicy = js;
         this.isExclusive = isExclusive;
     }
     
@@ -71,7 +67,6 @@ public class Bondsman implements Steppable {
     
     public void setWorld(Bounties bounties) {
         this.bounties = bounties;
-        logNormalDist = new LogNormalDist(8,1,bounties.random);
         whosDoingWhatTaskID = new int[this.bounties.numAgents];
         penaltyFactor = new double[this.bounties.numAgents];
         Arrays.fill(penaltyFactor, 1);
@@ -95,25 +90,14 @@ public class Bondsman implements Steppable {
             t.setID(i);
             //t.setCurrentReward(1);// this isn't used.
             t.setLoc(new Int2D(rand.nextInt(field.x), rand.nextInt(field.y)));
-            t.setGoal((Goal)goals.objs[rand.nextInt(goals.numObjs)]);
+            
             t.setRequiredRobots(1);
             tasks.add(t);
-            t.setFailureRate(10+rand.nextInt(100));
         }
         return tasks;
     }
     
-    public Bag initGoals(Int2D field, MersenneTwisterFast rand) {
-        goals.clear();
-        for (int i = 0; i < numGoals; i++) {
-            Goal t = new Goal();
-            t.setLocation(new Int2D(rand.nextInt(field.x), rand.nextInt(field.y)));
-            t.setId(i);
-            goals.add(t);
-        }
-        
-        return goals;
-    }
+    
     
     public Bag getTasks(){
         return tasks;
@@ -209,20 +193,6 @@ public class Bondsman implements Steppable {
         whosDoingWhatTaskID[robotID] = taskID;
         if (taskID != -1)
             taskBeingWorkedOn[taskID] = 1;
-    }
-    /**
-     * So if you were doing a task and you are switching
-     * you must tell the bondsman.  
-     * @param robot 
-     * @param newTaskID 
-     * @return true if changed.
-     */
-    public boolean changeTask(IAgent robot, Task oldTask, Task newTask, SimState state) {
-        if (jumpPolicy.jumpship(robot,oldTask, newTask, state)) {
-            whosDoingWhatTaskID[robot.getId()] = newTask.getID();
-            return true;
-        }
-        return false;
     }
     
     

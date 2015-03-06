@@ -192,7 +192,6 @@ public class Bounties extends SimState {
     
     
 
-    public SparseGrid2D goalsGrid = new SparseGrid2D(GRID_WIDTH, GRID_HEIGHT);
     public SparseGrid2D tasksGrid = new SparseGrid2D(GRID_WIDTH, GRID_HEIGHT);
     public SparseGrid2D robotgrid = new SparseGrid2D(GRID_WIDTH, GRID_HEIGHT);
 
@@ -294,17 +293,7 @@ public class Bounties extends SimState {
         bondsman.setWorld(this);
         
         // make new grids
-        goalsGrid = new SparseGrid2D(GRID_WIDTH, GRID_HEIGHT);
         
-        // get the goal locations from the bondsman.
-        Bag goalLocs = bondsman.initGoals(new Int2D(tasksGrid.getWidth(), tasksGrid.getHeight()),
-                this.random);
-        for (int i = 0; i < goalLocs.numObjs; i++) {
-            Goal curGoal = ((Goal)(goalLocs.objs[i]));
-            
-            
-            goalsGrid.setObjectLocation(goalLocs.objs[i], curGoal.getLocation());
-        }
         
         tasksGrid = new SparseGrid2D(GRID_WIDTH, GRID_HEIGHT);
         

@@ -122,10 +122,7 @@ public class Task implements Real, Fixed2D{
         timeUntilRespawn--;
         return timeUntilRespawn<=0;//less than or equal to since timeUntilRespawn could be -1 if timeUntilRespawn was chosen to be 0
     }
-    public int failureRate = 10;
-    public void setFailureRate(int i){
-        failureRate = i;
-    }
+    
     public void setLastFinished(int robotid, long timestamp){
         lastFinishedRobotID =  robotid;
         finishedTime = timestamp;
