@@ -20,12 +20,11 @@ import sim.util.Int2D;
  * @author drew
  */
 public class Bondsman implements Steppable {
-        private static final long serialVersionUID = 1;
+    private static final long serialVersionUID = 1;
 
     protected Bag tasks = new Bag();
     private int whosDoingWhatTaskID[];
     Bounties bounties;
-    
     private boolean isExclusive;
     
     
@@ -40,7 +39,16 @@ public class Bondsman implements Steppable {
         Arrays.fill(whosDoingWhatTaskID, -1);
     }
     
-
+    @Override
+    public void step(SimState state) {
+        incrementBounty();// increment the bounties
+    }
+    
+    public void incrementBounty(){
+        for(int i = 0; i< tasks.size(); i++){
+            ((Task)tasks.objs[i]).incrementCurrentReward();
+        }
+    }
     
     
     
@@ -67,19 +75,11 @@ public class Bondsman implements Steppable {
         return tasks;
     }
     
-    public void incrementBounty(){
-        for(int i = 0; i< tasks.size(); i++){
-            ((Task)tasks.objs[i]).incrementCurrentReward();
-        }
-    }
-    
-    public int getTotalNumRobots() {
-        return bounties.numAgents;
-    }
+   
     public Bag getAvailableTasks() {
         Bag avail = new Bag();
         for (int i = 0; i < tasks.size(); i++) {
-            if (((Task) tasks.objs[i]).getIsAvailable() && (isExclusive == false || whoseDoingTask((Task) tasks.objs[i]).isEmpty())) {
+            if (((Task) tasks.objs[i]).getIsAvailable() && (isExclusive == false || whoseDoingTaskByID((Task) tasks.objs[i]).isEmpty())) {
                 avail.add(tasks.objs[i]);
             }
         }
@@ -90,11 +90,6 @@ public class Bondsman implements Steppable {
         this.isExclusive = isExlucsive;
     }
     
-    @Override
-    public void step(SimState state) {
-        incrementBounty();// increment the bounties
-    }
-
     
     public void finishTask(Task curTask, int robotID, long timestamp) {
         curTask.setLastFinished(robotID, timestamp);
@@ -112,17 +107,6 @@ public class Bondsman implements Steppable {
         whosDoingWhatTaskID[robotID] = taskID;
     }
     
-    public Bag whoseDoingTask(Task b) {
-        Bag robots = new Bag();
-        // only jumpship robots use this.
-        IAgent[] allRobots = (IAgent[]) bounties.getAgents();
-        for (int i = 0; i < bounties.numAgents; i++) {
-            if (whosDoingWhatTaskID[i] == b.getID()){
-                robots.add(allRobots[i]);
-            }
-        }
-        return robots;
-    }
     
     public Bag whoseDoingTaskByID(Task b) {
         Bag robots = new Bag();

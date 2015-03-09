@@ -29,7 +29,7 @@ public class BadValuator extends DefaultValuator{
         while(curTask == null) {
             
             int ind = random.nextInt(availableTasks.length);
-            if  (bondsman.whoseDoingTask(availableTasks[ind]).numObjs == 0){
+            if  (bondsman.whoseDoingTaskByID(availableTasks[ind]).numObjs == 0){
                 curTask = (Task)availableTasks[ind];
             }
             
