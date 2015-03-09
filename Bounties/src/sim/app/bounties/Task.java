@@ -4,7 +4,7 @@ import sim.app.bounties.agent.IAgent;
 import ec.util.MersenneTwisterFast;
 import java.awt.Color;
 import java.util.Arrays;
-import sim.app.bounties.LogNormalDist.LogNormalDist;
+import sim.app.bounties.util.LogNormalDist;
 import sim.app.bounties.util.Real;
 import sim.portrayal.Fixed2D;
 import sim.util.Bag;
