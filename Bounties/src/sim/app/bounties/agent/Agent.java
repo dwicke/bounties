@@ -48,18 +48,20 @@ public class Agent implements IAgent, Steppable {
     int twoDieEveryN = 60000;
     DecisionValuator decider;
     
+    @Override
     public void setDecisionValuator(DecisionValuator dv) {
         decider = dv;
     }
     
-        /**
+    /**
      * Call this before scheduling the robots.
      * @param state the bounties state
      */
+    @Override
     public void init(SimState state) {
         bountyState = ((Bounties)state);
         bondsman = bountyState.bondsman;
-        decider.decideNextTask((Task[]) bondsman.getAvailableTasks().toArray());
+        curTask = decider.decideNextTask(bondsman.getAvailableTasks());
         numTimeSteps = 0;
         bondsman.doingTask(id, curTask.getID());
     }
@@ -103,9 +105,9 @@ public class Agent implements IAgent, Steppable {
         
         
         if (decideTaskFailed) {
-            if(!bondsman.getAvailableTasks().isEmpty()) {
+            if(bondsman.getAvailableTasks().length > 0) {
                 // get the next task
-                curTask = decider.decideNextTask((Task[])bondsman.getAvailableTasks().toArray());
+                curTask = decider.decideNextTask(bondsman.getAvailableTasks());
                 decideTaskFailed = (curTask == null);
                 if(decideTaskFailed == false) {
                     // then we picked a task so do the book keeping

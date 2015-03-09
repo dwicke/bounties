@@ -90,14 +90,20 @@ public class Bondsman implements Steppable {
     }
     
    
-    public Bag getAvailableTasks() {
-        Bag avail = new Bag();
+    public Task[] getAvailableTasks() {
+        Task[] avail = new Task[tasks.size()];
+        int curAv = 0;
         for (int i = 0; i < tasks.size(); i++) {
             if (((Task) tasks.objs[i]).getIsAvailable() && (isExclusive == false || whoseDoingTaskByID((Task) tasks.objs[i]).isEmpty())) {
-                avail.add(tasks.objs[i]);
+                avail[curAv] = (Task) tasks.objs[i];
+                curAv++;
             }
         }
-        return avail;
+        Task[] tempAvail = new Task[curAv];
+        for (int i = 0; i < curAv; i++) {
+            tempAvail[i] = avail[i];
+        }
+        return tempAvail;
     }
     
     public void setIsExclusive(boolean isExlucsive) {

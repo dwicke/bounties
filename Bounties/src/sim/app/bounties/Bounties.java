@@ -20,8 +20,6 @@ import sim.app.bounties.agent.valuator.ComplexValuator;
 import sim.app.bounties.agent.Agent;
 import sim.app.bounties.control.TeleportController;
 import sim.app.bounties.agent.IAgent;
-import sim.app.bounties.jumpship.Jumpship;
-import sim.app.bounties.jumpship.ResetJumpship;
 import sim.app.bounties.statistics.StatsPublisher;
 import sim.display.Console;
 import sim.engine.*;
@@ -252,27 +250,9 @@ public class Bounties extends SimState {
         }
         
         
-        
-        //willdie = 1;
-        //willRotate = 1;
         numAgents+=numBadRobot;
-        //maxRotateSteps= 25000;
-        //maxRotateSteps = Long.MAX_VALUE;
-//debug 
+        
         prevRobotTabsCols = new double[numTasks];
-        //debug
-        
-        /*
-        Jumpship methods can be constructed together like so:
-        
-        Jumpship js = new ResetJumpship(new LonelyJumpship())
-        
-        make sure that lonelyJumpship is the inner most one to be added
-        otherwise the other penalties can be applied and
-        
-        */
-        
-        
         
         //must change soon this is bad 
         // agent type 9 is exclusive simple 
@@ -280,29 +260,16 @@ public class Bounties extends SimState {
         bondsman = new Bondsman(this, agentType == 9 || agentType == 8);
         
         // make new grids
-        
-        
         tasksGrid = new SparseGrid2D(GRID_WIDTH, GRID_HEIGHT);
-        
-        
-        
         
         // set up the tasks in each of the quadrants
         Bag tasksLocs = bondsman.initTasks(new Int2D(tasksGrid.getWidth(), tasksGrid.getHeight()));// bottom left
         
         for (int i = 0; i < tasksLocs.numObjs; i++) {
             Task curTask = ((Task)(tasksLocs.objs[i]));
-            tasksGrid.setObjectLocation(tasksLocs.objs[i], curTask.getLocation()); 
-            
-            
+            tasksGrid.setObjectLocation(tasksLocs.objs[i], curTask.getLocation());
         }
-        
-        
         robotTabsCols = new double[numTasks];
-        
-        
-        
-        
         
         agents = new IAgent[numAgents];
         robotgrid = new SparseGrid2D(GRID_WIDTH, GRID_HEIGHT);
@@ -312,7 +279,7 @@ public class Bounties extends SimState {
         createEdgeRobots(numAgents,numBadRobot);
         
         
-        // Now make a BadRobot in the center
+        // Now make BadRobots
         
         for (int i = numAgents-numBadRobot; i < numAgents; i++) {
             agents[i] = createBadBot(i);
@@ -331,8 +298,8 @@ public class Bounties extends SimState {
     }
     
     
-    public Agent createBadBot(int badID) {
-        Agent br = new Agent();
+    public IAgent createBadBot(int badID) {
+        IAgent br = new Agent();
         br.setId(badID);
         br.setDecisionValuator(new BadValuator(random, badID, bondsman));
         Int2D center = new Int2D(0, 0);//new Int2D(GRID_WIDTH / 2, GRID_HEIGHT / 2);
@@ -405,24 +372,20 @@ public class Bounties extends SimState {
                 (( LearningValuator)valuator).setOneUpdateGamma(pUpdateValue);
             agents[x] = bot;
             bot.setId(x);
-            //int xloc = random.nextInt(GRID_WIDTH);
-            //int yloc = random.nextInt(GRID_HEIGHT);
-            
+            bot.setDecisionValuator(valuator);
             robotgrid.setObjectLocation(bot, quads[x%4]);
-            agents[x].setRobotHome(quads[x%4]);
+            bot.setRobotHome(quads[x%4]);
             
-            
-           // bot.init(this);
             
             TeleportController t = new TeleportController();
             t.setMyRobot(bot);
-            agents[x].setRobotController(t);
+            bot.setRobotController(t);
             schedule.scheduleRepeating(Schedule.EPOCH + x, 0, (Steppable)bot, 1);
             
         }
         
         // first ensure the auction bots know who the other auction bots are
-        for(Object ob : auctionVals.objs) {
+        for(Object ob : auctionVals) {
             ((SeanAuctionValuator)ob).setAuctionCompetitors((SeanAuctionValuator[])auctionVals.toArray());
         }
         

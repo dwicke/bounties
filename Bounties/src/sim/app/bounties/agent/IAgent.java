@@ -7,6 +7,7 @@
 package sim.app.bounties.agent;
 
 import java.awt.Color;
+import sim.app.bounties.agent.valuator.DecisionValuator;
 import sim.app.bounties.control.IController;
 import sim.engine.SimState;
 import sim.util.Int2D;
@@ -30,4 +31,5 @@ public interface IAgent {
     public Int2D getRobotHome();
     public void setRobotController(IController controller);
     public void setCanDie(boolean canDie);
+    public void setDecisionValuator(DecisionValuator dv);
 }
