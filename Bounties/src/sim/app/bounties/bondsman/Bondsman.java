@@ -7,11 +7,9 @@
 package sim.app.bounties.bondsman;
 
 import sim.app.bounties.agent.IAgent;
-import ec.util.MersenneTwisterFast;
 import java.util.Arrays;
 import sim.app.bounties.Bounties;
 import sim.app.bounties.Task;
-import sim.app.bounties.jumpship.Jumpship;
 import sim.engine.SimState;
 import sim.engine.Steppable;
 import sim.util.Bag;
@@ -43,6 +41,7 @@ public class Bondsman implements Steppable {
     
     @Override
     public void step(SimState state) {
+        makeAvailable();
         incrementBounty();// increment the bounties
     }
     
@@ -51,7 +50,17 @@ public class Bondsman implements Steppable {
             ((Task)tasks.objs[i]).incrementCurrentReward();
         }
     }
-    
+    public void makeAvailable() {
+        for (int i = 0; i < tasks.size(); i++) {
+            if (((Task) tasks.objs[i]).isDone()) {
+                if(((Task) tasks.objs[i]).isTaskReady()){
+                    
+                    ((Task) tasks.objs[i]).setAvailable(true);
+                    ((Task) tasks.objs[i]).setDone(false);
+                }
+            }
+        }
+    }
     
     
     /**

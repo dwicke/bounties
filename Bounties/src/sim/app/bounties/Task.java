@@ -1,10 +1,7 @@
 package sim.app.bounties;
 
-import sim.app.bounties.agent.IAgent;
 import ec.util.MersenneTwisterFast;
 import java.awt.Color;
-import java.util.Arrays;
-import sim.app.bounties.util.LogNormalDist;
 import sim.app.bounties.util.Real;
 import sim.portrayal.Fixed2D;
 import sim.util.Bag;
@@ -28,20 +25,24 @@ public class Task implements Real, Fixed2D{
     private boolean done = false; // true when at the goal false otherwise
     private boolean available = true;// true when a robot is not carrying and not at a goal it is false if not at the
     public Int2D realLocation;// location
-    public Int2D initialLocation; 
+    public Int2D initialLocation;
+    
     private int id = 0;
     private int defaultReward = 100;
     private Color availableColor = Color.RED;// may want to change color if we have different types of tasks
     private Color notAvailableColor = Color.WHITE;
     private Bag presentRobots = new Bag();
+    
     private int lastFinishedRobotID = -1;//hopefully this wont cause a runtime error... who last finished the task by default set to -1;
     private long finishedTime = -1;
     private Bag lastAgentsWorkingOnTask; // these are the agents working on the task when someone finished it
     private int timeUntilRespawn = 0;
+    
     private MersenneTwisterFast rand = null; 
     public int badForWho = -1;
  
     Bounties bountyState = null; //this is so we can hack in the graphics
+    
     private Task() {}
     public Task(int numAgents, MersenneTwisterFast rand, Bounties hack) {
 
