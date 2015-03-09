@@ -14,7 +14,7 @@ import sim.app.bounties.util.QTable;
  * @author drew
  */
 public abstract class LearningValuator extends DefaultValuator implements DecisionValuator {
-    
+    private static final long serialVersionUID = 1;    
     QTable timeTable; // time to do task
     QTable pTable; // probablility that I am successful at a task
     double oneUpdateGamma = .001;

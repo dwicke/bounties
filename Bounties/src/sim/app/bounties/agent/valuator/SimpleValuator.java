@@ -14,7 +14,7 @@ import sim.util.Bag;
  * @author drew
  */
 public class SimpleValuator extends LearningValuator implements DecisionValuator {
-
+    private static final long serialVersionUID = 1;
     public SimpleValuator(MersenneTwisterFast random, double epsilonChooseRandomTask, int agentID, boolean hasOneUp, int numTasks, int numRobots) {
         super(random, epsilonChooseRandomTask, agentID, hasOneUp, numTasks, numRobots);
     }

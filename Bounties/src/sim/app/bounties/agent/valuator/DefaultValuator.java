@@ -13,7 +13,7 @@ import sim.app.bounties.Task;
  * @author drew
  */
 public abstract class DefaultValuator implements DecisionValuator {
-    
+    private static final long serialVersionUID = 1;
     MersenneTwisterFast random;
     double epsilonChooseRandomTask;
     int agentID;

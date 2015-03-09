@@ -15,6 +15,7 @@ import sim.util.Int2D;
  * @author drew
  */
 public class SemiOptimalValuator extends DefaultValuator{
+    private static final long serialVersionUID = 1;
     Int2D home;
     public SemiOptimalValuator(MersenneTwisterFast random, double epsilonChooseRandomTask, int agentID, Int2D home) {
         super(random, epsilonChooseRandomTask, agentID);

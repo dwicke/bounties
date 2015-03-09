@@ -14,7 +14,7 @@ import sim.util.Bag;
  * @author drew
  */
 public class RandomValuator extends DefaultValuator{
-
+    private static final long serialVersionUID = 1;
     public RandomValuator(MersenneTwisterFast random, int agentID) {
         super(random, 1, agentID);
     }

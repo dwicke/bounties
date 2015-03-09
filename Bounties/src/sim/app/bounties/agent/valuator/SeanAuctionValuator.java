@@ -14,7 +14,7 @@ import sim.util.Bag;
  * @author drew
  */
 public class SeanAuctionValuator extends LearningValuator implements DecisionValuator{
-
+    private static final long serialVersionUID = 1;
     SeanAuctionValuator[] auctionValuators;
 
     public SeanAuctionValuator(MersenneTwisterFast random, double epsilonChooseRandomTask, int agentID, boolean hasOneUp, int numTasks, int numRobots) {
