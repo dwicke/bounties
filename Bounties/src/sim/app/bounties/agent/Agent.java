@@ -241,10 +241,6 @@ public class Agent implements IAgent, Steppable {
     }
     
     
-    public void debug(String message) {
-        //System.err.println(message);
-    }
-
     @Override
     public void setCanDie(boolean canDie) {
        this.canDie = canDie;
