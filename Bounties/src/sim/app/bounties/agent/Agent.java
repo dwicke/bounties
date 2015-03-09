@@ -25,7 +25,6 @@ public class Agent implements IAgent, Steppable {
     
     
     int historySize = 100;
-    boolean hasTaskItem = false;
     int id;
     IController control;
     Task curTask;
@@ -37,7 +36,7 @@ public class Agent implements IAgent, Steppable {
     boolean canDie;
     public boolean hasTraps = false;
     int numTimeSteps; // the number of timesteps since someone completed a task
-    long lastSeenFinished; // the timestep the current task was at
+    long lastSeenFinished = -1; // the timestep the current task was at when last finished
     Bounties bountyState;
     Bondsman bondsman;
     boolean decideTaskFailed = false;
@@ -185,60 +184,33 @@ public class Agent implements IAgent, Steppable {
         this.rewardCurrentTask = reward;
     }
     
+    @Override
     public void setId(int id) {
         this.id = id;
     }
 
+    @Override
     public int getId() {
         return id;
     }
-    private Color noTaskColor = Color.black;
-    private Color hasTaskColor = Color.red;
-
-    public Color getHasTaskColor() {
-        return hasTaskColor;
-    }
-
-    public Color getNoTaskColor() {
-        return noTaskColor;
-    }
-
-    /**
-     * Is true if the robot is at the location of the task and there are enough
-     * robots to perform the task.
-     *
-     * @return
-     */
-    public boolean getHasTaskItem() {
-        return hasTaskItem;
-    }
+    
     // there will be one history array for decisions, if the task is negitive it means you jumped ship, positive means you completed
     public void updateStatistics(boolean jumpedShip, int taskID){
        int multiplier = 1;
        if(jumpedShip)
            multiplier = -1;
-      // System.out.println("updated decisionsMade at " + rollingHistoryCounter + " with 10");
        decisionsMade[rollingHistoryCounter] = taskID*multiplier;
-      // timeOnTask[rollingHistoryCounter] = totalTimeOnTask;
        rollingHistoryCounter = (rollingHistoryCounter +1 )%historySize;
     }
     public int getLastDecision(){
         return decisionsMade[rollingHistoryCounter];
     }
 
-    public boolean gotoGoalPosition(final SimState state, Real position) {
-        
-        return control.gotoGoalPosition(state, position);
-    }
 
     public boolean gotoTaskPosition(final SimState state, Real position) {
-        
         return control.gotoTaskPosition(state, position);
     }
 
-    public void setHasTaskItem(boolean val) {
-        hasTaskItem = val;
-    }
 
     @Override
     public int getCurrentTaskID() {

@@ -93,8 +93,25 @@ public class Bounties extends SimState {
     public Console getConsole() {
         return con;
     }
-
-
+    
+    public int getAgentType() {
+        return agentType;
+    }
+    public void setAgentType(int agentType) {
+        this.agentType = agentType;
+    }
+    public int getWillDie() {
+        return willdie;
+    }
+    public void setWillDie(int willDie) {
+        this.willdie = willDie;
+    }
+    public int getHasTraps() {
+        return this.hasTraps;
+    }
+    public void setHasTraps(int hasTraps) {
+        this.hasTraps = hasTraps;
+    }
     
     public double getAverageTicks(){
         double sum =0;

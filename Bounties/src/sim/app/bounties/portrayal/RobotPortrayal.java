@@ -25,11 +25,7 @@ public class RobotPortrayal extends OvalPortrayal2D{
     }
     
     public final void draw(Object object, Graphics2D graphics, DrawInfo2D info) {
-        if (model.getHasTaskItem()) {
-            graphics.setColor(model.getHasTaskColor());
-        } else {
-            graphics.setColor(model.getNoTaskColor());
-        }
+        
 
         // this code was stolen from OvalPortrayal2D
         int x = (int) (info.draw.x - info.draw.width / 2.0);
