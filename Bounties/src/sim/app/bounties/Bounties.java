@@ -21,7 +21,6 @@ import sim.app.bounties.agent.Agent;
 import sim.app.bounties.control.TeleportController;
 import sim.app.bounties.agent.IAgent;
 import sim.app.bounties.statistics.StatsPublisher;
-import sim.display.Console;
 import sim.engine.*;
 import static sim.engine.SimState.doLoop;
 import sim.field.grid.*;
@@ -36,30 +35,35 @@ public class Bounties extends SimState {
 
     public static final int GRID_HEIGHT = 40;
     public static final int GRID_WIDTH = 60;
+    public static String[] myArgs;
 
-    public Console con;
-    public double[] robotTabsCols;
-    public double[] prevRobotTabsCols; // for debugging, see if to many people are getting reward
+
     public double[] rollingAverage = new double[1000];
     int avgCount = 0;
-    public Bondsman bondsman;
-    public int numAgents = 4;
-    public static String[] myArgs;
+    public Bondsman bondsman;// the bondsman ie the task allocator
     
     public IAgent[] agents;// index into this array corresponds to its id
     
-    public int numTasks = 20;
+    public SparseGrid2D tasksGrid = new SparseGrid2D(GRID_WIDTH, GRID_HEIGHT);
+    public SparseGrid2D robotgrid = new SparseGrid2D(GRID_WIDTH, GRID_HEIGHT);
+
     
-    double averageTicks = 0;
+    
     boolean rotateRobots  = false;
     boolean lastRotateValue = false;
     int offset = 0;
+    
     long maxRotateSteps = 25000;
     int willRotate = 0; // 0 don't rotate 1 will rotate
     private int agentType = 0; // 0 - simple, 1 - simpleP, 2 - simpleR, 3 - complex, 4 - complexP, 5 - complexR, 6 - random, 7 - psuedoOptimal
     private int willdie = 0; // 0 - won't die, 1 - will die
     private int hasTraps = 0;
-    private double epsilonChooseRandomTask = 0.0;
+    public int numAgents = 4;
+    public int numTasks = 20;
+    public int numBadRobot = 0;
+    private double epsilonChooseRandomTask = 0.1;
+    double pUpdateValue = .001;
+    public int isExclusive = 0;
     
     
     public void setRotateRobots(boolean value){
@@ -87,12 +91,7 @@ public class Bounties extends SimState {
     public boolean getRotateRobots(){
         return rotateRobots;
     }
-    public void setConsole(Console con) {
-        this.con = con;
-    }
-    public Console getConsole() {
-        return con;
-    }
+    
     
     public int getAgentType() {
         return agentType;
@@ -120,10 +119,8 @@ public class Bounties extends SimState {
         if(tasks==null) return -1;
         double count = 0;
         for(Object ob: tasks){
-           // if(tasks.objs[i] !=null){ // shouldnt really be null normally.....
-                sum+=((Task)ob).getCurrentReward();
-                count++;
-           // }
+            sum+=((Task)ob).getCurrentReward();
+            count++;
         }
 
          return sum/count;
@@ -134,10 +131,7 @@ public class Bounties extends SimState {
         Bag tasks = bondsman.getTasks();
         if(tasks==null) return -1;
         for(Object ob: tasks){
-           // if(tasks.objs[i] !=null){ // shouldnt really be null normally.....
-                sum+=((Task)ob).getCurrentReward();
-               
-           // }
+             sum+=((Task)ob).getCurrentReward();
         }
         return sum;
     }
@@ -148,7 +142,8 @@ public class Bounties extends SimState {
             double sum = getAverageTicks();
             rollingAverage[avgCount] = sum;
             avgCount++;
-            if(avgCount == rollingAverage.length) avgCount= 0;
+            if(avgCount == rollingAverage.length) 
+                avgCount= 0;
             sum = 0;
             for(int i = 0; i<rollingAverage.length; i++){
                 sum+=rollingAverage[i];
@@ -157,7 +152,7 @@ public class Bounties extends SimState {
             return sum;
         }
         return 0;
-//getTasks
+
     }
     public IAgent[] getAgents() {
         return agents;
@@ -195,16 +190,11 @@ public class Bounties extends SimState {
     
     
 
-    public SparseGrid2D tasksGrid = new SparseGrid2D(GRID_WIDTH, GRID_HEIGHT);
-    public SparseGrid2D robotgrid = new SparseGrid2D(GRID_WIDTH, GRID_HEIGHT);
-
     
     public Bounties(long seed) {
         super(seed);
     }
     
-    //debug thing again
-    boolean firstTimeThrough = true;
     
     static boolean keyExists(String key, String[] args) {
         
@@ -225,10 +215,11 @@ public class Bounties extends SimState {
         }
         return null;
     }
-    double pUpdateValue = .001;
+    
+    
     public void start() {
         super.start();  // clear out the schedule
-        int numBadRobot = 0;
+        
         long maxNumSteps = Long.MAX_VALUE;
         if(myArgs !=null && keyExists("-for", myArgs)) {
             maxNumSteps = Long.parseLong(argumentForKey("-for", myArgs));
@@ -238,6 +229,7 @@ public class Bounties extends SimState {
             dir = argumentForKey("-dir", myArgs);
         }
 
+        // rotates robots on this timestep
         if(myArgs !=null && keyExists("-rot", myArgs)) {
             maxRotateSteps = Long.parseLong(argumentForKey("-rot", myArgs));
         }
@@ -251,30 +243,35 @@ public class Bounties extends SimState {
         if(myArgs !=null && keyExists("-agt", myArgs)) {
             agentType = Integer.parseInt(argumentForKey("-agt", myArgs));
         }
-        // 0 - won't die, 1 - will die
+        // 0 - won't die, 1 - will die as defined in Agent
         if(myArgs !=null && keyExists("-die", myArgs)) {
             willdie = Integer.parseInt(argumentForKey("-die", myArgs));
         }
+        // n - number of bad robots all located in the top left corner (0,0) currently
         if(myArgs !=null && keyExists("-bad", myArgs)) {
             numBadRobot = Integer.parseInt(argumentForKey("-bad", myArgs));
-            
         }
-        if(myArgs !=null && keyExists("-pval", myArgs)) {
-            pUpdateValue = Double.parseDouble(argumentForKey("-pval", myArgs));
-        }
+        // 0 - no traps, 1 - traps meaning that p=.1 that there exists an agent that is bad at a particular task and that agent is uniformly chosen
         if(myArgs !=null && keyExists("-ptrap", myArgs)) {
             hasTraps = Integer.parseInt(argumentForKey("-ptrap", myArgs));
         }
-        
+        // the gamma value to use to update the p table (used to move value closer to 1 and is an exploration technique
+        if(myArgs !=null && keyExists("-pval", myArgs)) {
+            pUpdateValue = Double.parseDouble(argumentForKey("-pval", myArgs));
+        }
+        // the prob that the robot chooses a random task normally .1
+        if(myArgs !=null && keyExists("-epsRand", myArgs)) {
+            epsilonChooseRandomTask = Double.parseDouble(argumentForKey("-epsRand", myArgs));
+        }
+        // 0 if more than one agent can go after a task, 1 if only one can go after
+        if(myArgs !=null && keyExists("-isExcl", myArgs)) {
+            isExclusive = Integer.parseInt(argumentForKey("-isExcl", myArgs));
+        }
         
         numAgents+=numBadRobot;
         
-        prevRobotTabsCols = new double[numTasks];
-        
-        //must change soon this is bad 
-        // agent type 9 is exclusive simple 
         // agent type 8 is sean auction so its exclusive too
-        bondsman = new Bondsman(this, agentType == 9 || agentType == 8);
+        bondsman = new Bondsman(this, isExclusive == 1);
         
         // make new grids
         tasksGrid = new SparseGrid2D(GRID_WIDTH, GRID_HEIGHT);
@@ -286,18 +283,15 @@ public class Bounties extends SimState {
             Task curTask = ((Task)(tasksLocs.objs[i]));
             tasksGrid.setObjectLocation(tasksLocs.objs[i], curTask.getLocation());
         }
-        robotTabsCols = new double[numTasks];
         
         agents = new IAgent[numAgents];
         robotgrid = new SparseGrid2D(GRID_WIDTH, GRID_HEIGHT);
         
         // create the edge robots usually this should just be numRobots but we want a center so don't
-        
         createEdgeRobots(numAgents,numBadRobot);
         
         
         // Now make BadRobots
-        
         for (int i = numAgents-numBadRobot; i < numAgents; i++) {
             agents[i] = createBadBot(i);
             schedule.scheduleRepeating(Schedule.EPOCH + i, 0, (Steppable)agents[i], 1);
@@ -344,7 +338,6 @@ public class Bounties extends SimState {
             DecisionValuator valuator = null;
             
              // 0 - simple, 1 - simpleP, 2 - simpleR, 3 - complex, 4 - complexP, 5 - complexR, 6 - random, 7 - psuedoOptimal
-            //agentType = 3;
             switch(agentType)        
             {
                 case 0:// Simple
@@ -369,14 +362,11 @@ public class Bounties extends SimState {
                     valuator = new RandomValuator(random, x);
                     break;
                 case 7:// semi optimal 
-                    valuator = new SemiOptimalValuator(random, epsilonChooseRandomTask, x, quads[x%4]);
+                    valuator = new SemiOptimalValuator(random, 0, x, quads[x%4]);
                     break;
                 case 8:// sean auction
-                    valuator = new SeanAuctionValuator(random, epsilonChooseRandomTask, x, false, numTasks, numAgents);
+                    valuator = new SeanAuctionValuator(random, 0, x, false, numTasks, numAgents);
                     auctionVals.add(valuator);
-                    break;
-                case 9:// simple exclusive valuator (need this until exclusivity is moved into bondsman)
-                    valuator = new SimpleValuator(random, 0, x, false, numTasks, numAgents);
                     break;
                 default:
                     break;
