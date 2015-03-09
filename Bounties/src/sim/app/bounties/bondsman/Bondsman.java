@@ -57,7 +57,7 @@ public class Bondsman implements Steppable {
                 
                 ((Task) tasks.objs[i]).setAvailable(true);
                 ((Task) tasks.objs[i]).setDone(false);
-                ((Task) tasks.objs[i]).makeRespawnTime();
+                ((Task) tasks.objs[i]).makeRespawnTime(bounties.random);
                 
                 
             }
@@ -76,7 +76,7 @@ public class Bondsman implements Steppable {
             Task t = new Task();
             t.setID(i);
             t.setInitialLocation(new Int2D(bounties.random.nextInt(field.x), bounties.random.nextInt(field.y)));
-            t.generateRealTaskLocation();
+            t.generateRealTaskLocation(bounties.random);
             bounties.tasksGrid.setObjectLocation(t, t.realLocation);
             tasks.add(t);
         }
@@ -116,7 +116,7 @@ public class Bondsman implements Steppable {
             curTask.setBadForWho(-1);
         }
         
-        curTask.generateRealTaskLocation();
+        curTask.generateRealTaskLocation(bounties.random);
         bounties.tasksGrid.setObjectLocation(curTask, curTask.realLocation);
         curTask.resetReward();
         whosDoingWhatTaskID[robotID] = -1;

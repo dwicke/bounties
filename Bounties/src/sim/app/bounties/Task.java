@@ -38,7 +38,6 @@ public class Task implements Real, Fixed2D{
     private Bag lastAgentsWorkingOnTask; // these are the agents working on the task when someone finished it
     private int timeUntilRespawn = 0;
     
-    private MersenneTwisterFast rand = null; 
     public int badForWho = -1;
  
     Bounties bountyState = null; //this is so we can hack in the graphics
@@ -56,7 +55,7 @@ public class Task implements Real, Fixed2D{
     public void setDone(boolean val){
         done = val;
     }
-    public void generateRealTaskLocation(){
+    public void generateRealTaskLocation(MersenneTwisterFast rand){
         int newX = initialLocation.x + (int)Math.round(((rand.nextGaussian()) * 5));
         int newY = initialLocation.y + (int)Math.round(((rand.nextGaussian()) * 5));
         realLocation = new Int2D(newX,newY);
@@ -103,7 +102,7 @@ public class Task implements Real, Fixed2D{
     public long getLastFinishedTime() {
         return finishedTime;
     }
-    public void makeRespawnTime(){
+    public void makeRespawnTime(MersenneTwisterFast rand){
         timeUntilRespawn = rand.nextInt(20); // use uniform since we want them to come back within a reasonable time... //10 + (int)(Math.round(rand.nextGaussian())*10-5);
     }
     public void setAvailable(boolean available) {
@@ -183,8 +182,4 @@ public class Task implements Real, Fixed2D{
     public Color getAvailableColor() {
         return availableColor;
     }
-
-   
-    
-
 }
