@@ -10,6 +10,11 @@ package sim.app.bounties;
  * @author drew
  */
 public class AdaptiveBondsman extends Bondsman {
+
+    @Override
+    public void incrementBounty() {
+        // Do my own thing
+    }
     
     
     

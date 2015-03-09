@@ -285,12 +285,11 @@ public class Bounties extends SimState {
         */
         
         
-        Jumpship js = new ResetJumpship();
+        
         //must change soon this is bad 
         // agent type 9 is exclusive simple 
         // agent type 8 is sean auction so its exclusive too
-        bondsman = new Bondsman(numGoals, numTasks, js,0, agentType == 9 || agentType == 8);
-        bondsman.setWorld(this);
+        bondsman = new Bondsman(this, agentType == 9 || agentType == 8);
         
         // make new grids
         
@@ -301,8 +300,7 @@ public class Bounties extends SimState {
         
         
         // set up the tasks in each of the quadrants
-        Bag tasksLocs = bondsman.initTasks(new Int2D(tasksGrid.getWidth(), tasksGrid.getHeight()),
-                this.random);// bottom left
+        Bag tasksLocs = bondsman.initTasks(new Int2D(tasksGrid.getWidth(), tasksGrid.getHeight()));// bottom left
         
         for (int i = 0; i < tasksLocs.numObjs; i++) {
             Task curTask = ((Task)(tasksLocs.objs[i]));

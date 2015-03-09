@@ -14,9 +14,9 @@ import sim.engine.SimState;
 import sim.engine.Steppable;
 import sim.util.Bag;
 import sim.util.Int2D;
-import sim.app.bounties.LogNormalDist.LogNormalDist;
+
 /**
- * Makes the tasks and goals
+ * Makes the tasks
  * @author drew
  */
 public class Bondsman implements Steppable {
@@ -24,58 +24,24 @@ public class Bondsman implements Steppable {
 
     protected Bag tasks = new Bag();
     private int whosDoingWhatTaskID[];
-    private int numTasks = 50;
-    private int numGoals = 1;
     Bounties bounties;
-    private double penaltyFactor[]; // each robot has a penalty factor what percentage of current bounty do they get
-    private int clearingTimes[];
-    protected int taskBeingWorkedOn[];
-    private int clearTime;
+    
     private boolean isExclusive;
     
     
     public Bondsman(){
     }
 
-    public Bondsman(int numGoals, int numTasks, Jumpship js, int clearTime, boolean isExclusive) {
-        this.numGoals = numGoals;
-        this.numTasks = numTasks;
-        this.clearTime = clearTime;
-        clearingTimes = new int[numTasks];
-        Arrays.fill(clearingTimes, clearTime);
-        taskBeingWorkedOn = new int[numTasks];
+    public Bondsman(Bounties bounties, boolean isExclusive) {
         this.isExclusive = isExclusive;
-    }
-    
-    public void resetClearTime(int taskID) {
-        clearingTimes[taskID] = clearTime;
-    }
-    public int getClearTime(int taskID) {
-        return clearingTimes[taskID];
-    } 
-    
-    public void updateClearingTimes() {
-        for (int i = 0; i < clearingTimes.length; i++) {
-            if(clearingTimes[i] == 0 || taskBeingWorkedOn[i] == 1) { // we have to reset or someone is working on it 
-                clearingTimes[i] = clearTime;
-            }
-            else {
-                clearingTimes[i] = clearingTimes[i] - 1;
-            }
-        }
-    }
-    
-    public void setWorld(Bounties bounties) {
         this.bounties = bounties;
         whosDoingWhatTaskID = new int[this.bounties.numAgents];
-        penaltyFactor = new double[this.bounties.numAgents];
-        Arrays.fill(penaltyFactor, 1);
         // set everyone to do task -1 since not doing anytask
-        for (int i = 0; i < whosDoingWhatTaskID.length; i++) {
-            whosDoingWhatTaskID[i] = -1;
-        }
-        
+        Arrays.fill(whosDoingWhatTaskID, -1);
     }
+    
+
+    
     
     
     /**
@@ -83,15 +49,13 @@ public class Bondsman implements Steppable {
      * @param field the field in where the tasks locations can be
      * @return the tasks
      */
-    public Bag initTasks(Int2D field, MersenneTwisterFast rand) {
+    public Bag initTasks(Int2D field) {
         tasks.clear();
-        for (int i = 0; i < numTasks; i++) {
-            Task t = new Task(this.bounties.numAgents, rand, this.bounties);
+        for (int i = 0; i < bounties.numTasks; i++) {
+            Task t = new Task(this.bounties.numAgents, bounties.random, this.bounties);
             t.setID(i);
-            //t.setCurrentReward(1);// this isn't used.
-            t.setLoc(new Int2D(rand.nextInt(field.x), rand.nextInt(field.y)));
-            
-            t.setRequiredRobots(1);
+            t.setInitialLocation(new Int2D(bounties.random.nextInt(field.x), bounties.random.nextInt(field.y)));
+            t.generateRealTaskLocation();
             tasks.add(t);
         }
         return tasks;
@@ -102,21 +66,13 @@ public class Bondsman implements Steppable {
     public Bag getTasks(){
         return tasks;
     }
-    public void setTasks(Bag tasks) {
-        this.tasks = tasks;
-        numTasks = tasks.size();
-    }
-    public void addTask(Task a){
-        tasks.add(a);
-    }
+    
     public void incrementBounty(){
         for(int i = 0; i< tasks.size(); i++){
             ((Task)tasks.objs[i]).incrementCurrentReward();
         }
     }
-    public int getTotalNumTasks() {
-        return tasks.size();
-    }
+    
     public int getTotalNumRobots() {
         return bounties.numAgents;
     }
@@ -134,53 +90,16 @@ public class Bondsman implements Steppable {
         this.isExclusive = isExlucsive;
     }
     
-    public void makeAvailable() {
-        for (int i = 0; i < tasks.size(); i++) {
-            if (((Task) tasks.objs[i]).isDone()) {
-                if(((Task) tasks.objs[i]).isTaskReady()){
-                    ((Task) tasks.objs[i]).setAvailable(true);
-                    ((Task) tasks.objs[i]).setDone(false);
-                    taskBeingWorkedOn[((Task) tasks.objs[i]).getID()] = 0;
-                }
-            }
-        }
-    }
-    
     @Override
     public void step(SimState state) {
-        
-        
-        // reopen finished tasks (to be more realistic need a time a number of tics before add back in)
-        //((Bounties)state).getRobotTabsCols();
-        makeAvailable();
         incrementBounty();// increment the bounties
-        updateClearingTimes();
     }
 
-    public void setNumTasks(int numTasks) {
-        this.numTasks = numTasks;
-    }
-
-    public void setNumGoals(int numGoals) {
-        this.numGoals = numGoals;
-    }
-
-    public int getNumGoals() {
-        return numGoals;
-    }
-
-    public int getNumTasks() {
-        return numTasks;
-    }
     
     public void finishTask(Task curTask, int robotID, long timestamp) {
         curTask.setLastFinished(robotID, timestamp);
         curTask.setAvailable(false); // whenever an agent finishes a task then make it unavailable
         curTask.setDone(true);
-        
-        //curTask.resetReward((int)logNormalDist.sample());
-        //curTask.resetReward((int)Math.abs(bounties.random.nextGaussian())*5000 + 1000); // this made a differnce a big one even more so when a bad robot is in the mix i think it does better than the 100 (works for simple and complex)
-        //curTask.resetReward((int)Math.abs(bounties.random.nextGaussian())*5000 + 100); // this accentuates it even more especially if one of the robots is a BadRobot
         curTask.resetReward();
         whosDoingWhatTaskID[robotID] = -1;
     }
@@ -191,12 +110,8 @@ public class Bondsman implements Steppable {
      */
     public void doingTask(int robotID, int taskID) {
         whosDoingWhatTaskID[robotID] = taskID;
-        if (taskID != -1)
-            taskBeingWorkedOn[taskID] = 1;
     }
     
-    
-
     public Bag whoseDoingTask(Task b) {
         Bag robots = new Bag();
         // only jumpship robots use this.
@@ -219,18 +134,6 @@ public class Bondsman implements Steppable {
             }
         }
         return robots;
-    }
-    
-    public int getBondsmanAdjustedBounty(Task task, IAgent bot) {
-        return (int) (task.getCurrentReward(bot) * penaltyFactor[bot.getId()]);
-    }
-    
-    public void setPenaltyFactor(IAgent bot, double rate) {
-        penaltyFactor[bot.getId()] = rate;
-    }
-    
-    public double getPenaltyFactor(IAgent bot) {
-        return penaltyFactor[bot.getId()];
     }
     
     
