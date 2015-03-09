@@ -15,6 +15,7 @@ import sim.util.Bag;
  * @author drew
  */
 public class BadValuator extends DefaultValuator{
+    private static final long serialVersionUID = 1;
 
     Bondsman bondsman;
     public BadValuator(MersenneTwisterFast random, int agentID, Bondsman bondsman) {

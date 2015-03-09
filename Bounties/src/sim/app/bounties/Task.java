@@ -19,7 +19,7 @@ import sim.util.Int2D;
  * @author dfreelan
  */
 public class Task implements Real, Fixed2D{
-        private static final long serialVersionUID = 1;
+    private static final long serialVersionUID = 1;
 
     private int currentReward = 0; // controlled by bondsman to increase
     private boolean done = false; // true when at the goal false otherwise
@@ -31,17 +31,16 @@ public class Task implements Real, Fixed2D{
     private int defaultReward = 100;
     private Color availableColor = Color.RED;// may want to change color if we have different types of tasks
     private Color notAvailableColor = Color.WHITE;
-    private Bag presentRobots = new Bag();
     
-    private int lastFinishedRobotID = -1;//hopefully this wont cause a runtime error... who last finished the task by default set to -1;
+    private int lastFinishedRobotID = -1;// who last finished the task by default set to -1;
     private long finishedTime = -1;
     private Bag lastAgentsWorkingOnTask; // these are the agents working on the task when someone finished it
     private int timeUntilRespawn = 0;
     
     public int badForWho = -1;
- 
-    Bounties bountyState = null; //this is so we can hack in the graphics
+    public int maxRespawnTime = 20;
     
+    public final double taskStdDev = 5.0;
     
     public Task() {
         currentReward = defaultReward;
@@ -56,8 +55,8 @@ public class Task implements Real, Fixed2D{
         done = val;
     }
     public void generateRealTaskLocation(MersenneTwisterFast rand){
-        int newX = initialLocation.x + (int)Math.round(((rand.nextGaussian()) * 5));
-        int newY = initialLocation.y + (int)Math.round(((rand.nextGaussian()) * 5));
+        int newX = initialLocation.x + (int)Math.round(((rand.nextGaussian()) * taskStdDev));
+        int newY = initialLocation.y + (int)Math.round(((rand.nextGaussian()) * taskStdDev));
         realLocation = new Int2D(newX,newY);
     }
     
@@ -103,7 +102,7 @@ public class Task implements Real, Fixed2D{
         return finishedTime;
     }
     public void makeRespawnTime(MersenneTwisterFast rand){
-        timeUntilRespawn = rand.nextInt(20); // use uniform since we want them to come back within a reasonable time... //10 + (int)(Math.round(rand.nextGaussian())*10-5);
+        timeUntilRespawn = rand.nextInt(maxRespawnTime); // use uniform since we want them to come back within a reasonable time... //10 + (int)(Math.round(rand.nextGaussian())*10-5);
     }
     public void setAvailable(boolean available) {
         this.available = available;
@@ -112,10 +111,10 @@ public class Task implements Real, Fixed2D{
         return available;
     }
     
-    public void setCurrentReward(int reward){
+    public void setCurrentReward(int reward) {
         currentReward = reward;
     }
-    public void incrementCurrentReward(){
+    public void incrementCurrentReward() {
         if (currentReward < 10000000 && isDone() == false)// don't increment while the task is done 
             currentReward+=1;
     }
@@ -145,9 +144,7 @@ public class Task implements Real, Fixed2D{
     }
 
     
-    public int getNumRobotsDoingTask() {
-        return presentRobots.numObjs;
-    }
+    
 
     public void resetReward() {
         currentReward = defaultReward;
@@ -158,11 +155,13 @@ public class Task implements Real, Fixed2D{
         currentReward = reward;
     }
 
+    @Override
     public Double2D getRealTargetLocation()
     {
-        return new Double2D((realLocation.x - 30) * 0.1, (realLocation.y - 20) * 0.1);
+        return new Double2D((realLocation.x - Bounties.GRID_WIDTH/2) * 0.1, (realLocation.y - Bounties.GRID_HEIGHT/2) * 0.1);
     }
    
+    @Override
     public double getOrientation() { return 0; }
 
     @Override
@@ -171,7 +170,6 @@ public class Task implements Real, Fixed2D{
         initialLocation = (Int2D) newObjectLocation;
         System.err.println("Set new location to: " + initialLocation.toCoordinates());
         realLocation = initialLocation;
-        //((SparseGrid2D)field).setObjectLocation(this, initialLocation);// move myself
         return true;
     }
 
