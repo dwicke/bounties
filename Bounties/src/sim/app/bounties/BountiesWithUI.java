@@ -5,7 +5,6 @@
  */
 package sim.app.bounties;
 
-import sim.app.bounties.portrayal.GoalPortrayal;
 import sim.app.bounties.portrayal.TaskPortrayal;
 import sim.app.bounties.portrayal.RobotPortrayal;
 import sim.app.bounties.agent.IAgent;
@@ -14,12 +13,8 @@ import sim.display.*;
 import sim.portrayal.grid.*;
 import java.awt.*;
 import javax.swing.*;
-import sim.portrayal.SimplePortrayal2D;
-import sim.portrayal.simple.AdjustablePortrayal2D;
 import sim.portrayal.simple.LabelledPortrayal2D;
 import sim.portrayal.simple.MovablePortrayal2D;
-import sim.portrayal.simple.OrientedPortrayal2D;
-import sim.portrayal.simple.TrailedPortrayal2D;
 
 public class BountiesWithUI extends GUIState {
     private static final long serialVersionUID = 1;
@@ -31,7 +26,7 @@ public class BountiesWithUI extends GUIState {
     // each type of ball has a particular goal location.  So, ball type 1 has goal location 1
     // ball type 2 has goal location 2.  There can be multiple balls of type 1 but they
     // may be of different tasks but they each must be brought to goal location 1.
-    SparseGridPortrayal2D goalsPortrayal = new SparseGridPortrayal2D();  // immutable
+    
 
     // the grid that displays the balls.
     SparseGridPortrayal2D ballGridPortrayal = new SparseGridPortrayal2D();
@@ -75,10 +70,6 @@ public class BountiesWithUI extends GUIState {
         }
         
         
-        
-
-        
-
         robotPortrayal.setField(bounties.robotgrid);
         for(int i = 0; i < bounties.robotgrid.allObjects.numObjs; i++) {
             IAgent ir = (IAgent) bounties.robotgrid.allObjects.objs[i];
@@ -114,7 +105,6 @@ public class BountiesWithUI extends GUIState {
         displayFrame.setVisible(true);
 
         // attach the portrayals from bottom to top
-        display.attach(goalsPortrayal, "Goals");
         display.attach(ballGridPortrayal, "Tasks");
         display.attach(robotPortrayal, "Agents");
 
