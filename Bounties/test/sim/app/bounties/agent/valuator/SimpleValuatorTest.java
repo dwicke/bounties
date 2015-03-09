@@ -23,8 +23,8 @@ public class SimpleValuatorTest {
     
     public SimpleValuatorTest() {
         tasks = new Task[2];
-        tasks[0] = new Task(1, random, null);
-        tasks[1] = new Task(1, random, null);
+        tasks[0] = new Task();
+        tasks[1] = new Task();
         tasks[0].setID(0);
         tasks[1].setID(1);
     }
