@@ -43,48 +43,31 @@ public class Task implements Real, Fixed2D{
  
     Bounties bountyState = null; //this is so we can hack in the graphics
     
-    private Task() {}
-    public Task(int numAgents, MersenneTwisterFast rand, Bounties hack) {
-
-        
+    
+    public Task() {
         currentReward = defaultReward;
-        this.rand = rand;
-        bountyState = hack;
         lastAgentsWorkingOnTask = new Bag();
     }
     
-    public void setRandom(MersenneTwisterFast rand){
-        this.rand = rand;
-    }
     
     public boolean isDone(){
         return done;
     }
     public void setDone(boolean val){
-        if(val == true && done == false){
-            setBadForWho();
-            generateRealTaskLocation();
-        }
-        if(val==false && done == true){
-            makeRespawnTime();
-        }
         done = val;
     }
     public void generateRealTaskLocation(){
-        
         int newX = initialLocation.x + (int)Math.round(((rand.nextGaussian()) * 5));
         int newY = initialLocation.y + (int)Math.round(((rand.nextGaussian()) * 5));
-
         realLocation = new Int2D(newX,newY);
-        this.bountyState.tasksGrid.setObjectLocation(this, realLocation);
     }
     
-    public void setBadForWho() {
-        if(rand.nextInt(10)==0){
-            badForWho = rand.nextInt(bountyState.numAgents);
-        }else{
-            badForWho = -1;
-        }
+    /**
+     * id of agent the task will be harder for or -1 if not harder for anyone.
+     * @param agentID 
+     */
+    public void setBadForWho(int agentID) {
+        badForWho = agentID;
     }
     
     public boolean isTaskReady(){//check to see if this is finally time to spawn.
@@ -124,9 +107,6 @@ public class Task implements Real, Fixed2D{
         timeUntilRespawn = rand.nextInt(20); // use uniform since we want them to come back within a reasonable time... //10 + (int)(Math.round(rand.nextGaussian())*10-5);
     }
     public void setAvailable(boolean available) {
-        if(available == true){
-            makeRespawnTime();
-        }
         this.available = available;
     }
     public boolean getIsAvailable() {

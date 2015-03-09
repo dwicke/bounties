@@ -52,12 +52,14 @@ public class Bondsman implements Steppable {
     }
     public void makeAvailable() {
         for (int i = 0; i < tasks.size(); i++) {
-            if (((Task) tasks.objs[i]).isDone()) {
-                if(((Task) tasks.objs[i]).isTaskReady()){
-                    
-                    ((Task) tasks.objs[i]).setAvailable(true);
-                    ((Task) tasks.objs[i]).setDone(false);
-                }
+            if (((Task) tasks.objs[i]).isDone() && ((Task) tasks.objs[i]).isTaskReady()) {
+                // need to reset the task and 
+                
+                ((Task) tasks.objs[i]).setAvailable(true);
+                ((Task) tasks.objs[i]).setDone(false);
+                ((Task) tasks.objs[i]).makeRespawnTime();
+                
+                
             }
         }
     }
@@ -71,10 +73,11 @@ public class Bondsman implements Steppable {
     public Bag initTasks(Int2D field) {
         tasks.clear();
         for (int i = 0; i < bounties.numTasks; i++) {
-            Task t = new Task(this.bounties.numAgents, bounties.random, this.bounties);
+            Task t = new Task();
             t.setID(i);
             t.setInitialLocation(new Int2D(bounties.random.nextInt(field.x), bounties.random.nextInt(field.y)));
             t.generateRealTaskLocation();
+            bounties.tasksGrid.setObjectLocation(t, t.realLocation);
             tasks.add(t);
         }
         return tasks;
@@ -106,6 +109,15 @@ public class Bondsman implements Steppable {
         curTask.setLastFinished(robotID, timestamp);
         curTask.setAvailable(false); // whenever an agent finishes a task then make it unavailable
         curTask.setDone(true);
+        
+        if(bounties.random.nextInt(10)==0){
+            curTask.setBadForWho(bounties.random.nextInt(bounties.numAgents));
+        }else{
+            curTask.setBadForWho(-1);
+        }
+        
+        curTask.generateRealTaskLocation();
+        bounties.tasksGrid.setObjectLocation(curTask, curTask.realLocation);
         curTask.resetReward();
         whosDoingWhatTaskID[robotID] = -1;
     }
