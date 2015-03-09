@@ -6,7 +6,7 @@
 package sim.app.bounties.agent;
 
 import java.awt.Color;
-import sim.app.bounties.Bondsman;
+import sim.app.bounties.bondsman.Bondsman;
 import sim.app.bounties.Bounties;
 import sim.app.bounties.Task;
 import sim.app.bounties.agent.valuator.DecisionValuator;

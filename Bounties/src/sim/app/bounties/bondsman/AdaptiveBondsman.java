@@ -3,7 +3,9 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package sim.app.bounties;
+package sim.app.bounties.bondsman;
+
+import sim.app.bounties.bondsman.Bondsman;
 
 /**
  *

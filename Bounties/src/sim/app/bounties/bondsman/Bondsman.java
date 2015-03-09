@@ -4,11 +4,13 @@
  * and open the template in the editor.
  */
 
-package sim.app.bounties;
+package sim.app.bounties.bondsman;
 
 import sim.app.bounties.agent.IAgent;
 import ec.util.MersenneTwisterFast;
 import java.util.Arrays;
+import sim.app.bounties.Bounties;
+import sim.app.bounties.Task;
 import sim.app.bounties.jumpship.Jumpship;
 import sim.engine.SimState;
 import sim.engine.Steppable;

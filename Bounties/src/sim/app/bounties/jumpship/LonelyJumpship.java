@@ -32,7 +32,7 @@ public class LonelyJumpship implements Jumpship {
         boolean succ = this.parent.jumpship(robot, curTask, newTask, state);
         if (succ == true) {
             final Bounties af = (Bounties) state;
-            if (af.bondsman.whoseDoingTask(curTask).size() > 1) {
+            if (af.bondsman.whoseDoingTaskByID(curTask).size() > 1) {
                 // I'm not the only agent workin on the task so I do
                 return succ;
             } else {

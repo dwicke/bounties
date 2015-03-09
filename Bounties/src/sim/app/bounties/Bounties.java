@@ -8,6 +8,7 @@ package sim.app.bounties;
 
 
 
+import sim.app.bounties.bondsman.Bondsman;
 import sim.app.bounties.agent.valuator.BadValuator;
 import sim.app.bounties.agent.valuator.DecisionValuator;
 import sim.app.bounties.agent.valuator.RandomValuator;
@@ -49,8 +50,8 @@ public class Bounties extends SimState {
     
     public IAgent[] agents;// index into this array corresponds to its id
     
-    int numTasks = 20;
-    int numGoals = 1;    
+    public int numTasks = 20;
+    
     double averageTicks = 0;
     boolean rotateRobots  = false;
     boolean lastRotateValue = false;
@@ -78,14 +79,9 @@ public class Bounties extends SimState {
             offset++;
         }
         for (int x = 0; x < numAgents; x++) {
-            //GreedyBot bot = new GreedyBot();
-
             
             IAgent bot = agents[x];
-            //int xloc = random.nextInt(GRID_WIDTH);
-            //int yloc = random.nextInt(GRID_HEIGHT);
             
-            //robotgrid.setObjectLocation(bot, quads[x%4]);
             bot.setRobotHome(quads[(offset+x)%4]);
         }
         rotateRobots = value;
@@ -170,18 +166,10 @@ public class Bounties extends SimState {
             rollingAverage = new double[val];
         }
     }
-    public void setNumGoals(int numGoals) {
-        if (numGoals > 0)
-            this.numGoals = numGoals;
-    }
 
     public void setNumTasks(int numTasks) {
         if (numTasks > 0)
             this.numTasks = numTasks;
-    }
-
-    public int getNumGoals() {
-        return numGoals;
     }
 
     public int getNumTasks() {
@@ -327,20 +315,9 @@ public class Bounties extends SimState {
         // Now make a BadRobot in the center
         
         for (int i = numAgents-numBadRobot; i < numAgents; i++) {
-            System.err.println("look here? " + i);
             agents[i] = createBadBot(i);
             schedule.scheduleRepeating(Schedule.EPOCH + i, 0, (Steppable)agents[i], 1);
         }
-        
-
-        //robotgrid/.setObjectLocation(bot, xloc, yloc);
-        //robots[x].setRobotHome(new Int2D(xloc, yloc));
-       
-
-        
-        
-        
-        
         
         StatsPublisher stats = new StatsPublisher(this, maxNumSteps,dir);
         // now schedule the bondsman so that it can add more tasks as needed.

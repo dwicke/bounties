@@ -169,12 +169,12 @@ public class Task implements Real, Fixed2D{
         return presentRobots.numObjs;
     }
 
-    void resetReward() {
+    public void resetReward() {
         currentReward = defaultReward;
         
     }
     
-    void resetReward(int reward) {
+    public void resetReward(int reward) {
         currentReward = reward;
     }
 
