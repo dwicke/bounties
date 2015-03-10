@@ -8,12 +8,6 @@ import sim.util.Bag;
 import sim.util.Double2D;
 import sim.util.Int2D;
 
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
-
 /**
  *
  * @author dfreelan
@@ -30,7 +24,7 @@ public class Task implements Real, Fixed2D{
     private int id = 0;
     private int defaultReward = 100;
     private Color availableColor = Color.RED;// may want to change color if we have different types of tasks
-    private Color notAvailableColor = Color.WHITE;
+    private Color notAvailableColor = Color.WHITE; // make it disappear
     
     private int lastFinishedRobotID = -1;// who last finished the task by default set to -1;
     private long finishedTime = -1;
@@ -54,6 +48,7 @@ public class Task implements Real, Fixed2D{
     public void setDone(boolean val){
         done = val;
     }
+    
     public void generateRealTaskLocation(MersenneTwisterFast rand){
         int newX = initialLocation.x + (int)Math.round(((rand.nextGaussian()) * taskStdDev));
         int newY = initialLocation.y + (int)Math.round(((rand.nextGaussian()) * taskStdDev));
@@ -102,7 +97,10 @@ public class Task implements Real, Fixed2D{
         return finishedTime;
     }
     public void makeRespawnTime(MersenneTwisterFast rand){
-        timeUntilRespawn = rand.nextInt(maxRespawnTime); // use uniform since we want them to come back within a reasonable time... //10 + (int)(Math.round(rand.nextGaussian())*10-5);
+        timeUntilRespawn = rand.nextInt(maxRespawnTime); // use uniform since we want them to come back within a reasonable time... 
+    }
+    public int getTimeUntilRespawn() {
+        return timeUntilRespawn;
     }
     public void setAvailable(boolean available) {
         this.available = available;
@@ -148,7 +146,6 @@ public class Task implements Real, Fixed2D{
 
     public void resetReward() {
         currentReward = defaultReward;
-        
     }
     
     public void resetReward(int reward) {
