@@ -29,17 +29,14 @@ public class Agent implements IAgent, Steppable {
     Task curTask;
     Int2D home;
     public int[] decisionsMade = new int[historySize];
-    int[] timeOnTask = new int[historySize];
     int rollingHistoryCounter = 0; // pointer to current spot in the list for history purposes
-    int rewardCurrentTask; // the reward for the current task
-    boolean canDie;
+    boolean canDie = false;
     public boolean hasTraps = false;
     int numTimeSteps; // the number of timesteps since someone completed a task
     long lastSeenFinished = -1; // the timestep the current task was at when last finished
     Bounties bountyState;
     Bondsman bondsman;
     boolean decideTaskFailed = false;
-    Bag whoWasDoingWhenIDecided = new Bag();
     int deadCount = 0;
     int deadLength = 20000;
     int dieEveryN = 30000;
@@ -59,9 +56,7 @@ public class Agent implements IAgent, Steppable {
     public void init(SimState state) {
         bountyState = ((Bounties)state);
         bondsman = bountyState.bondsman;
-        curTask = decider.decideNextTask(bondsman.getAvailableTasks());
-        numTimeSteps = 0;
-        bondsman.doingTask(id, curTask.getID());
+        decideTask(state);
     }
     /**
      * Determines whether the agent should continue deciding what task to do.
@@ -191,16 +186,7 @@ public class Agent implements IAgent, Steppable {
     public void setHasTraps(boolean hasTraps) {
         this.hasTraps = hasTraps;
     }
-    public int getRewardCurrentTask() {
-        return rewardCurrentTask;
-    }
-    /**
-     * Must set this whenever I switch to a task or take a task
-     * @param reward the bounty at time of commitment for me
-     */
-    public void setRewardCurrentTask(int reward) {
-        this.rewardCurrentTask = reward;
-    }
+    
     
     @Override
     public void setId(int id) {
