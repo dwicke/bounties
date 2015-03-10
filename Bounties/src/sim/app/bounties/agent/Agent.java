@@ -5,7 +5,6 @@
  */
 package sim.app.bounties.agent;
 
-import java.awt.Color;
 import sim.app.bounties.bondsman.Bondsman;
 import sim.app.bounties.Bounties;
 import sim.app.bounties.Task;
@@ -64,14 +63,12 @@ public class Agent implements IAgent, Steppable {
         numTimeSteps = 0;
         bondsman.doingTask(id, curTask.getID());
     }
-    
-    
-    @Override
-    public void step(SimState state) {
-        // check if someone else finished the task I was working on
-            // if finished current task then learn
-        // pick task
-        // goto task
+    /**
+     * Determines whether the agent should continue deciding what task to do.
+     * @param state the bounty state
+     * @return true if should not continue to decide false if should decide
+     */
+    boolean beforeDecide(SimState state) {
         if(this.canDie) {
             if(state.schedule.getSteps()!=0 && state.schedule.getSteps()%twoDieEveryN == 0){
                 if(id==0 || id == 1){
@@ -96,51 +93,75 @@ public class Agent implements IAgent, Steppable {
             }
             if(deadCount>0){
                 deadCount--;
-                return;
+                return true;
             }else {
                 decider.setIsDead(false);// i'm no longer dead so can make decisions
             }
         }
-        
+        return false;
+    }
+    
+    void decideTask(SimState state) {
+        if(bondsman.getAvailableTasks().length > 0) {
+            // get the next task
+            curTask = decider.decideNextTask(bondsman.getAvailableTasks());
+            decideTaskFailed = (curTask == null);
+            if(decideTaskFailed == false) {
+                // then we picked a task so do the book keeping
+                numTimeSteps = 0;
+                updateStatistics(false,curTask.getID());
+                bondsman.doingTask(id, curTask.getID());
+                lastSeenFinished = curTask.getLastFinishedTime(); 
+            }
+        }
+    }
+    
+    /**
+     * Called after either i won (got the bounty) or someone else won
+     * @param reward ie 1.0 if I won and 0.0 if i lost (or something else)
+     * @param won true if I won false if I lost (someone else finished the task before me.
+     */
+    void cleanup(double reward, boolean won) {
+        if (won) {// only if I won do I get to say it is finished
+            curTask.setLastFinished(id, bountyState.schedule.getSteps(), bondsman.whoseDoingTaskByID(curTask));
+            bondsman.finishTask(curTask, id, bountyState.schedule.getSteps());
+        }
+        decider.learn(curTask, reward, curTask.getLastAgentsWorkingOnTask(), numTimeSteps);
+        jumpHome();
+        curTask = null;
+        numTimeSteps = 0;
+        decideTaskFailed = true;
+    }
+    
+    boolean preGotoTask() {
+        if(curTask!=null && curTask.badForWho == this.id && this.hasTraps == true) {
+            if(bountyState.schedule.getSteps() % 10 != 0)
+                return true;
+        }
+        return false;
+    }
+    
+    @Override
+    public void step(SimState state) {
+        // the preamble before deciding or going toward a task check if I'm in a state that allows me to
+        if (beforeDecide(state))
+            return;
         
         if (decideTaskFailed) {
-            if(bondsman.getAvailableTasks().length > 0) {
-                // get the next task
-                curTask = decider.decideNextTask(bondsman.getAvailableTasks());
-                decideTaskFailed = (curTask == null);
-                if(decideTaskFailed == false) {
-                    // then we picked a task so do the book keeping
-                    numTimeSteps = 0;
-                    updateStatistics(false,curTask.getID());
-                    bondsman.doingTask(id, curTask.getID());
-                    lastSeenFinished = curTask.getLastFinishedTime(); 
-                }
-            }
-            //decideTaskFailed = decideNextTask();
-        } else {
+            decideTask(state);// so try and decide on a task
+        } 
+        else {
             numTimeSteps++;
             if (finishedTask()) {
-                decider.learn(curTask, 0.0, curTask.getLastAgentsWorkingOnTask(),numTimeSteps); // then learn from it
-                jumpHome(); // someone else finished the task so start again
-                curTask = null;
-                numTimeSteps = 0;
-                decideTaskFailed = true;
+                cleanup(0.0, false); // someone else finished the task so start again
                 return; // can't start it in the same timestep that i chose it since doesn't happen if I was the one who completed it
             }
-            if(curTask!=null && curTask.badForWho == this.id && this.hasTraps == true){
-                numTimeSteps++;
-                if(bountyState.schedule.getSteps() % 10 != 0)
-                    return;
-            }
-            if (gotoTask()) { // if i made it to the task then finish it and learn
-                jumpHome();
-                curTask.setLastFinished(id, bountyState.schedule.getSteps(), bondsman.whoseDoingTaskByID(curTask));
-                bondsman.finishTask(curTask, id, bountyState.schedule.getSteps());
-                decider.learn(curTask, 1.0, curTask.getLastAgentsWorkingOnTask(), numTimeSteps);
-                curTask = null;
-                numTimeSteps = 0;
-                decideTaskFailed = true;
-            }
+            
+            if(preGotoTask())// do stuff before going toward the task
+                return;
+            
+            if (gotoTask()) // if i made it to the task then finish it and learn
+                cleanup(1.0, true);
         }
         
     }
@@ -156,9 +177,6 @@ public class Agent implements IAgent, Steppable {
      * @return true if i made it to the task
      */
     public boolean gotoTask() {
-        if(bountyState == null || curTask == null){
-            System.err.println("one was null " + bountyState + "  " + curTask);
-        }
         return gotoTaskPosition(bountyState, curTask);
     }
     

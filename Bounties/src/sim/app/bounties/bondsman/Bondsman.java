@@ -26,7 +26,7 @@ public class Bondsman implements Steppable {
     private int whosDoingWhatTaskID[];
     Bounties bounties;
     private boolean isExclusive;
-    
+    private final int badOdds = 10;
     
     public Bondsman(){
     }
@@ -116,7 +116,7 @@ public class Bondsman implements Steppable {
         curTask.setAvailable(false); // whenever an agent finishes a task then make it unavailable
         curTask.setDone(true);
         
-        if(bounties.random.nextInt(10)==0){
+        if(bounties.random.nextInt(badOdds)==0){
             curTask.setBadForWho(bounties.random.nextInt(bounties.numAgents));
         }else{
             curTask.setBadForWho(-1);
