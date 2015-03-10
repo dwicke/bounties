@@ -372,8 +372,7 @@ public class Bounties extends SimState {
                     break;
             }
             
-            ((Agent)bot).hasTraps = hasTraps == 1;
-            
+            bot.setHasTraps(hasTraps == 1);
             bot.setCanDie(willdie == 1);
             if(valuator instanceof LearningValuator)
                 (( LearningValuator)valuator).setOneUpdateGamma(pUpdateValue);
@@ -387,7 +386,7 @@ public class Bounties extends SimState {
             TeleportController t = new TeleportController();
             t.setMyRobot(bot);
             bot.setRobotController(t);
-            schedule.scheduleRepeating(Schedule.EPOCH + x, 0, (Steppable)bot, 1);
+            schedule.scheduleRepeating(Schedule.EPOCH + x, 0, bot, 1);
             
         }
         

@@ -53,13 +53,10 @@ public class Bondsman implements Steppable {
     public void makeAvailable() {
         for (int i = 0; i < tasks.size(); i++) {
             if (((Task) tasks.objs[i]).isDone() && ((Task) tasks.objs[i]).isTaskReady()) {
-                // need to reset the task and 
-                
+                // need to reset the task and make it available again
                 ((Task) tasks.objs[i]).setAvailable(true);
                 ((Task) tasks.objs[i]).setDone(false);
                 ((Task) tasks.objs[i]).makeRespawnTime(bounties.random);
-                
-                
             }
         }
     }
@@ -127,6 +124,7 @@ public class Bondsman implements Steppable {
         curTask.resetReward();
         whosDoingWhatTaskID[robotID] = -1;
     }
+    
     /**
      * use this when you finish a task and are committing to a new task
      * @param robotID who you are 

@@ -10,22 +10,23 @@ import java.awt.Color;
 import sim.app.bounties.agent.valuator.DecisionValuator;
 import sim.app.bounties.control.IController;
 import sim.engine.SimState;
+import sim.engine.Steppable;
 import sim.util.Int2D;
 
 /**
  *
  * @author drew
  */
-public interface IAgent {
+public interface IAgent extends Steppable {
     public void init(SimState state);
     public void setId(int id);
     public int getId();
     public int getCurrentTaskID();
     public boolean getIsRealRobot();
-    //public void setIsRealRobot(boolean isReal);
     public void setRobotHome(Int2D home); // the base 
     public Int2D getRobotHome();
     public void setRobotController(IController controller);
     public void setCanDie(boolean canDie);
+    public void setHasTraps(boolean hasTraps);
     public void setDecisionValuator(DecisionValuator dv);
 }

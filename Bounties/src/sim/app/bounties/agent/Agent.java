@@ -13,14 +13,13 @@ import sim.app.bounties.control.IController;
 import sim.app.bounties.util.Real;
 import sim.engine.SimState;
 import sim.engine.Steppable;
-import sim.util.Bag;
 import sim.util.Int2D;
 
 /**
  *
  * @author drew
  */
-public class Agent implements IAgent, Steppable {
+public class Agent implements IAgent {
     
     
     int historySize = 100;
@@ -183,6 +182,7 @@ public class Agent implements IAgent, Steppable {
     }
     
     
+    @Override
     public void setHasTraps(boolean hasTraps) {
         this.hasTraps = hasTraps;
     }
