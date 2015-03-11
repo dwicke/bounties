@@ -13,12 +13,6 @@ import sim.app.bounties.bondsman.Bondsman;
  */
 public class AdaptiveBondsman extends Bondsman {
     private static final long serialVersionUID = 1;
-    @Override
-    public void incrementBounty() {
-        // Do my own thing
-    }
     
     
-    
-        
 }

@@ -25,14 +25,21 @@ public class Bondsman implements Steppable {
     protected Bag tasks = new Bag();
     private int whosDoingWhatTaskID[];
     Bounties bounties;
-    private boolean isExclusive;
+    boolean isExclusive[];
+    int exclusiveType;
     private final int badOdds = 10;
+    
     
     public Bondsman(){
     }
 
-    public Bondsman(Bounties bounties, boolean isExclusive) {
-        this.isExclusive = isExclusive;
+    /**
+     * 
+     * @param bounties the state
+     * @param exclusiveType 0 if not exclusive, 1 if exclusive, 2 if bondsman decided
+     */
+    public Bondsman(Bounties bounties, int exclusiveType) {
+        this.exclusiveType = exclusiveType;
         this.bounties = bounties;
         whosDoingWhatTaskID = new int[this.bounties.numAgents];
         // set everyone to do task -1 since not doing anytask
@@ -52,15 +59,29 @@ public class Bondsman implements Steppable {
     }
     public void makeAvailable() {
         for (int i = 0; i < tasks.size(); i++) {
-            if (((Task) tasks.objs[i]).isDone() && ((Task) tasks.objs[i]).isTaskReady()) {
-                // need to reset the task and make it available again
-                ((Task) tasks.objs[i]).setAvailable(true);
-                ((Task) tasks.objs[i]).setDone(false);
-                ((Task) tasks.objs[i]).makeRespawnTime(bounties.random);
+            if (((Task) tasks.objs[i]).isDone()) {
+                if(((Task) tasks.objs[i]).isTaskReady()) {
+                        // need to reset the task and make it available again
+                        ((Task) tasks.objs[i]).setAvailable(true);
+                        ((Task) tasks.objs[i]).setDone(false);
+                        ((Task) tasks.objs[i]).makeRespawnTime(bounties.random);
+                        // need to decide whether to make it exclusive or not
+                        if (exclusiveType == 2)
+                            decideExclusivity(((Task) tasks.objs[i]));
+                }
             }
         }
     }
     
+    public void decideExclusivity(Task task) {
+        if (isExclusive[task.getID()]) {
+            // decide if we should change to non-exclusive
+            
+        } else {
+            // decide if we should change to exclusive
+            
+        }
+    }
     
     /**
      * gets the initial tasks
@@ -69,6 +90,7 @@ public class Bondsman implements Steppable {
      */
     public Bag initTasks(Int2D field) {
         tasks.clear();
+        isExclusive = new boolean[bounties.numTasks];
         for (int i = 0; i < bounties.numTasks; i++) {
             Task t = new Task();
             t.setID(i);
@@ -76,6 +98,11 @@ public class Bondsman implements Steppable {
             t.generateRealTaskLocation(bounties.random);
             bounties.tasksGrid.setObjectLocation(t, t.realLocation);
             tasks.add(t);
+            if (exclusiveType == 2) {
+                isExclusive[i] = bounties.random.nextBoolean(); // randomly choose initial state
+            } else {
+                isExclusive[i] = (exclusiveType == 1);// 1 == exclusive 0 == not exclusive
+            }
         }
         return tasks;
     }
@@ -91,21 +118,17 @@ public class Bondsman implements Steppable {
         Task[] avail = new Task[tasks.size()];
         int curAv = 0;
         for (int i = 0; i < tasks.size(); i++) {
-            if (((Task) tasks.objs[i]).getIsAvailable() && (isExclusive == false || whoseDoingTaskByID((Task) tasks.objs[i]).isEmpty())) {
+            if (((Task) tasks.objs[i]).getIsAvailable() && (isExclusive[i] == false || whoseDoingTaskByID((Task) tasks.objs[i]).isEmpty())) {
                 avail[curAv] = (Task) tasks.objs[i];
                 curAv++;
             }
         }
         Task[] tempAvail = new Task[curAv];
-        for (int i = 0; i < curAv; i++) {
-            tempAvail[i] = avail[i];
-        }
+        System.arraycopy(avail, 0, tempAvail, 0, curAv);
         return tempAvail;
     }
     
-    public void setIsExclusive(boolean isExlucsive) {
-        this.isExclusive = isExlucsive;
-    }
+    
     
     
     public void finishTask(Task curTask, int robotID, long timestamp) {

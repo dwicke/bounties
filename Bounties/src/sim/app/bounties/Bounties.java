@@ -111,7 +111,12 @@ public class Bounties extends SimState {
     public void setHasTraps(int hasTraps) {
         this.hasTraps = hasTraps;
     }
-    
+    public int getIsExclusive() {
+        return isExclusive;
+    }
+    public void setIsExclusive(int isExclusive) {
+        this.isExclusive = isExclusive;
+    }
     public double getAverageTicks(){
         double sum =0;
         if(bondsman==null) return 0.0;
@@ -263,15 +268,14 @@ public class Bounties extends SimState {
         if(myArgs !=null && keyExists("-epsRand", myArgs)) {
             epsilonChooseRandomTask = Double.parseDouble(argumentForKey("-epsRand", myArgs));
         }
-        // 0 if more than one agent can go after a task, 1 if only one can go after
-        if(myArgs !=null && keyExists("-isExcl", myArgs)) {
-            isExclusive = Integer.parseInt(argumentForKey("-isExcl", myArgs));
+        // 0 if more than one agent can go after a task, 1 if only one can go after, 2 if bondsman decides (initially random)
+        if(myArgs !=null && keyExists("-exclType", myArgs)) {
+            isExclusive = Integer.parseInt(argumentForKey("-exclType", myArgs));
         }
         
         numAgents+=numBadRobot;
-        
-        // agent type 8 is sean auction so its exclusive too
-        bondsman = new Bondsman(this, isExclusive == 1);
+
+        bondsman = new Bondsman(this, isExclusive);
         
         // make new grids
         tasksGrid = new SparseGrid2D(GRID_WIDTH, GRID_HEIGHT);

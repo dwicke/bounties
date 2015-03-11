@@ -16,6 +16,7 @@ public class Task implements Real, Fixed2D{
     private static final long serialVersionUID = 1;
 
     private int currentReward = 0; // controlled by bondsman to increase
+    private int lastRewardPaid = 0;
     private boolean done = false; // true when at the goal false otherwise
     private boolean available = true;// true when a robot is not carrying and not at a goal it is false if not at the
     public Int2D realLocation;// location
@@ -142,9 +143,12 @@ public class Task implements Real, Fixed2D{
     }
 
     
-    
+    public int getLastReward() {
+        return lastRewardPaid;
+    }
 
     public void resetReward() {
+        lastRewardPaid = currentReward;
         currentReward = defaultReward;
     }
     
