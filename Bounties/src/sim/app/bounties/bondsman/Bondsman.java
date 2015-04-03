@@ -138,10 +138,10 @@ public class Bondsman implements Steppable {
         curTask.setAvailable(false); // whenever an agent finishes a task then make it unavailable
         curTask.setDone(true);
         
+        // You stay bad at it until someone else becomes bad at it.
+        // this should have been more clearly stated in the paper.
         if(bounties.random.nextInt(badOdds)==0){
             curTask.setBadForWho(bounties.random.nextInt(bounties.numAgents));
-        }else{
-            curTask.setBadForWho(-1);
         }
         
         curTask.generateRealTaskLocation(bounties.random);

@@ -19,7 +19,17 @@ public class LearningBondsman extends Bondsman {
         super(bounties, exclusiveType);
     }
     
-       
+
+    /*
+    So what would you want to learn?
+    
+    we want to minimize the expected bounty for the task
+    We have the success rates of the agents
+    We have the current average bounty on 
+    we have the past bounty paid
+    want to make it so that it also works for rotating robots
+    
+    */
     
     @Override
     public void decideExclusivity(Task task) {
