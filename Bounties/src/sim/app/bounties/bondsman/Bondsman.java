@@ -23,11 +23,12 @@ public class Bondsman implements Steppable {
     private static final long serialVersionUID = 1;
 
     protected Bag tasks = new Bag();
-    private int whosDoingWhatTaskID[];
+    public int whosDoingWhatTaskID[];
     Bounties bounties;
     boolean isExclusive[];
     int exclusiveType;
     private final int badOdds = 10;
+    public int clumpcnt = 0;
     
     
     public Bondsman(){
@@ -61,13 +62,14 @@ public class Bondsman implements Steppable {
         for (int i = 0; i < tasks.size(); i++) {
             if (((Task) tasks.objs[i]).isDone()) {
                 if(((Task) tasks.objs[i]).isTaskReady()) {
-                        // need to reset the task and make it available again
-                        ((Task) tasks.objs[i]).setAvailable(true);
-                        ((Task) tasks.objs[i]).setDone(false);
-                        ((Task) tasks.objs[i]).makeRespawnTime(bounties.random);
-                        // need to decide whether to make it exclusive or not
-                        if (exclusiveType == 2)
-                            decideExclusivity(((Task) tasks.objs[i]));
+                    // need to decide whether to make it exclusive or not
+                    if (exclusiveType == 2)
+                        decideExclusivity(((Task) tasks.objs[i]));
+                    // need to reset the task and make it available again
+                    ((Task) tasks.objs[i]).setAvailable(true);
+                    ((Task) tasks.objs[i]).setDone(false);
+                    ((Task) tasks.objs[i]).makeRespawnTime(bounties.random);
+                        
                 }
             }
         }
@@ -76,7 +78,7 @@ public class Bondsman implements Steppable {
     public void decideExclusivity(Task task) {
         if (isExclusive[task.getID()]) {
             // decide if we should change to non-exclusive
-            
+            // i think that this might be a
         } else {
             // decide if we should change to exclusive
             
@@ -170,5 +172,32 @@ public class Bondsman implements Steppable {
         return robots;
     }
     
+    
+    public boolean[] getExclusivity() {
+        return isExclusive;
+    }
+    
+    public int[] getWhosDoingWhatTaskID() {
+        return whosDoingWhatTaskID;
+    }
+    
+    public int getRunningTotalNumberRedundantAgents() {
+        
+        int[] nums = whosDoingWhatTaskID.clone();
+        Arrays.sort(nums);
+        boolean prevSame = false;
+        for (int i = 1; i < nums.length; i++) {
+            if (nums[i] == nums[i - 1] && nums[i] != -1) {
+                if (!prevSame) {
+                    // this is the first time for this clump.
+                    prevSame = true;
+                    clumpcnt++;
+                }
+            } else {
+                prevSame = false;
+            }
+        }
+        return clumpcnt;
+    }
     
 }

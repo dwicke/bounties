@@ -20,6 +20,7 @@ import sim.app.bounties.agent.valuator.ComplexValuator;
 import sim.app.bounties.agent.Agent;
 import sim.app.bounties.control.TeleportController;
 import sim.app.bounties.agent.IAgent;
+import sim.app.bounties.bondsman.AdaptiveBondsman;
 import sim.app.bounties.statistics.StatsPublisher;
 import sim.engine.*;
 import static sim.engine.SimState.doLoop;
@@ -275,7 +276,7 @@ public class Bounties extends SimState {
         
         numAgents+=numBadRobot;
 
-        bondsman = new Bondsman(this, isExclusive);
+        bondsman = new AdaptiveBondsman(this, isExclusive);
         
         // make new grids
         tasksGrid = new SparseGrid2D(GRID_WIDTH, GRID_HEIGHT);
@@ -434,6 +435,9 @@ public class Bounties extends SimState {
         
     }
     
+    public Bondsman getBondsman() {
+        return bondsman;
+    }
 
     public static void main(String[] args) {
         myArgs = args;
