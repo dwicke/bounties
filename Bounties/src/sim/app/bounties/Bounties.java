@@ -67,6 +67,14 @@ public class Bounties extends SimState {
     public int isExclusive = 0;
     
     
+    public void setWillRotate(int val) {
+        this.willRotate = val;
+    }
+    
+    public int getWillRotate() {
+        return this.willRotate;
+    }
+    
     public void setRotateRobots(boolean value){
            
         

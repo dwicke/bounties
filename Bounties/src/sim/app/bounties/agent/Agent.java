@@ -99,7 +99,10 @@ public class Agent implements IAgent {
         if(bondsman.getAvailableTasks().length > 0) {
             // get the next task
             curTask = decider.decideNextTask(bondsman.getAvailableTasks());
+            
+            
             decideTaskFailed = (curTask == null);
+           
             if(decideTaskFailed == false) {
                 // then we picked a task so do the book keeping
                 numTimeSteps = 0;

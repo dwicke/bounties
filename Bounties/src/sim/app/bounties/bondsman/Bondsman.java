@@ -8,8 +8,10 @@ package sim.app.bounties.bondsman;
 
 import sim.app.bounties.agent.IAgent;
 import java.util.Arrays;
+import java.util.Set;
 import sim.app.bounties.Bounties;
 import sim.app.bounties.Task;
+import sim.app.bounties.agent.Agent;
 import sim.engine.SimState;
 import sim.engine.Steppable;
 import sim.util.Bag;
@@ -29,7 +31,7 @@ public class Bondsman implements Steppable {
     int exclusiveType;
     private final int badOdds = 10;
     public int clumpcnt = 0;
-    
+    public double currentAvgNumAgents = 0.0;
     
     public Bondsman(){
     }
@@ -157,12 +159,18 @@ public class Bondsman implements Steppable {
      */
     public void doingTask(int robotID, int taskID) {
         whosDoingWhatTaskID[robotID] = taskID;
+        if (taskID != -1 && exclusiveType == 2) {
+            isExclusive(taskID, robotID);
+        }
+    }
+    
+    public void isExclusive(int t, int a) {
+        //// don't do anything.
     }
     
     
     public Bag whoseDoingTaskByID(Task b) {
         Bag robots = new Bag();
-        // only jumpship robots use this.
         IAgent[] allRobots = (IAgent[]) bounties.getAgents();
         for (int i = 0; i < bounties.numAgents; i++) {
             if (whosDoingWhatTaskID[i] == b.getID()){
@@ -172,6 +180,10 @@ public class Bondsman implements Steppable {
         return robots;
     }
     
+    
+    public boolean isExclusive(Task task) {
+        return isExclusive[task.getID()];
+    }
     
     public boolean[] getExclusivity() {
         return isExclusive;
@@ -185,19 +197,30 @@ public class Bondsman implements Steppable {
         
         int[] nums = whosDoingWhatTaskID.clone();
         Arrays.sort(nums);
-        boolean prevSame = false;
         for (int i = 1; i < nums.length; i++) {
             if (nums[i] == nums[i - 1] && nums[i] != -1) {
-                if (!prevSame) {
-                    // this is the first time for this clump.
-                    prevSame = true;
-                    clumpcnt++;
-                }
-            } else {
-                prevSame = false;
+                clumpcnt++;
+                
             }
         }
+        
         return clumpcnt;
+    }
+    
+    public double getAvgNumAgentsPerTask() {
+        // #tasksServicing / #maxAvail
+        
+       int[] nums = whosDoingWhatTaskID.clone();
+       int unique = 1;
+        Arrays.sort(nums);
+        for (int i = 1; i < nums.length; i++) {
+            if (nums[i] != nums[i - 1] && nums[i] != -1) {
+                unique++;
+                
+            }
+        }
+        currentAvgNumAgents = (double)unique;
+        return currentAvgNumAgents;
     }
     
 }

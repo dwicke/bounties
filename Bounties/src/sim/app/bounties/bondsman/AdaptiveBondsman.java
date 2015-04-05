@@ -7,6 +7,7 @@ package sim.app.bounties.bondsman;
 
 import sim.app.bounties.Bounties;
 import sim.app.bounties.Task;
+import sim.app.bounties.agent.Agent;
 
 /**
  *
@@ -15,9 +16,61 @@ import sim.app.bounties.Task;
 public class AdaptiveBondsman extends Bondsman {
     private static final long serialVersionUID = 1;
 
+    double bountyHist[][];
+    double alpha = 0.85; // closer to 1 the more current information is used in the history
+    double oneminusalpha = 1 - alpha;
+    
+    
     public AdaptiveBondsman(Bounties bounties, int exclusiveType) {
         super(bounties, exclusiveType);
+        bountyHist = new double[bounties.numTasks][bounties.numAgents];
     }
+
+    
+    /**
+     * Given that agent a decided to do this task t should we keep it available
+     * for other agents to go after?
+     * @param t task id t
+     * @param a agent id a
+     */
+    @Override
+    public void isExclusive(int t, int a) {
+        // first average the bounty paid to the other agents
+        double minOthers = 0;
+        int numOthers = 0;
+        double mine = 0;
+        for (int i = 0; i < this.bounties.numAgents; i++) {
+            if (a == i) {
+                mine = bountyHist[t][i];
+            }
+            else if (minOthers == 0 || (bountyHist[t][i] < minOthers && bountyHist[t][i] != 0))
+            {
+                minOthers = bountyHist[t][i];
+            }
+        }
+        
+        
+        if(minOthers > mine && mine != 0) {
+            // make it exclusive
+            isExclusive[t] = true;
+        }
+        else {
+            isExclusive[t] = false; /// therefore non-exclusive if no one has done it
+        }
+        
+        
+    }
+
+    @Override
+    public void finishTask(Task curTask, int robotID, long timestamp) {
+        super.finishTask(curTask, robotID, timestamp);
+        // "learn" the history average
+        bountyHist[curTask.getID()][robotID] = alpha * curTask.getLastReward() + 
+                oneminusalpha * bountyHist[curTask.getID()][robotID];
+    }
+    
+    
+    
     
        
     /**
@@ -46,7 +99,7 @@ public class AdaptiveBondsman extends Bondsman {
             // i think that this might be a
             //System.err.println("Exclusive deciding if should be");
 
-            // the sky is falling! so go to non-exclusive
+            // the sky is falling! so go to non-exclusive when avg > last reward
             if((totalBounty/availTasks.length) > task.getLastReward()) {
                 // then make it exclusive
                 isExclusive[task.getID()] = false;

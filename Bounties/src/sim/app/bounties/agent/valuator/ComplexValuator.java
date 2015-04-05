@@ -7,7 +7,6 @@ package sim.app.bounties.agent.valuator;
 
 import ec.util.MersenneTwisterFast;
 import sim.app.bounties.Task;
-import sim.app.bounties.util.QTable;
 import sim.util.Bag;
 
 /**
