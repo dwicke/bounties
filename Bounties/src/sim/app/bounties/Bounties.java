@@ -8,6 +8,7 @@ package sim.app.bounties;
 
 
 
+import java.util.Arrays;
 import sim.app.bounties.bondsman.Bondsman;
 import sim.app.bounties.agent.valuator.BadValuator;
 import sim.app.bounties.agent.valuator.DecisionValuator;
@@ -41,6 +42,10 @@ public class Bounties extends SimState {
 
     public double[] rollingAverage = new double[1000];
     int avgCount = 0;
+    
+    public double[] rollingAverageRed = new double[1000];
+    int avgRedCount = 0;
+    
     public Bondsman bondsman;// the bondsman ie the task allocator
     
     public IAgent[] agents;// index into this array corresponds to its id
@@ -139,6 +144,42 @@ public class Bounties extends SimState {
 
          return sum/count;
     }
+    
+    public double getAverageRedudantAgents() {
+        double sum = 0;
+        if(bondsman == null || numAgents < 2) return 0.0;
+        
+        int[] nums = bondsman.whosDoingWhatTaskID.clone();
+        Arrays.sort(nums);
+        for (int i = 1; i < nums.length; i++) {
+            if (nums[i] == nums[i - 1] && nums[i] != -1) {
+                sum++;
+                
+            }
+        }
+        
+        return sum / (numAgents - 1);
+    }
+    
+    public double getRollingAvergeRedudantAgents() {
+        if (bondsman != null) {
+          
+            
+            double sum = getAverageRedudantAgents();
+            rollingAverageRed[avgRedCount] = sum;
+            avgRedCount++;
+            if(avgRedCount == rollingAverageRed.length) 
+                avgRedCount= 0;
+            sum = 0;
+            for(int i = 0; i<rollingAverageRed.length; i++){
+                sum+=rollingAverageRed[i];
+            }
+            sum/=rollingAverageRed.length;
+            return sum;
+        }
+        return 0;
+    }
+    
     public double getTotalTicks(){
         double sum =0;
         if(bondsman==null) return 0.0;
