@@ -23,6 +23,8 @@ import sim.util.Int2D;
 public class StatsPublisher implements Steppable{
     Bounties board  = null;
     Bag bagOfTotal = new Bag();
+    Bag bagOfRedundantTotal = new Bag();
+    
     Bag[] arrayOfBagsOfDecisions = null;
     String directoryName;
     private long maxNumSteps;
@@ -44,6 +46,7 @@ public class StatsPublisher implements Steppable{
         //if(state.schedule.getSteps()== 190000 || state.schedule.getSteps()== 350000)
         //IRobot[] robots = a.getRobots();
         bagOfTotal.add(board.getTotalTicks());
+        bagOfRedundantTotal.add(board.getTotalRedunantAgents());
         
         if( maxNumSteps - state.schedule.getSteps() < numberOfDecisionsToRecord)
         for(int i = 0; i<arrayOfBagsOfDecisions.length; i++){
@@ -62,6 +65,17 @@ public class StatsPublisher implements Steppable{
             for(int i = 0; i<bagOfTotal.numObjs; i++){
                 writer.print(((Double)bagOfTotal.objs[i]) + ",");
             }
+            
+            
+            File fileRed = new File(directoryName + "/" + "NumRedundAg" + state.seed() + ".bounties");
+            fileRed.getParentFile().mkdirs();   
+            PrintWriter writerRed = new PrintWriter(fileRed, "UTF-8");
+           
+            for(int i = 0; i<bagOfRedundantTotal.numObjs; i++){
+                writerRed.print(((Double)bagOfRedundantTotal.objs[i]) + ",");
+            }
+            
+            
             Bag tasks = board.bondsman.getTasks();
             for(int i = 0; i<arrayOfBagsOfDecisions.length; i++){
                 
@@ -76,7 +90,9 @@ public class StatsPublisher implements Steppable{
                 writer2.close();
             }
             System.out.println("wrote to " + directoryName + "/" + "maxTicks" + state.seed() + ".bounties");
-            writer.close();}catch(Exception e){e.printStackTrace(); System.exit(0);}
+            writer.close();
+            writerRed.close();
+           }catch(Exception e){e.printStackTrace(); System.exit(0);}
         }
     }
    
