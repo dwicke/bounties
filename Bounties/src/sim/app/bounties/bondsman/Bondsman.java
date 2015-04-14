@@ -8,10 +8,8 @@ package sim.app.bounties.bondsman;
 
 import sim.app.bounties.agent.IAgent;
 import java.util.Arrays;
-import java.util.Set;
 import sim.app.bounties.Bounties;
 import sim.app.bounties.Task;
-import sim.app.bounties.agent.Agent;
 import sim.engine.SimState;
 import sim.engine.Steppable;
 import sim.util.Bag;
@@ -103,7 +101,7 @@ public class Bondsman implements Steppable {
             bounties.tasksGrid.setObjectLocation(t, t.realLocation);
             tasks.add(t);
             if (exclusiveType == 2) {
-                isExclusive[i] = bounties.random.nextBoolean(); // randomly choose initial state
+                isExclusive[i] = false;//bounties.random.nextBoolean(); // randomly choose initial state
             } else {
                 isExclusive[i] = (exclusiveType == 1);// 1 == exclusive 0 == not exclusive
             }
@@ -134,7 +132,13 @@ public class Bondsman implements Steppable {
     
     
     
-    
+    /**
+     * Finishes the task
+     * @param curTask what task was finished
+     * @param robotID who finished it
+     * @param timestamp when did you finish it
+     * @param numSteps how long did it take you to finish it
+     */
     public void finishTask(Task curTask, int robotID, long timestamp) {
         curTask.setLastFinished(robotID, timestamp);
         curTask.setAvailable(false); // whenever an agent finishes a task then make it unavailable

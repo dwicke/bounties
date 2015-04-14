@@ -15,16 +15,22 @@ import sim.app.bounties.Task;
 public class AdaptiveBondsman extends Bondsman {
     private static final long serialVersionUID = 1;
 
-    double bountyHist[][];
+    public double bountyHist[][];
     double alpha = 0.85; // closer to 1 the more current information is used in the history
     double oneminusalpha = 1 - alpha;
+    
+    boolean mightDoubleBounty[];
     
     
     public AdaptiveBondsman(Bounties bounties, int exclusiveType) {
         super(bounties, exclusiveType);
         bountyHist = new double[bounties.numTasks][bounties.numAgents];
+        mightDoubleBounty = new boolean[bounties.numTasks];// all are false to begin with
     }
 
+    public double[][] getBountyHist() {
+        return bountyHist;
+    }
     
     /**
      * Given that agent a decided to do this task t should we keep it available
@@ -93,15 +99,19 @@ public class AdaptiveBondsman extends Bondsman {
             totalBounty += t.getCurrentReward();
         }
         //System.err.println("Exclusivity: " + isExclusive[task.getID()]);
-        if (isExclusive[task.getID()]) {
+        if (mightDoubleBounty[task.getID()]) {
             // decide if we should change to non-exclusive
             // i think that this might be a
             //System.err.println("Exclusive deciding if should be");
 
             // the sky is falling! so go to non-exclusive when avg > last reward
             if((totalBounty/availTasks.length) > task.getLastReward()) {
-                // then make it exclusive
-                isExclusive[task.getID()] = false;
+                // then make it non-exclusive
+                mightDoubleBounty[task.getID()] = false;
+                // promote it as well by starting the bounty out higher?
+                task.setCurrentReward(task.getDefaultReward()*2);
+                
+                
             }
             
         } else {
@@ -119,7 +129,7 @@ public class AdaptiveBondsman extends Bondsman {
             //System.err.println("Not exclusive deciding if should be");
             if((totalBounty/availTasks.length) < task.getLastReward()) {
                 // then make it exclusive
-                isExclusive[task.getID()] = true;
+                mightDoubleBounty[task.getID()] = true;
             }
         }
     }

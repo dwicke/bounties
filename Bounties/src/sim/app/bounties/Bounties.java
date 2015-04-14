@@ -144,8 +144,7 @@ public class Bounties extends SimState {
 
          return sum/count;
     }
-    
-    public double getAverageRedudantAgents() {
+    public double getTotalRedunantAgents() {
         double sum = 0;
         if(bondsman == null || numAgents < 2) return 0.0;
         
@@ -157,8 +156,10 @@ public class Bounties extends SimState {
                 
             }
         }
-        
-        return sum / (numAgents - 1);
+        return sum;
+    }
+    public double getAverageRedudantAgents() {
+        return getTotalRedunantAgents() / (numAgents - 1);
     }
     
     public double getRollingAvergeRedudantAgents() {

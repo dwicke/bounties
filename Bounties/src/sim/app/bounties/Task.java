@@ -118,7 +118,9 @@ public class Task implements Real, Fixed2D{
             currentReward+=1;
     }
     
-    
+    public int getDefaultReward() {
+        return defaultReward;
+    }
     
     public int getCurrentReward(){
         return currentReward;
