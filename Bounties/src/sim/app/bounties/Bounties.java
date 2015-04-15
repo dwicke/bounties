@@ -140,9 +140,6 @@ public class Bounties extends SimState {
         this.numBadRobot = numBadRobot;
     }
     
-    
-    
-    
     public double getAverageTicks(){
         double sum =0;
         if(bondsman==null) return 0.0;
