@@ -30,6 +30,7 @@ public class Agent implements IAgent {
     public int[] decisionsMade = new int[historySize];
     int rollingHistoryCounter = 0; // pointer to current spot in the list for history purposes
     boolean canDie = false;
+    boolean isBad = false;
     public boolean hasTraps = false;
     int numTimeSteps; // the number of timesteps since someone completed a task
     long lastSeenFinished = -1; // the timestep the current task was at when last finished
@@ -110,6 +111,9 @@ public class Agent implements IAgent {
                 bondsman.doingTask(id, curTask.getID());
                 lastSeenFinished = curTask.getLastFinishedTime(); 
             }
+            else {
+                
+            }
         }
     }
     
@@ -128,10 +132,12 @@ public class Agent implements IAgent {
         curTask = null;
         numTimeSteps = 0;
         decideTaskFailed = true;
+        bondsman.doingTask(id, -1);// not doing anytask.
     }
     
     boolean preGotoTask() {
-        if(curTask!=null && curTask.badForWho == this.id && this.hasTraps == true) {
+        if(curTask!=null && ((curTask.badForWho == this.id && this.hasTraps == true) ||
+                this.isBad == true)) {
             if(bountyState.schedule.getSteps() % 10 != 0)
                 return true;
         }
@@ -251,5 +257,10 @@ public class Agent implements IAgent {
     @Override
     public void setCanDie(boolean canDie) {
        this.canDie = canDie;
+    }
+    
+    @Override
+    public void setIsBad(boolean isBad) {
+        this.isBad = isBad;
     }
 }

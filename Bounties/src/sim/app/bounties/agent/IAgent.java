@@ -28,5 +28,6 @@ public interface IAgent extends Steppable {
     public void setRobotController(IController controller);
     public void setCanDie(boolean canDie);
     public void setHasTraps(boolean hasTraps);
+    public void setIsBad(boolean isBad);
     public void setDecisionValuator(DecisionValuator dv);
 }

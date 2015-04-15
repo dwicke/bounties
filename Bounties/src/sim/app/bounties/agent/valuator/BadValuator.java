@@ -27,6 +27,8 @@ public class BadValuator extends DefaultValuator{
     Task pickTask(Task[] availableTasks) {
         Task curTask = null;
         
+        // this is not a good way to do this since if there are more agent's than
+        // tasks this could result in an infinite loop!
         while(curTask == null) {
             
             int ind = random.nextInt(availableTasks.length);

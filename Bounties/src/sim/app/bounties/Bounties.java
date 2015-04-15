@@ -367,6 +367,7 @@ public class Bounties extends SimState {
     public IAgent createBadBot(int badID) {
         IAgent br = new Agent();
         br.setId(badID);
+        br.setIsBad(true);
         br.setDecisionValuator(new BadValuator(random, badID, bondsman));
         Int2D center = new Int2D(0, 0);//new Int2D(GRID_WIDTH / 2, GRID_HEIGHT / 2);
         robotgrid.setObjectLocation(br, center);
