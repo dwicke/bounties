@@ -66,8 +66,9 @@ public class StatsPublisher implements Steppable{
                 writer.print(((Double)bagOfTotal.objs[i]) + ",");
             }
             
+            File f = new File(directoryName);
             
-            File fileRed = new File(directoryName + "/" + "NumRedundAg" + state.seed() + ".bounties");
+            File fileRed = new File(directoryName + "Red" + "/" + "NumRedundAg" + state.seed() + ".bounties");
             fileRed.getParentFile().mkdirs();   
             PrintWriter writerRed = new PrintWriter(fileRed, "UTF-8");
            

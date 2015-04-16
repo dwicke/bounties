@@ -138,7 +138,9 @@ public class Agent implements IAgent {
     boolean preGotoTask() {
         if(curTask!=null && ((curTask.badForWho == this.id && this.hasTraps == true) ||
                 this.isBad == true)) {
-            if(bountyState.schedule.getSteps() % 10 != 0)
+            if(bountyState.schedule.getSteps() % 10 != 0 && this.hasTraps)
+                return true;
+            if(bountyState.schedule.getSteps() % 20 != 0 && this.isBad)
                 return true;
         }
         return false;
