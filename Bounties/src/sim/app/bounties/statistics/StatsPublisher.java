@@ -24,6 +24,7 @@ public class StatsPublisher implements Steppable{
     Bounties board  = null;
     Bag bagOfTotal = new Bag();
     Bag bagOfRedundantTotal = new Bag();
+    Bag bagOfStepsTotal = new Bag();
     
     Bag[] arrayOfBagsOfDecisions = null;
     String directoryName;
@@ -47,6 +48,7 @@ public class StatsPublisher implements Steppable{
         //IRobot[] robots = a.getRobots();
         bagOfTotal.add(board.getTotalTicks());
         bagOfRedundantTotal.add(board.getTotalRedunantAgents());
+        //bagOfStepsTotal.add(board.get)
         
         if( maxNumSteps - state.schedule.getSteps() < numberOfDecisionsToRecord)
         for(int i = 0; i<arrayOfBagsOfDecisions.length; i++){
@@ -66,15 +68,25 @@ public class StatsPublisher implements Steppable{
                 writer.print(((Double)bagOfTotal.objs[i]) + ",");
             }
             
-            File f = new File(directoryName);
             
-            File fileRed = new File(directoryName + "Red" + "/" + "NumRedundAg" + state.seed() + ".bounties");
+            File fileRed = new File(directoryName + "/" + "NumRedundAg" + state.seed() + ".bounties");
             fileRed.getParentFile().mkdirs();   
             PrintWriter writerRed = new PrintWriter(fileRed, "UTF-8");
            
             for(int i = 0; i<bagOfRedundantTotal.numObjs; i++){
                 writerRed.print(((Double)bagOfRedundantTotal.objs[i]) + ",");
             }
+            
+            
+            
+            File fileSteps = new File(directoryName + "/" + "NumSteps" + state.seed() + ".bounties");
+            fileSteps.getParentFile().mkdirs();   
+            PrintWriter writerSteps = new PrintWriter(fileRed, "UTF-8");
+           
+            for(int i = 0; i<bagOfRedundantTotal.numObjs; i++){
+                writerSteps.print(((Double)bagOfRedundantTotal.objs[i]) + ",");
+            }
+            
             
             
             Bag tasks = board.bondsman.getTasks();
