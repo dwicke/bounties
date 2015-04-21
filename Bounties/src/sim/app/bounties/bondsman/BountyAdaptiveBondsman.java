@@ -39,7 +39,7 @@ public class BountyAdaptiveBondsman extends Bondsman {
             
             for(int i = 0; i< tasks.size(); i++) {
                 lengthOnBoard[i]++;
-                int newReward = (int) ((((Task)tasks.objs[i]).getDefaultReward() + lengthOnBoard[i]) * Math.pow(getTimeEst(i)+1, getGamma()));
+                int newReward = (int) ((((Task)tasks.objs[i]).getDefaultReward() + lengthOnBoard[i]) * Math.pow(getTimeEst(i), getGamma()));
                 ((Task)tasks.objs[i]).setCurrentReward(newReward);
             }
         } else {
