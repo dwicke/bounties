@@ -69,7 +69,7 @@ public class StatsPublisher implements Steppable{
             }
             
             
-            File fileRed = new File(directoryName + "/" + "NumRedundAg" + state.seed() + ".bounties");
+            File fileRed = new File(directoryName + "Red" + "/" + "NumRedundAg" + state.seed() + ".bounties");
             fileRed.getParentFile().mkdirs();   
             PrintWriter writerRed = new PrintWriter(fileRed, "UTF-8");
            
@@ -79,7 +79,7 @@ public class StatsPublisher implements Steppable{
             
             
             
-            File fileSteps = new File(directoryName + "/" + "NumSteps" + state.seed() + ".bounties");
+            File fileSteps = new File(directoryName + "Steps" + "/" + "NumSteps" + state.seed() + ".bounties");
             fileSteps.getParentFile().mkdirs();   
             PrintWriter writerSteps = new PrintWriter(fileSteps, "UTF-8");
            
