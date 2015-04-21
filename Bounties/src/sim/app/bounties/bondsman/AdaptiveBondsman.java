@@ -42,7 +42,7 @@ public class AdaptiveBondsman extends Bondsman {
     public void isExclusive(int t, int a) {
         // first average the bounty paid to the other agents
         double minOthers = 0;
-        int numOthers = 0;
+        
         double mine = 0;
         for (int i = 0; i < this.bounties.numAgents; i++) {
             if (a == i) {

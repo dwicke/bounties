@@ -48,7 +48,7 @@ public class StatsPublisher implements Steppable{
         //IRobot[] robots = a.getRobots();
         bagOfTotal.add(board.getTotalTicks());
         bagOfRedundantTotal.add(board.getTotalRedunantAgents());
-        //bagOfStepsTotal.add(board.get)
+        bagOfStepsTotal.add(board.getTotalLengthOnBoard());
         
         if( maxNumSteps - state.schedule.getSteps() < numberOfDecisionsToRecord)
         for(int i = 0; i<arrayOfBagsOfDecisions.length; i++){
@@ -83,8 +83,8 @@ public class StatsPublisher implements Steppable{
             fileSteps.getParentFile().mkdirs();   
             PrintWriter writerSteps = new PrintWriter(fileRed, "UTF-8");
            
-            for(int i = 0; i<bagOfRedundantTotal.numObjs; i++){
-                writerSteps.print(((Double)bagOfRedundantTotal.objs[i]) + ",");
+            for(int i = 0; i<bagOfStepsTotal.numObjs; i++){
+                writerSteps.print(((Double)bagOfStepsTotal.objs[i]) + ",");
             }
             
             
@@ -105,6 +105,7 @@ public class StatsPublisher implements Steppable{
             System.out.println("wrote to " + directoryName + "/" + "maxTicks" + state.seed() + ".bounties");
             writer.close();
             writerRed.close();
+            writerSteps.close();
            }catch(Exception e){e.printStackTrace(); System.exit(0);}
         }
     }
