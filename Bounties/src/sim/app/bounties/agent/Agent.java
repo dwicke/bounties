@@ -125,7 +125,7 @@ public class Agent implements IAgent {
     void cleanup(double reward, boolean won) {
         if (won) {// only if I won do I get to say it is finished
             curTask.setLastFinished(id, bountyState.schedule.getSteps(), bondsman.whoseDoingTaskByID(curTask));
-            bondsman.finishTask(curTask, id, bountyState.schedule.getSteps());
+            bondsman.finishTask(curTask, id, bountyState.schedule.getSteps(), numTimeSteps);
         }
         decider.learn(curTask, reward, curTask.getLastAgentsWorkingOnTask(), numTimeSteps);
         jumpHome();

@@ -146,7 +146,7 @@ public class Bondsman implements Steppable {
      * @param robotID who finished it
      * @param timestamp when did you finish it
      */
-    public void finishTask(Task curTask, int robotID, long timestamp) {
+    public void finishTask(Task curTask, int robotID, long timestamp, int numTimeSteps) {
         curTask.setLastFinished(robotID, timestamp);
         curTask.setAvailable(false); // whenever an agent finishes a task then make it unavailable
         curTask.setDone(true);

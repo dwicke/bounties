@@ -65,8 +65,8 @@ public class AgentAdaptiveBondsman extends Bondsman {
     }
 
     @Override
-    public void finishTask(Task curTask, int robotID, long timestamp) {
-        super.finishTask(curTask, robotID, timestamp);
+    public void finishTask(Task curTask, int robotID, long timestamp, int numTimeSteps) {
+        super.finishTask(curTask, robotID, timestamp, numTimeSteps);
         // "learn" the history average
         bountyHist[curTask.getID()][robotID] = alpha * curTask.getLastReward() + 
                 oneminusalpha * bountyHist[curTask.getID()][robotID];
