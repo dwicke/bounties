@@ -190,6 +190,18 @@ public class Bounties extends SimState {
         return 0;
     }
     
+    public double getTotalLengthOnBoard() {
+        double sum = 0;
+        if(bondsman==null) return 0.0;
+        Bag tasks = bondsman.getTasks();
+        if(tasks==null) return -1;
+        for(Object ob: tasks){
+             sum+=((Task)ob).getTimeNotFinished();
+        }
+        return sum;
+    }
+    
+    
     public double getTotalTicks(){
         double sum =0;
         if(bondsman==null) return 0.0;

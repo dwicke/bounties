@@ -72,6 +72,8 @@ public class AdaptiveBondsman extends Bondsman {
         // "learn" the history average
         bountyHist[curTask.getID()][robotID] = alpha * curTask.getLastReward() + 
                 oneminusalpha * bountyHist[curTask.getID()][robotID];
+        
+        isExclusive[curTask.getID()] = false;
     }
     
     

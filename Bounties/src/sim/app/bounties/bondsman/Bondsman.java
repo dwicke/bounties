@@ -50,12 +50,20 @@ public class Bondsman implements Steppable {
     @Override
     public void step(SimState state) {
         makeAvailable();
-        incrementBounty();// increment the bounties
+        incrementBounty(); // increment the bounties
+        incrementExistence();
     }
     
     public void incrementBounty(){
         for(int i = 0; i< tasks.size(); i++){
-            ((Task)tasks.objs[i]).incrementCurrentReward();
+           // if (((Task) tasks.objs[i]).getIsAvailable()) // only increment the 
+                ((Task)tasks.objs[i]).incrementCurrentReward();
+        }
+    }
+    public void incrementExistence() {
+        for(int i = 0; i< tasks.size(); i++){
+            if (((Task) tasks.objs[i]).getIsAvailable())
+                ((Task)tasks.objs[i]).incrementTimeNotFinished();
         }
     }
     public void makeAvailable() {
@@ -137,13 +145,12 @@ public class Bondsman implements Steppable {
      * @param curTask what task was finished
      * @param robotID who finished it
      * @param timestamp when did you finish it
-     * @param numSteps how long did it take you to finish it
      */
     public void finishTask(Task curTask, int robotID, long timestamp) {
         curTask.setLastFinished(robotID, timestamp);
         curTask.setAvailable(false); // whenever an agent finishes a task then make it unavailable
         curTask.setDone(true);
-        
+        curTask.resetTimeNotFinished();
         // You stay bad at it until someone else becomes bad at it.
         // this should have been more clearly stated in the paper.
         if(bounties.random.nextInt(badOdds)==0){

@@ -37,11 +37,22 @@ public class Task implements Real, Fixed2D{
     
     public final double taskStdDev = 5.0;
     
+    public double timeNotFinished = 0;// the amount of time this task has been waiting to be finished.
+    
     public Task() {
         currentReward = defaultReward;
         lastAgentsWorkingOnTask = new Bag();
     }
     
+    public void incrementTimeNotFinished() {
+        timeNotFinished++;
+    }
+    public double getTimeNotFinished() {
+        return timeNotFinished;
+    }
+    public void resetTimeNotFinished() {
+        timeNotFinished = 0;
+    }
     
     public boolean isDone(){
         return done;
