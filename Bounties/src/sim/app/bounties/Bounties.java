@@ -72,6 +72,14 @@ public class Bounties extends SimState {
     public int isExclusive = 0;
     
     
+    public void setPUpdateVal(double val) {
+        pUpdateValue = val;
+    }
+    
+    public double getPUpdateVal() {
+        return pUpdateValue;
+    }
+    
     public void setWillRotate(int val) {
         this.willRotate = val;
     }
