@@ -25,6 +25,9 @@ public class BountyAdaptiveBondsman extends Bondsman {
     public BountyAdaptiveBondsman(Bounties bounties, int exclusiveType) {
         super(bounties, exclusiveType);
         timeEst = new double[bounties.numTasks];// all are false to begin with
+        for (int i = 0; i < bounties.numTasks; i++) {
+            timeEst[i] = 1.0;
+        }
         lengthOnBoard = new int[bounties.numTasks];
     }
 
@@ -49,7 +52,7 @@ public class BountyAdaptiveBondsman extends Bondsman {
     }
     
     public double getGamma() {
-        return 0.9;
+        return 0.99;
     }
     
     
@@ -60,5 +63,16 @@ public class BountyAdaptiveBondsman extends Bondsman {
                 oneminusalpha * timeEst[curTask.getID()];
         lengthOnBoard[curTask.getID()] = 0;
     }
+    /*
+    @Override
+    public void isExclusive(Task task, int a) {
+        if (whoseDoingTaskByID(task).numObjs >= 2) {
+            task.setIsExclusive(true);
+            isExclusive[task.getID()] = true;
+        } else {
+            task.setIsExclusive(false);
+            isExclusive[task.getID()] = false;
+        }
+    }*/
        
 }

@@ -72,7 +72,16 @@ public class Bounties extends SimState {
     private double epsilonChooseRandomTask = 0.1;
     double pUpdateValue = .001;
     public int isExclusive = 0;
+    public int bondsmanType = 0;
     
+    
+    public void setBondsmanType(int type) {
+        bondsmanType = type;
+    }
+    
+    public int getBondsmanType() {
+        return bondsmanType;
+    }
     
     public void setPUpdateVal(double val) {
         pUpdateValue = val;
@@ -356,8 +365,26 @@ public class Bounties extends SimState {
         }
         
         numAgents+=numBadRobot;
+        
+        if(myArgs !=null && keyExists("-exclType", myArgs)) {
+            bondsmanType = Integer.parseInt(argumentForKey("-bondType", myArgs));
+        }
 
-        bondsman = new CutoffBondsman(this, isExclusive);
+        switch(bondsmanType) {
+            case 0:
+                bondsman = new Bondsman(this, isExclusive);
+                break;
+            case 1:
+                bondsman = new AdaptiveBondsman(this, isExclusive);
+                break;
+            case 2:
+                bondsman = new BountyAdaptiveBondsman(this, isExclusive);
+                break;
+            case 3:
+                bondsman = new CutoffBondsman(this, isExclusive);
+                break;
+        }
+        
         
         // make new grids
         tasksGrid = new SparseGrid2D(GRID_WIDTH, GRID_HEIGHT);
