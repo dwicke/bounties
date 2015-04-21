@@ -21,7 +21,9 @@ import sim.app.bounties.agent.valuator.ComplexValuator;
 import sim.app.bounties.agent.Agent;
 import sim.app.bounties.control.TeleportController;
 import sim.app.bounties.agent.IAgent;
-import sim.app.bounties.bondsman.AdaptiveBondsman;
+import sim.app.bounties.agent.valuator.ExpandedComplexValuator;
+import sim.app.bounties.bondsman.*;
+import sim.app.bounties.bondsman.BountyAdaptiveBondsman;
 import sim.app.bounties.statistics.StatsPublisher;
 import sim.engine.*;
 import static sim.engine.SimState.doLoop;
@@ -61,7 +63,7 @@ public class Bounties extends SimState {
     
     long maxRotateSteps = 25000;
     int willRotate = 0; // 0 don't rotate 1 will rotate
-    private int agentType = 0; // 0 - simple, 1 - simpleP, 2 - simpleR, 3 - complex, 4 - complexP, 5 - complexR, 6 - random, 7 - psuedoOptimal
+    private int agentType = 0; // 0 - simple, 1 - simpleP, 2 - simpleR, 3 - complex, 4 - complexP, 5 - complexR, 6 - random, 7 - psuedoOptimal, 8 - sean auction, 9 - ExpandedComplexValuator
     private int willdie = 0; // 0 - won't die, 1 - will die
     private int hasTraps = 0;
     public int numAgents = 4;
@@ -324,7 +326,7 @@ public class Bounties extends SimState {
             willRotate = Integer.parseInt(argumentForKey("-prot", myArgs));
         
         }
-        // 0 - simple, 1 - simpleP, 2 - simpleR, 3 - complex, 4 - complexP, 5 - complexR, 6 - random, 7 - psuedoOptimal
+        // 0 - simple, 1 - simpleP, 2 - simpleR, 3 - complex, 4 - complexP, 5 - complexR, 6 - random, 7 - psuedoOptimal, 8 - sean auction, 9 - ExpandedComplexValuator
         if(myArgs !=null && keyExists("-agt", myArgs)) {
             agentType = Integer.parseInt(argumentForKey("-agt", myArgs));
         }
@@ -355,7 +357,7 @@ public class Bounties extends SimState {
         
         numAgents+=numBadRobot;
 
-        bondsman = new AdaptiveBondsman(this, isExclusive);
+        bondsman = new CutoffBondsman(this, isExclusive);
         
         // make new grids
         tasksGrid = new SparseGrid2D(GRID_WIDTH, GRID_HEIGHT);
@@ -452,6 +454,9 @@ public class Bounties extends SimState {
                 case 8:// sean auction
                     valuator = new SeanAuctionValuator(random, 0, x, false, numTasks, numAgents);
                     auctionVals.add(valuator);
+                    break;
+                case 9: // ExpandedComplexValuator
+                    valuator = new ExpandedComplexValuator(random, 0, x, true, numTasks, numAgents);
                     break;
                 default:
                     break;

@@ -171,11 +171,11 @@ public class Bondsman implements Steppable {
     public void doingTask(int robotID, int taskID) {
         whosDoingWhatTaskID[robotID] = taskID;
         if (taskID != -1 && exclusiveType == 2) {
-            isExclusive(taskID, robotID);
+            isExclusive((Task) tasks.objs[taskID], robotID);
         }
     }
     
-    public void isExclusive(int t, int a) {
+    public void isExclusive(Task t, int a) {
         //// don't do anything.
     }
     

@@ -39,9 +39,10 @@ public class AdaptiveBondsman extends Bondsman {
      * @param a agent id a
      */
     @Override
-    public void isExclusive(int t, int a) {
+    public void isExclusive(Task task, int a) {
         // first average the bounty paid to the other agents
         double minOthers = 0;
+        int t = task.getID();
         
         double mine = 0;
         for (int i = 0; i < this.bounties.numAgents; i++) {
@@ -58,9 +59,11 @@ public class AdaptiveBondsman extends Bondsman {
         if(minOthers > mine && mine != 0) {
             // make it exclusive
             isExclusive[t] = true;
+            task.setIsExclusive(true);
         }
         else {
             isExclusive[t] = false; /// therefore non-exclusive if no one has done it
+            task.setIsExclusive(false);
         }
         
         
