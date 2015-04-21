@@ -366,7 +366,7 @@ public class Bounties extends SimState {
         
         numAgents+=numBadRobot;
         
-        if(myArgs !=null && keyExists("-exclType", myArgs)) {
+        if(myArgs !=null && keyExists("-bondType", myArgs)) {
             bondsmanType = Integer.parseInt(argumentForKey("-bondType", myArgs));
         }
 
@@ -382,6 +382,11 @@ public class Bounties extends SimState {
                 break;
             case 3:
                 bondsman = new CutoffBondsman(this, isExclusive);
+                break;
+            case 4:
+                bondsman = new BountyPlatAdaptiveBondsman(this, isExclusive);
+            default:
+                bondsman = new Bondsman(this, isExclusive);
                 break;
         }
         

@@ -56,7 +56,8 @@ public class Agent implements IAgent {
     public void init(SimState state) {
         bountyState = ((Bounties)state);
         bondsman = bountyState.bondsman;
-        decideTask(state);
+        //decideTask(state);
+        decideTaskFailed = true;
     }
     /**
      * Determines whether the agent should continue deciding what task to do.
