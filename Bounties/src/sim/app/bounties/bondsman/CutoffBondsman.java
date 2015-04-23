@@ -29,10 +29,10 @@ public class CutoffBondsman extends Bondsman {
     @Override
     public void isExclusive(Task task, int a) {
         if (whoseDoingTaskByID(task).numObjs >= 2) {
-            task.setIsExclusive(true);
+            task.setIsNonExclusive(false);
             isExclusive[task.getID()] = true;
         } else {
-            task.setIsExclusive(false);
+            task.setIsNonExclusive(true);
             isExclusive[task.getID()] = false;
         }
     }

@@ -59,11 +59,11 @@ public class AdaptiveBondsman extends Bondsman {
         if(minOthers > mine && mine != 0) {
             // make it exclusive
             isExclusive[t] = true;
-            task.setIsExclusive(true);
+            task.setIsNonExclusive(false);
         }
         else {
             isExclusive[t] = false; /// therefore non-exclusive if no one has done it
-            task.setIsExclusive(false);
+            task.setIsNonExclusive(true);
         }
         
         

@@ -86,7 +86,7 @@ public class ExpandedComplexValuator extends LearningValuator implements Decisio
             timeTable.update(curTask.getID(), 0, numTimeSteps);
             for (int i = 0; i < curTask.getLastAgentsWorkingOnTask().numObjs; i++) {
                 pTable.update(curTask.getID(), ((int)curTask.getLastAgentsWorkingOnTask().objs[i]), reward);
-                kTable.update(curTask.getID(), ((int)curTask.getLastAgentsWorkingOnTask().objs[i]), curTask.getIsExclusive());
+                kTable.update(curTask.getID(), ((int)curTask.getLastAgentsWorkingOnTask().objs[i]), curTask.getIsNonExclusive());
 
             }
             
@@ -96,7 +96,7 @@ public class ExpandedComplexValuator extends LearningValuator implements Decisio
             return;
         }
         pTable.update(curTask.getID(), curTask.getLastFinishedRobotID(), reward);
-        kTable.update(curTask.getID(), curTask.getLastFinishedRobotID(), curTask.getIsExclusive());
+        kTable.update(curTask.getID(), curTask.getLastFinishedRobotID(), curTask.getIsNonExclusive());
         
        if (this.hasOneUp)
                 pTable.oneUpdate(oneUpdateGamma);

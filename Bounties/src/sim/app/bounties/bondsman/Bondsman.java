@@ -136,7 +136,6 @@ public class Bondsman implements Steppable {
         
         Task[] tempAvail = new Task[curAv];
         System.arraycopy(avail, 0, tempAvail, 0, curAv);
-        System.err.println("Finish getAvailtasks" + tempAvail.length);
         return tempAvail;
     }
     

@@ -39,19 +39,19 @@ public class Task implements Real, Fixed2D{
     
     public double timeNotFinished = 0;// the amount of time this task has been waiting to be finished.
     
-    public boolean isExclusive = false;
+    public boolean isNonExclusive = true;
     
     public Task() {
         currentReward = defaultReward;
         lastAgentsWorkingOnTask = new Bag();
     }
     
-    public void setIsExclusive(boolean isExcl) {
-        this.isExclusive = isExcl;
+    public void setIsNonExclusive(boolean isNonExcl) {
+        this.isNonExclusive = isNonExcl;
     }
     
-    public int getIsExclusive() {
-        return this.isExclusive == true ? 1 : 0;
+    public int getIsNonExclusive() {
+        return this.isNonExclusive == true ? 1 : 0;
     }
     public void incrementTimeNotFinished() {
         timeNotFinished++;
