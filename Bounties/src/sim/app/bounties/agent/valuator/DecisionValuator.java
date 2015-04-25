@@ -5,7 +5,7 @@
  */
 package sim.app.bounties.agent.valuator;
 
-import sim.app.bounties.Task;
+import sim.app.bounties.environment.Task;
 import sim.util.Bag;
 
 /**

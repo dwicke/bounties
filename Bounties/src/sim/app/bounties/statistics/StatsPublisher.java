@@ -9,7 +9,7 @@ package sim.app.bounties.statistics;
 import java.io.File;
 import java.io.PrintWriter;
 import sim.app.bounties.Bounties;
-import sim.app.bounties.Task;
+import sim.app.bounties.environment.Task;
 import sim.app.bounties.agent.Agent;
 import sim.engine.SimState;
 import sim.engine.Steppable;

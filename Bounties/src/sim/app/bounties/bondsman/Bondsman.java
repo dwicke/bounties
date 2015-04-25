@@ -9,7 +9,7 @@ package sim.app.bounties.bondsman;
 import sim.app.bounties.agent.IAgent;
 import java.util.Arrays;
 import sim.app.bounties.Bounties;
-import sim.app.bounties.Task;
+import sim.app.bounties.environment.Task;
 import sim.engine.SimState;
 import sim.engine.Steppable;
 import sim.util.Bag;

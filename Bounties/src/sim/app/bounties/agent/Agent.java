@@ -7,7 +7,7 @@ package sim.app.bounties.agent;
 
 import sim.app.bounties.bondsman.Bondsman;
 import sim.app.bounties.Bounties;
-import sim.app.bounties.Task;
+import sim.app.bounties.environment.Task;
 import sim.app.bounties.agent.valuator.DecisionValuator;
 import sim.app.bounties.control.IController;
 import sim.app.bounties.util.Real;

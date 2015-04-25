@@ -7,7 +7,7 @@ package sim.app.bounties.agent.valuator;
 
 import ec.util.MersenneTwisterFast;
 import sim.app.bounties.bondsman.Bondsman;
-import sim.app.bounties.Task;
+import sim.app.bounties.environment.Task;
 import sim.util.Bag;
 
 /**

@@ -8,6 +8,7 @@ package sim.app.bounties;
 
 
 
+import sim.app.bounties.environment.Task;
 import java.util.Arrays;
 import sim.app.bounties.bondsman.Bondsman;
 import sim.app.bounties.agent.valuator.BadValuator;

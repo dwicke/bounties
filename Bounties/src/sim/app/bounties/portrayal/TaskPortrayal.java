@@ -7,7 +7,7 @@
 package sim.app.bounties.portrayal;
 
 import java.awt.Graphics2D;
-import sim.app.bounties.Task;
+import sim.app.bounties.environment.Task;
 import sim.portrayal.DrawInfo2D;
 import sim.portrayal.simple.OvalPortrayal2D;
 

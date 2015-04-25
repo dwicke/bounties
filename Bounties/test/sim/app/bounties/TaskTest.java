@@ -5,6 +5,7 @@
  */
 package sim.app.bounties;
 
+import sim.app.bounties.environment.Task;
 import ec.util.MersenneTwisterFast;
 import static org.testng.Assert.*;
 import org.testng.FileAssert;

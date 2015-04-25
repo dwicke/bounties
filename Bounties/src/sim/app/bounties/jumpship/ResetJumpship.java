@@ -8,7 +8,7 @@ package sim.app.bounties.jumpship;
 
 import sim.app.bounties.Bounties;
 import sim.app.bounties.agent.IAgent;
-import sim.app.bounties.Task;
+import sim.app.bounties.environment.Task;
 import sim.engine.SimState;
 
 /**

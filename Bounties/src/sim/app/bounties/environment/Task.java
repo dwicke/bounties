@@ -1,7 +1,8 @@
-package sim.app.bounties;
+package sim.app.bounties.environment;
 
 import ec.util.MersenneTwisterFast;
 import java.awt.Color;
+import sim.app.bounties.Bounties;
 import sim.app.bounties.util.Real;
 import sim.portrayal.Fixed2D;
 import sim.util.Bag;
