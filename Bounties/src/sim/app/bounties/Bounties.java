@@ -385,6 +385,8 @@ public class Bounties extends SimState {
                 break;
             case 4:
                 bondsman = new BountyPlatAdaptiveBondsman(this, isExclusive);
+            case 5:
+                bondsman = new NonLinBPABondsman(this, isExclusive);
             default:
                 bondsman = new Bondsman(this, isExclusive);
                 break;
