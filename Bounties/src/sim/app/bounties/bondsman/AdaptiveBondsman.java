@@ -20,7 +20,7 @@ public class AdaptiveBondsman extends Bondsman {
     double oneminusalpha = 1 - alpha;
     
     boolean mightDoubleBounty[];
-    
+   
     
     public AdaptiveBondsman(Bounties bounties, int exclusiveType) {
         super(bounties, exclusiveType);
@@ -139,6 +139,7 @@ public class AdaptiveBondsman extends Bondsman {
                 // then make it exclusive
                 mightDoubleBounty[task.getID()] = true;
             }
+            
         }
     }
 }

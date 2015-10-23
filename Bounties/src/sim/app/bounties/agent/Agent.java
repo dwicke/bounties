@@ -159,6 +159,7 @@ public class Agent implements IAgent {
         else {
             numTimeSteps++;
             if (finishedTask()) {
+                // look into adjusting this from 0.0 to something nicer....
                 cleanup(0.0, false); // someone else finished the task so start again
                 return; // can't start it in the same timestep that i chose it since doesn't happen if I was the one who completed it
             }
