@@ -33,4 +33,8 @@ hs_err_pid*
 *.bbl
 *.blg
 
+.classpath
+.project
 
+
+/bin/
