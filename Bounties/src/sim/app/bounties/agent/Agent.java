@@ -10,6 +10,7 @@ import sim.app.bounties.Bounties;
 import sim.app.bounties.environment.Task;
 import sim.app.bounties.agent.valuator.DecisionValuator;
 import sim.app.bounties.control.IController;
+import sim.app.bounties.jumpship.Jumpship;
 import sim.app.bounties.util.Real;
 import sim.engine.SimState;
 import sim.engine.Steppable;
@@ -41,12 +42,24 @@ public class Agent implements IAgent {
     int deadLength = 20000;
     int dieEveryN = 30000;
     int twoDieEveryN = 60000;
+    boolean canJumpship = false;
+    Jumpship jumpship;
     DecisionValuator decider;
+    
     
     @Override
     public void setDecisionValuator(DecisionValuator dv) {
         decider = dv;
     }
+
+    @Override
+    public void setJumpship(Jumpship jumpship) {
+        this.jumpship = jumpship;
+    }
+    public void setCanJumpship(boolean canJumpship) {
+        this.canJumpship = canJumpship;
+    }
+    
     
     /**
      * Call this before scheduling the robots.
@@ -153,6 +166,17 @@ public class Agent implements IAgent {
         if (beforeDecide(state))
             return;
         
+        if(canJumpship && curTask != null) {
+            Task oldTask = curTask;
+            decideTask(state);// so decide a task.
+            if (oldTask.getID() != curTask.getID()) 
+            {
+                // learn who was going after the task when I jumpship
+                decider.learn(oldTask, 0, bondsman.whoseDoingTask(oldTask), numTimeSteps);
+                jumpship.jumpship(this, oldTask, curTask, state);// take the penalty... (reset?)
+            }
+        }
+        
         if (decideTaskFailed) {
             decideTask(state);// so try and decide on a task
         } 
@@ -193,6 +217,7 @@ public class Agent implements IAgent {
     public void jumpHome() {
         bountyState.robotgrid.setObjectLocation(this,this.getRobotHome());// teleport home
     }
+    
     
     
     @Override

@@ -82,7 +82,17 @@ public class Bondsman implements Steppable {
             }
         }
     }
-    
+    public Bag whoseDoingTask(Task b) {
+        Bag robots = new Bag();
+        // only jumpship robots use this.
+        IAgent[] allRobots = (IAgent[]) bounties.getAgents();
+        for (int i = 0; i < bounties.numAgents; i++) {
+            if (whosDoingWhatTaskID[i] == b.getID()){
+                robots.add(allRobots[i]);
+            }
+        }
+        return robots;
+    }
     public void decideExclusivity(Task task) {
         if (isExclusive[task.getID()]) {
             // decide if we should change to non-exclusive

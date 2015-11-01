@@ -23,8 +23,10 @@ import sim.app.bounties.agent.Agent;
 import sim.app.bounties.control.TeleportController;
 import sim.app.bounties.agent.IAgent;
 import sim.app.bounties.agent.valuator.ExpandedComplexValuator;
+import sim.app.bounties.agent.valuator.JumpshipComplexValuator;
 import sim.app.bounties.bondsman.*;
 import sim.app.bounties.bondsman.BountyAdaptiveBondsman;
+import sim.app.bounties.jumpship.ResetJumpship;
 import sim.app.bounties.statistics.StatsPublisher;
 import sim.engine.*;
 import static sim.engine.SimState.doLoop;
@@ -493,6 +495,10 @@ public class Bounties extends SimState {
                 case 9: // ExpandedComplexValuator
                     valuator = new ExpandedComplexValuator(random, 0, x, true, numTasks, numAgents);
                     break;
+                case 10:
+                    bot.setCanJumpship(true);
+                    bot.setJumpship(new ResetJumpship());
+                    valuator = new JumpshipComplexValuator(random, 0, x, true, numTasks, numAgents);
                 default:
                     break;
             }
