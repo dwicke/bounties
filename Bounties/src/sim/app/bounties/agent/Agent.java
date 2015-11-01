@@ -123,6 +123,7 @@ public class Agent implements IAgent {
                 numTimeSteps = 0;
                 updateStatistics(false,curTask.getID());
                 bondsman.doingTask(id, curTask.getID());
+                curTask.setCurrentAgentsOnTask(bondsman.whoseDoingTaskByID(curTask));
                 lastSeenFinished = curTask.getLastFinishedTime(); 
             }
             else {

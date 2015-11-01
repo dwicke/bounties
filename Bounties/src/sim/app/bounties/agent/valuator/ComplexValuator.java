@@ -18,6 +18,7 @@ public class ComplexValuator extends LearningValuator implements DecisionValuato
     public ComplexValuator(MersenneTwisterFast random, double epsilonChooseRandomTask, int agentID, boolean hasOneUp, int numTasks, int numRobots) {
         super(random, epsilonChooseRandomTask, agentID, hasOneUp, numTasks, numRobots);
     }
+    /*
     @Override
     public double getPValue(Task taski) {
         
@@ -30,6 +31,23 @@ public class ComplexValuator extends LearningValuator implements DecisionValuato
         for(int i = 0; i < taski.getLastAgentsWorkingOnTask().size(); i++) {
             if ((int)(taski.getLastAgentsWorkingOnTask().objs[i]) != agentID)
                 pmul *= pTable.getQValue(taski.getID(), (int)(taski.getLastAgentsWorkingOnTask().objs[i]));
+        }
+        return pmul;
+        
+    }*/
+    
+    @Override
+    public double getPValue(Task taski) {
+        
+        if (taski.getCurrentAgentsOnTask().isEmpty()) {
+            return 1.0;
+        }
+        
+        double pmul = 1.0;
+        
+        for(int i = 0; i < taski.getCurrentAgentsOnTask().size(); i++) {
+            if ((int)(taski.getCurrentAgentsOnTask().objs[i]) != agentID)
+                pmul *= pTable.getQValue(taski.getID(), (int)(taski.getCurrentAgentsOnTask().objs[i]));
         }
         return pmul;
         

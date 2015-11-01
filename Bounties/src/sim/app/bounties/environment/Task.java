@@ -31,6 +31,7 @@ public class Task implements Real, Fixed2D{
     private int lastFinishedRobotID = -1;// who last finished the task by default set to -1;
     private long finishedTime = -1;
     private Bag lastAgentsWorkingOnTask; // these are the agents working on the task when someone finished it
+    private Bag currentAgentsWorkingOnTask; // these are the agents working on the task now
     private int timeUntilRespawn = 0;
     
     public int badForWho = -1;
@@ -45,8 +46,15 @@ public class Task implements Real, Fixed2D{
     public Task() {
         currentReward = defaultReward;
         lastAgentsWorkingOnTask = new Bag();
+        currentAgentsWorkingOnTask = new Bag();
     }
     
+    public void setCurrentAgentsOnTask(Bag currentAgentsWorkingOnTask) {
+        this.currentAgentsWorkingOnTask = currentAgentsWorkingOnTask;
+    }
+    public Bag getCurrentAgentsOnTask() {
+        return this.currentAgentsWorkingOnTask;
+    }
     public void setIsNonExclusive(boolean isNonExcl) {
         this.isNonExclusive = isNonExcl;
     }
