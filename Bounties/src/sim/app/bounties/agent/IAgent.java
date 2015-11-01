@@ -9,6 +9,7 @@ package sim.app.bounties.agent;
 import java.awt.Color;
 import sim.app.bounties.agent.valuator.DecisionValuator;
 import sim.app.bounties.control.IController;
+import sim.app.bounties.jumpship.Jumpship;
 import sim.engine.SimState;
 import sim.engine.Steppable;
 import sim.util.Int2D;
@@ -30,4 +31,6 @@ public interface IAgent extends Steppable {
     public void setHasTraps(boolean hasTraps);
     public void setIsBad(boolean isBad);
     public void setDecisionValuator(DecisionValuator dv);
+    public void setJumpship(Jumpship jumpship);
+    public void setCanJumpship(boolean canJumpship);
 }

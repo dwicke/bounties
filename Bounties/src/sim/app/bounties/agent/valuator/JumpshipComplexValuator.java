@@ -13,28 +13,30 @@ import sim.util.Bag;
  *
  * @author drew
  */
-public class ComplexValuator extends LearningValuator implements DecisionValuator {
+public class JumpshipComplexValuator extends LearningValuator implements DecisionValuator {
     private static final long serialVersionUID = 1;
-    public ComplexValuator(MersenneTwisterFast random, double epsilonChooseRandomTask, int agentID, boolean hasOneUp, int numTasks, int numRobots) {
+    public JumpshipComplexValuator(MersenneTwisterFast random, double epsilonChooseRandomTask, int agentID, boolean hasOneUp, int numTasks, int numRobots) {
         super(random, epsilonChooseRandomTask, agentID, hasOneUp, numTasks, numRobots);
     }
-    /*
+    
+    
+    
     @Override
-    public double getPValue(Task taski) {
-        
-        if (taski.getLastAgentsWorkingOnTask().isEmpty()) {
-            return 1.0;
+    Task pickTask(Task availableTasks[]) {
+        double max = -1;
+        Task curTask = null;
+        for (Task availTask : availableTasks) {
+            // over all tasks
+            double tval = timeTable.getQValue(availTask.getID(), 0);
+            double pval = getPValue(availTask);
+            double value = 1.0 / tval * pval * (availTask.getCurrentReward() + tval);
+            if (value > max) {
+                max = value;
+                curTask = availTask;
+            }
         }
-        
-        double pmul = 1.0;
-        
-        for(int i = 0; i < taski.getLastAgentsWorkingOnTask().size(); i++) {
-            if ((int)(taski.getLastAgentsWorkingOnTask().objs[i]) != agentID)
-                pmul *= pTable.getQValue(taski.getID(), (int)(taski.getLastAgentsWorkingOnTask().objs[i]));
-        }
-        return pmul;
-        
-    }*/
+        return curTask;
+    }
     
     @Override
     public double getPValue(Task taski) {
@@ -52,6 +54,24 @@ public class ComplexValuator extends LearningValuator implements DecisionValuato
         return pmul;
         
     }
+
+    /*
+    @Override
+    public double getPValue(Task taski) {
+        
+        if (taski.getLastAgentsWorkingOnTask().isEmpty()) {
+            return 1.0;
+        }
+        
+        double pmul = 1.0;
+        
+        for(int i = 0; i < taski.getLastAgentsWorkingOnTask().size(); i++) {
+            if ((int)(taski.getLastAgentsWorkingOnTask().objs[i]) != agentID)
+                pmul *= pTable.getQValue(taski.getID(), (int)(taski.getLastAgentsWorkingOnTask().objs[i]));
+        }
+        return pmul;
+        
+    }*/
 
     @Override
     public void learn(Task curTask, double reward, Bag agentsWorking, int numTimeSteps) {

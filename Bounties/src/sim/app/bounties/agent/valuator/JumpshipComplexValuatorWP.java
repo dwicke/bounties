@@ -10,21 +10,41 @@ import sim.app.bounties.environment.Task;
 import sim.util.Bag;
 
 /**
- *
+ * This also predicts who is going to be on the task.
  * @author drew
  */
-public class ComplexValuator extends LearningValuator implements DecisionValuator {
+public class JumpshipComplexValuatorWP extends LearningValuator implements DecisionValuator {
     private static final long serialVersionUID = 1;
-    public ComplexValuator(MersenneTwisterFast random, double epsilonChooseRandomTask, int agentID, boolean hasOneUp, int numTasks, int numRobots) {
+    
+    double RTable[/*i*/][/*a*/]; // number of times i have commited to task i and seen agent a
+    double NCount[];// number of times i have committed to doing task i
+    public JumpshipComplexValuatorWP(MersenneTwisterFast random, double epsilonChooseRandomTask, int agentID, boolean hasOneUp, int numTasks, int numRobots) {
         super(random, epsilonChooseRandomTask, agentID, hasOneUp, numTasks, numRobots);
+        RTable = new double[numTasks][numRobots];
+        NCount = new double[numTasks];
     }
-    /*
+    
+    
     @Override
-    public double getPValue(Task taski) {
-        
-        if (taski.getLastAgentsWorkingOnTask().isEmpty()) {
-            return 1.0;
+    Task pickTask(Task availableTasks[]) {
+        double max = -1;
+        Task curTask = null;
+        for (Task availTask : availableTasks) {
+            // over all tasks
+            double tval = timeTable.getQValue(availTask.getID(), 0);
+            double pval = getPValue(availTask);
+            double rval = getRValue(availTask);
+            double value = 1.0 / tval * pval * (availTask.getCurrentReward() + tval);
+            if (value > max) {
+                max = value;
+                curTask = availTask;
+            }
         }
+        return curTask;
+    }
+    
+    public double getRValue(Task taski) {
+        
         
         double pmul = 1.0;
         
@@ -33,8 +53,7 @@ public class ComplexValuator extends LearningValuator implements DecisionValuato
                 pmul *= pTable.getQValue(taski.getID(), (int)(taski.getLastAgentsWorkingOnTask().objs[i]));
         }
         return pmul;
-        
-    }*/
+    }
     
     @Override
     public double getPValue(Task taski) {
