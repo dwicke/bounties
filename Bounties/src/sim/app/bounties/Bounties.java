@@ -24,6 +24,7 @@ import sim.app.bounties.control.TeleportController;
 import sim.app.bounties.agent.IAgent;
 import sim.app.bounties.agent.valuator.ExpandedComplexValuator;
 import sim.app.bounties.agent.valuator.JumpshipComplexValuator;
+import sim.app.bounties.agent.valuator.JumpshipSimpleValuator;
 import sim.app.bounties.bondsman.*;
 import sim.app.bounties.bondsman.BountyAdaptiveBondsman;
 import sim.app.bounties.jumpship.ResetJumpship;
@@ -40,10 +41,12 @@ public class Bounties extends SimState {
 
     private static final long serialVersionUID = 1;
 
-    public static final int GRID_HEIGHT = 40;
-    public static final int GRID_WIDTH = 60;
+    public static final int GRID_HEIGHT = 40;//40;
+    public static final int GRID_WIDTH = 60;//60;
     public static String[] myArgs;
 
+    public double[] rollingAverageJump = new double[1000];
+    int avgJumpCount = 0;
 
     public double[] rollingAverage = new double[1000];
     int avgCount = 0;
@@ -72,7 +75,7 @@ public class Bounties extends SimState {
     public int numAgents = 4;
     public int numTasks = 20;
     public int numBadRobot = 0;
-    private double epsilonChooseRandomTask = 0.1;
+    private double epsilonChooseRandomTask = 0.002;
     double pUpdateValue = .001;
     public int isExclusive = 0;
     public int bondsmanType = 0;
@@ -161,7 +164,19 @@ public class Bounties extends SimState {
     public void setNumBadRobot(int numBadRobot) {
         this.numBadRobot = numBadRobot;
     }
-    
+    public double getAverageJumpships(){
+        double sum =0;
+        if(bondsman==null) return 0.0;
+        
+        if(agents==null) return -1;
+        double count = 0;
+        for(Object ob: agents){
+            sum+=((Agent)ob).getRateJumpship();
+            count++;
+        }
+
+         return sum/count;
+    }
     public double getAverageTicks(){
         double sum =0;
         if(bondsman==null) return 0.0;
@@ -253,6 +268,28 @@ public class Bounties extends SimState {
         return 0;
 
     }
+    
+    public double getRollingAverageJumpships(){
+        if (bondsman != null) {
+          
+            
+            double sum = getAverageJumpships();
+            rollingAverageJump[avgJumpCount] = sum;
+            avgJumpCount++;
+            if(avgJumpCount == rollingAverageJump.length) 
+                avgJumpCount= 0;
+            sum = 0;
+            for(int i = 0; i<rollingAverageJump.length; i++){
+                sum+=rollingAverageJump[i];
+            }
+            sum/=rollingAverageJump.length;
+            return sum;
+        }
+        return 0;
+
+    }
+    
+    
     public IAgent[] getAgents() {
         return agents;
     }
@@ -498,7 +535,8 @@ public class Bounties extends SimState {
                 case 10:
                     bot.setCanJumpship(true);
                     bot.setJumpship(new ResetJumpship());
-                    valuator = new JumpshipComplexValuator(random, 0, x, true, numTasks, numAgents);
+                    
+                    valuator = new JumpshipSimpleValuator(random, epsilonChooseRandomTask, x, true, numTasks, numAgents);
                 default:
                     break;
             }

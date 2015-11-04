@@ -24,7 +24,7 @@ public class Task implements Real, Fixed2D{
     public Int2D initialLocation;
     
     private int id = 0;
-    private int defaultReward = 100;
+    private int defaultReward = 100;//100;
     private Color availableColor = Color.RED;// may want to change color if we have different types of tasks
     private Color notAvailableColor = Color.WHITE; // make it disappear
     

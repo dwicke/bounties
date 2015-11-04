@@ -45,6 +45,8 @@ public class Agent implements IAgent {
     boolean canJumpship = false;
     Jumpship jumpship;
     DecisionValuator decider;
+    double numSteps;
+    double numJumpships;
     
     
     @Override
@@ -60,6 +62,13 @@ public class Agent implements IAgent {
         this.canJumpship = canJumpship;
     }
     
+    public void jumpshipStat(boolean hasJumpship) {
+        numSteps++;
+        numJumpships = (hasJumpship == true) ? numJumpships + 1 : numJumpships;
+    }
+    public double getRateJumpship() {
+        return numJumpships / numSteps;
+    }
     
     /**
      * Call this before scheduling the robots.
@@ -172,9 +181,13 @@ public class Agent implements IAgent {
             decideTask(state);// so decide a task.
             if (oldTask.getID() != curTask.getID()) 
             {
+                jumpshipStat(true);
                 // learn who was going after the task when I jumpship
-                decider.learn(oldTask, 0, bondsman.whoseDoingTask(oldTask), numTimeSteps);
+                decider.learn(oldTask, 0.1, bondsman.whoseDoingTaskByID(oldTask), numTimeSteps);
                 jumpship.jumpship(this, oldTask, curTask, state);// take the penalty... (reset?)
+            } else
+            {
+                jumpshipStat(false);
             }
         }
         
