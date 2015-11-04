@@ -183,7 +183,7 @@ public class Agent implements IAgent {
             {
                 jumpshipStat(true);
                 // learn who was going after the task when I jumpship
-                decider.learn(oldTask, 0.1, bondsman.whoseDoingTaskByID(oldTask), numTimeSteps);
+                decider.learn(oldTask, 0.3, bondsman.whoseDoingTaskByID(oldTask), numTimeSteps);
                 jumpship.jumpship(this, oldTask, curTask, state);// take the penalty... (reset?)
             } else
             {
