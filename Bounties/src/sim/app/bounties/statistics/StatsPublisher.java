@@ -68,7 +68,7 @@ public class StatsPublisher implements Steppable{
                 writer.print(((Double)bagOfTotal.objs[i]) + ",");
             }
             
-            
+            /*
             File fileRed = new File(directoryName + "Red" + "/" + "NumRedundAg" + state.seed() + ".bounties");
             fileRed.getParentFile().mkdirs();   
             PrintWriter writerRed = new PrintWriter(fileRed, "UTF-8");
@@ -87,8 +87,8 @@ public class StatsPublisher implements Steppable{
                 writerSteps.print(((Double)bagOfStepsTotal.objs[i]) + ",");
             }
             
-            
-            
+            */
+            /*
             Bag tasks = board.bondsman.getTasks();
             for(int i = 0; i<arrayOfBagsOfDecisions.length; i++){
                 
@@ -101,11 +101,11 @@ public class StatsPublisher implements Steppable{
                     writer2.write(theTask.getLocation().toCoordinates());
                 }
                 writer2.close();
-            }
+            }*/
             System.out.println("wrote to " + directoryName + "/" + "maxTicks" + state.seed() + ".bounties");
             writer.close();
-            writerRed.close();
-            writerSteps.close();
+            //writerRed.close();
+            //writerSteps.close();
            }catch(Exception e){e.printStackTrace(); System.exit(0);}
         }
     }
