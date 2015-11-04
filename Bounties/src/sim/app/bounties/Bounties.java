@@ -537,6 +537,9 @@ public class Bounties extends SimState {
                     bot.setJumpship(new ResetJumpship());
                     
                     valuator = new JumpshipSimpleValuator(random, epsilonChooseRandomTask, x, true, numTasks, numAgents);
+                case 11:
+                    valuator = new SimpleValuator(random, epsilonChooseRandomTask, x, true, numTasks, numAgents);
+                    break;
                 default:
                     break;
             }
