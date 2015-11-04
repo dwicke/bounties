@@ -6,6 +6,7 @@
 package sim.app.bounties.agent.valuator;
 
 import ec.util.MersenneTwisterFast;
+import sim.app.bounties.agent.Agent;
 import sim.app.bounties.environment.Task;
 import sim.util.Bag;
 
@@ -77,14 +78,17 @@ public class JumpshipComplexValuator extends LearningValuator implements Decisio
     public void learn(Task curTask, double reward, Bag agentsWorking, int numTimeSteps) {
         if(reward == 1.0) {
             timeTable.update(curTask.getID(), 0, numTimeSteps);
-            for (int i = 0; i < curTask.getLastAgentsWorkingOnTask().numObjs; i++) {
-                pTable.update(curTask.getID(), ((int)curTask.getLastAgentsWorkingOnTask().objs[i]), reward);
+            for (int i = 0; i < agentsWorking.numObjs; i++) {
+                pTable.update(curTask.getID(),(int) (agentsWorking.objs[i]), reward);
             }
             if (this.hasOneUp)
                 pTable.oneUpdate(oneUpdateGamma);
             return;
         }
-        pTable.update(curTask.getID(), curTask.getLastFinishedRobotID(), reward);
+        for (int i = 0; i < agentsWorking.numObjs; i++) {
+                pTable.update(curTask.getID(), ((int)agentsWorking.objs[i]), reward);
+        }
+        //pTable.update(curTask.getID(), curTask.getLastFinishedRobotID(), reward);
        if (this.hasOneUp)
                 pTable.oneUpdate(oneUpdateGamma);
     }

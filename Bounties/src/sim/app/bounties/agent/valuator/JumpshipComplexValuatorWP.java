@@ -48,9 +48,9 @@ public class JumpshipComplexValuatorWP extends LearningValuator implements Decis
         
         double pmul = 1.0;
         
-        for(int i = 0; i < taski.getLastAgentsWorkingOnTask().size(); i++) {
-            if ((int)(taski.getLastAgentsWorkingOnTask().objs[i]) != agentID)
-                pmul *= pTable.getQValue(taski.getID(), (int)(taski.getLastAgentsWorkingOnTask().objs[i]));
+        for(int i = 0; i < taski.getCurrentAgentsOnTask().size(); i++) {
+            if ((int)(taski.getCurrentAgentsOnTask().objs[i]) != agentID)
+                pmul *= pTable.getQValue(taski.getID(), (int)(taski.getCurrentAgentsOnTask().objs[i]));
         }
         return pmul;
     }
@@ -76,14 +76,16 @@ public class JumpshipComplexValuatorWP extends LearningValuator implements Decis
     public void learn(Task curTask, double reward, Bag agentsWorking, int numTimeSteps) {
         if(reward == 1.0) {
             timeTable.update(curTask.getID(), 0, numTimeSteps);
-            for (int i = 0; i < curTask.getLastAgentsWorkingOnTask().numObjs; i++) {
-                pTable.update(curTask.getID(), ((int)curTask.getLastAgentsWorkingOnTask().objs[i]), reward);
+            for (int i = 0; i < agentsWorking.numObjs; i++) {
+                pTable.update(curTask.getID(),(int) (agentsWorking.objs[i]), reward);
             }
             if (this.hasOneUp)
                 pTable.oneUpdate(oneUpdateGamma);
             return;
         }
-        pTable.update(curTask.getID(), curTask.getLastFinishedRobotID(), reward);
+        for (int i = 0; i < agentsWorking.numObjs; i++) {
+                pTable.update(curTask.getID(), ((int)agentsWorking.objs[i]), reward);
+        }
        if (this.hasOneUp)
                 pTable.oneUpdate(oneUpdateGamma);
     }
