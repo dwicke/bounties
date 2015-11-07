@@ -17,11 +17,11 @@ import sim.app.bounties.agent.valuator.RandomValuator;
 import sim.app.bounties.agent.valuator.SemiOptimalValuator;
 import sim.app.bounties.agent.valuator.LearningValuator;
 import sim.app.bounties.agent.valuator.SimpleValuator;
-import sim.app.bounties.agent.valuator.SeanAuctionValuator;
 import sim.app.bounties.agent.valuator.ComplexValuator;
 import sim.app.bounties.agent.Agent;
 import sim.app.bounties.control.TeleportController;
 import sim.app.bounties.agent.IAgent;
+import sim.app.bounties.agent.valuator.AuctionValuator;
 import sim.app.bounties.agent.valuator.ExpandedComplexValuator;
 import sim.app.bounties.agent.valuator.JumpshipComplexValuator;
 import sim.app.bounties.agent.valuator.JumpshipSimpleValuator;
@@ -526,7 +526,8 @@ public class Bounties extends SimState {
                     valuator = new SemiOptimalValuator(random, 0, x, quads[x%4]);
                     break;
                 case 8:// sean auction
-                    valuator = new SeanAuctionValuator(random, 0, x, false, numTasks, numAgents);
+                    //valuator = new SeanAuctionValuator(random, 0, x, false, numTasks, numAgents);
+                    valuator = new AuctionValuator(random, 0, x, false, numTasks, numAgents);
                     auctionVals.add(valuator);
                     break;
                 case 9: // ExpandedComplexValuator
@@ -563,10 +564,27 @@ public class Bounties extends SimState {
         }
         
         // first ensure the auction bots know who the other auction bots are
-        for(Object ob : auctionVals) {
-            ((SeanAuctionValuator)ob).setAuctionCompetitors((SeanAuctionValuator[])auctionVals.toArray());
+        AuctionValuator[] botAuc = new AuctionValuator[auctionVals.size()];
+        for(int i = 0; i < auctionVals.size(); i++) {
+            botAuc[i] = (AuctionValuator) auctionVals.objs[i];            
+        }
+        for(AuctionValuator ob : botAuc)
+        {
+            System.err.println("cur ob: " + ob);
+            ob.setAuctionCompetitors(botAuc);
         }
         
+        /*
+        SeanAuctionValuator[] botAuc = new SeanAuctionValuator[auctionVals.size()];
+        for(int i = 0; i < auctionVals.size(); i++) {
+            botAuc[i] = (SeanAuctionValuator) auctionVals.objs[i];            
+        }
+        for(SeanAuctionValuator ob : botAuc)
+        {
+            System.err.println("cur ob: " + ob);
+            ob.setAuctionCompetitors(botAuc);
+        }
+        */
         for (int i = 0; i < numBots-badRobots; i++) {
             agents[i].init(this);
         }
