@@ -33,7 +33,10 @@ hs_err_pid*
 *.bbl
 *.blg
 
+.classpath
+.project
 
 /bounty/nbproject/private/
 /bounty/build/
 /bounty/dist/
+/bin/
