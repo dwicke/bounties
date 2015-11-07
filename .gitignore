@@ -34,3 +34,6 @@ hs_err_pid*
 *.blg
 
 
+/bounty/nbproject/private/
+/bounty/build/
+/bounty/dist/
