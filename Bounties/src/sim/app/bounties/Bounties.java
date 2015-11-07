@@ -526,8 +526,7 @@ public class Bounties extends SimState {
                 case 7:// semi optimal 
                     valuator = new SemiOptimalValuator(random, 0, x, quads[x%4]);
                     break;
-                case 8:// sean auction
-                    //valuator = new SeanAuctionValuator(random, 0, x, false, numTasks, numAgents);
+                case 8:// auction
                     valuator = new AuctionValuator(random, 0, x, false, numTasks, numAgents);
                     auctionVals.add(valuator);
                     break;
@@ -544,6 +543,12 @@ public class Bounties extends SimState {
                     break;
                 case 12:// semi optimal 
                     valuator = new OptimalValuator(random, x, quads[x%4]);
+                    break;
+                case 13:// jumpship/swapping auction
+                    valuator = new AuctionValuator(random, 0, x, false, numTasks, numAgents);
+                    bot.setCanJumpship(true);
+                    bot.setJumpship(new ResetJumpship());
+                    auctionVals.add(valuator);
                     break;
                 default:
                     break;
