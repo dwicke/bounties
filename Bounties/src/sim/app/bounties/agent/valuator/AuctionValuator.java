@@ -67,7 +67,7 @@ public class AuctionValuator extends LearningValuator implements DecisionValuato
         // then set all of the agent valuations for that task to -MAX 
         
         double[][] valuations = new double[auctionValuators.length][availableTasks.length];
-        
+        //System.err.println("Num avail tasks = " + availableTasks.length);
         // for each agent get their valuation
         for (int i = 0; i < auctionValuators.length; i++) {
             valuations[i] = auctionValuators[i].getEvaluations(availableTasks);// agent id corresponds to agent's index.
