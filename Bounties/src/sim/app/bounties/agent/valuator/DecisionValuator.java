@@ -7,6 +7,7 @@ package sim.app.bounties.agent.valuator;
 
 import sim.app.bounties.environment.Task;
 import sim.util.Bag;
+import sim.util.Int2D;
 
 /**
  * This is where the decision are weighed and decided...
@@ -16,4 +17,6 @@ public interface DecisionValuator {
     public Task decideNextTask(Task availableTasks[]);
     public void learn(Task curTask, double reward, Bag agentsWorking, int numTimeSteps);
     public void setIsDead(boolean isDead);
+    public void setNumTimeSteps(int numTimeSteps);
+    public void setHome(Int2D home);// used only for the optimal valuators.
 }

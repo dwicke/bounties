@@ -29,6 +29,9 @@ public class JumpshipSimpleValuator extends LearningValuator implements Decision
         for (Task availTask : availableTasks) {
             // over all tasks
             double tval = timeTable.getQValue(availTask.getID(), 0);
+           /* if (tval > numTimeSteps) {
+                tval -= numTimeSteps;
+            }*/
             double pval = getPValue(availTask);
             double value = 1.0 / tval * pval * (availTask.getCurrentReward() + tval);
             if (value > max) {

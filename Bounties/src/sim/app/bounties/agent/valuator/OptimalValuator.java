@@ -23,6 +23,11 @@ public class OptimalValuator extends DefaultValuator{
     }
 
     @Override
+    public void setHome(Int2D home) {
+        this.home = home;
+    }
+    
+    @Override
     Task pickTask(Task[] availableTasks) {
         double max = -1; 
         Task curTask = null;

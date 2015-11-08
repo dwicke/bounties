@@ -24,6 +24,7 @@ public abstract class LearningValuator extends DefaultValuator implements Decisi
     double pTableDiscountBeta = .1;
     double initValue = 1;
     boolean hasOneUp;
+    int numTimeSteps;
     
     public LearningValuator(MersenneTwisterFast random, double epsilonChooseRandomTask, 
             int agentID, boolean hasOneUp, int numTasks, int numRobots){
@@ -35,6 +36,9 @@ public abstract class LearningValuator extends DefaultValuator implements Decisi
     
     public void setOneUpdateGamma(double oneUpdateGamma) {
         this.oneUpdateGamma = oneUpdateGamma;
+    }
+    public void setNumTimeSteps(int numTimeSteps) {
+        this.numTimeSteps = numTimeSteps;
     }
     
     @Override

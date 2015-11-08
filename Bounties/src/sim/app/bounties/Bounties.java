@@ -542,7 +542,7 @@ public class Bounties extends SimState {
                 case 11: // random and 
                     valuator = new SimpleValuator(random, epsilonChooseRandomTask, x, true, numTasks, numAgents);
                     break;
-                case 12:// semi optimal 
+                case 12:// optimal 
                     valuator = new OptimalValuator(random, x, quads[x%4]);
                     break;
                 case 13:// jumpship/swapping auction

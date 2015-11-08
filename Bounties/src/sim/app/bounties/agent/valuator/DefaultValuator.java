@@ -7,6 +7,7 @@ package sim.app.bounties.agent.valuator;
 
 import ec.util.MersenneTwisterFast;
 import sim.app.bounties.environment.Task;
+import sim.util.Int2D;
 
 /**
  *
@@ -18,6 +19,14 @@ public abstract class DefaultValuator implements DecisionValuator {
     double epsilonChooseRandomTask;
     int agentID;
     boolean isDead;
+    int numTimeSteps;
+    
+    
+    public void setHome(Int2D home) {}// does nothing here... used for the optimal
+    @Override
+    public void setNumTimeSteps(int numTimeSteps) {
+        this.numTimeSteps = numTimeSteps;
+    }
     
     public DefaultValuator(MersenneTwisterFast random, double epsilonChooseRandomTask, int agentID) {
         this.random = random;

@@ -21,6 +21,11 @@ public class SemiOptimalValuator extends DefaultValuator{
         super(random, epsilonChooseRandomTask, agentID);
         this.home = home;
     }
+    
+    @Override
+    public void setHome(Int2D home) {
+        this.home = home;
+    }
 
     @Override
     Task pickTask(Task[] availableTasks) {

@@ -121,6 +121,8 @@ public class Agent implements IAgent {
     
     void decideTask(SimState state) {
         if(bondsman.getAvailableTasks().length > 0) {
+            
+            
             // get the next task
             curTask = decider.decideNextTask(bondsman.getAvailableTasks());
             
@@ -178,6 +180,7 @@ public class Agent implements IAgent {
         
         if(canJumpship && curTask != null) {
             Task oldTask = curTask;
+            
             decideTask(state);// so decide a task.
             if (oldTask.getID() != curTask.getID()) 
             {
@@ -280,6 +283,7 @@ public class Agent implements IAgent {
     @Override
     public void setRobotHome(Int2D home) {
         this.home = home;
+        this.decider.setHome(home);
     }
 
     @Override
