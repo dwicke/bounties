@@ -24,6 +24,7 @@ import sim.app.bounties.agent.IAgent;
 import sim.app.bounties.agent.valuator.AuctionValuator;
 import sim.app.bounties.agent.valuator.ExpandedComplexValuator;
 import sim.app.bounties.agent.valuator.JumpshipComplexValuator;
+import sim.app.bounties.agent.valuator.JumpshipSimpleBValuator;
 import sim.app.bounties.agent.valuator.JumpshipSimpleValuator;
 import sim.app.bounties.agent.valuator.OptimalValuator;
 import sim.app.bounties.bondsman.*;
@@ -536,10 +537,9 @@ public class Bounties extends SimState {
                 case 10:
                     bot.setCanJumpship(true);
                     bot.setJumpship(new ResetJumpship());
-                    
                     valuator = new JumpshipSimpleValuator(random, epsilonChooseRandomTask, x, true, numTasks, numAgents);
                     break;
-                case 11:
+                case 11: // random and 
                     valuator = new SimpleValuator(random, epsilonChooseRandomTask, x, true, numTasks, numAgents);
                     break;
                 case 12:// semi optimal 
@@ -550,6 +550,11 @@ public class Bounties extends SimState {
                     bot.setCanJumpship(true);
                     bot.setJumpship(new ResetJumpship());
                     auctionVals.add(valuator);
+                    break;
+                case 14:
+                    bot.setCanJumpship(true);
+                    bot.setJumpship(new ResetJumpship());
+                    valuator = new JumpshipSimpleBValuator(random, epsilonChooseRandomTask, x, true, numTasks, numAgents);
                     break;
                 default:
                     break;

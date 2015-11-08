@@ -224,6 +224,10 @@ public class QTable implements java.io.Serializable {
         return qtable[state][action];
     }
     
+    public void setQValue(int state, int action, double value) {
+        qtable[state][action] = value;
+    }
+    
     public int getBestAction(int state) {
         double max = qtable[state][0];
         int best = 0;
