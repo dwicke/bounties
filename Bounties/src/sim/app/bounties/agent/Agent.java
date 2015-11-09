@@ -48,9 +48,13 @@ public class Agent implements IAgent {
     double numSteps;
     double numJumpships;
     int tried[];
+    int completed[];
     
     public int[] getTried() {
         return tried;
+    }
+    public int[] getCompleted() {
+        return completed;
     }
     
     @Override
@@ -83,6 +87,7 @@ public class Agent implements IAgent {
         bountyState = ((Bounties)state);
         bondsman = bountyState.bondsman;
         tried = new int[bountyState.numTasks];
+        completed = new int[bountyState.numTasks];
         //decideTask(state);
         decideTaskFailed = true;
     }
@@ -214,8 +219,10 @@ public class Agent implements IAgent {
             if(preGotoTask())// do stuff before going toward the task
                 return;
             
-            if (gotoTask()) // if i made it to the task then finish it and learn
+            if (gotoTask()) { // if i made it to the task then finish it and learn
+                completed[curTask.getID()]++;
                 cleanup(1.0, true);
+            }
         }
         
     }
