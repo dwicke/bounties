@@ -49,6 +49,7 @@ public class Agent implements IAgent {
     double numJumpships;
     int tried[];
     int completed[];
+    int currentTaskId = -1;
     
     public int[] getTried() {
         return tried;
@@ -131,12 +132,16 @@ public class Agent implements IAgent {
     
     void decideTask(SimState state) {
         if(bondsman.getAvailableTasks().length > 0) {
-            
+
             decider.setCurrentPos(control.getCurrentLocation(state));
+
             // get the next task
             curTask = decider.decideNextTask(bondsman.getAvailableTasks());
             
-            
+            if (currentTaskId != curTask.getID() && currentTaskId != -1) {
+            	tried[currentTaskId]++;
+            }
+            currentTaskId = curTask.getID();
             decideTaskFailed = (curTask == null);
            
             if(decideTaskFailed == false) {
@@ -146,7 +151,7 @@ public class Agent implements IAgent {
                 bondsman.doingTask(id, curTask.getID());
                 curTask.setCurrentAgentsOnTask(bondsman.whoseDoingTaskByID(curTask));
                 lastSeenFinished = curTask.getLastFinishedTime(); 
-                tried[curTask.getID()]++;
+                //tried[curTask.getID()]++;
             }
             else {
                 
