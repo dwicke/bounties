@@ -33,4 +33,5 @@ public interface IAgent extends Steppable {
     public void setDecisionValuator(DecisionValuator dv);
     public void setJumpship(Jumpship jumpship);
     public void setCanJumpship(boolean canJumpship);
+    public int[] getTried();
 }

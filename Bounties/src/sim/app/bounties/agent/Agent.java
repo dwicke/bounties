@@ -47,7 +47,11 @@ public class Agent implements IAgent {
     DecisionValuator decider;
     double numSteps;
     double numJumpships;
+    int tried[];
     
+    public int[] getTried() {
+        return tried;
+    }
     
     @Override
     public void setDecisionValuator(DecisionValuator dv) {
@@ -78,6 +82,7 @@ public class Agent implements IAgent {
     public void init(SimState state) {
         bountyState = ((Bounties)state);
         bondsman = bountyState.bondsman;
+        tried = new int[bountyState.numTasks];
         //decideTask(state);
         decideTaskFailed = true;
     }
@@ -136,6 +141,7 @@ public class Agent implements IAgent {
                 bondsman.doingTask(id, curTask.getID());
                 curTask.setCurrentAgentsOnTask(bondsman.whoseDoingTaskByID(curTask));
                 lastSeenFinished = curTask.getLastFinishedTime(); 
+                tried[curTask.getID()]++;
             }
             else {
                 
