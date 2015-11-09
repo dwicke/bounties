@@ -49,6 +49,12 @@ public class VirtualController implements IController {
         }
         return true;// we are there already
     }
+    
+    public Int2D getCurrentLocation(final SimState state) {
+        final Bounties af = (Bounties) state;
+
+        return af.robotgrid.getObjectLocation(me);
+    }
 
     @Override
     public boolean gotoGoalPosition(final SimState state, Real position) {

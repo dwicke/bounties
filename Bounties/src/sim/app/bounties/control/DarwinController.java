@@ -145,6 +145,9 @@ public class DarwinController implements IController{
         
         return false;
     }
+    public Int2D getCurrentLocation(final SimState state) {
+        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    }
 
     @Override
     public void setMyRobot(IAgent robot) {

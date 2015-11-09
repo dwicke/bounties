@@ -81,6 +81,7 @@ public class Bounties extends SimState {
     double pUpdateValue = .001;
     public int isExclusive = 0;
     public int bondsmanType = 0;
+    public boolean shouldTeleport;
     
     
     public void setBondsmanType(int type) {
@@ -406,6 +407,10 @@ public class Bounties extends SimState {
             isExclusive = Integer.parseInt(argumentForKey("-exclType", myArgs));
         }
         
+        if(myArgs !=null && keyExists("-tele", myArgs)) {
+            this.shouldTeleport = (Integer.parseInt(argumentForKey("-tele", myArgs)) == 1);
+        }
+        
         numAgents+=numBadRobot;
         
         if(myArgs !=null && keyExists("-bondType", myArgs)) {
@@ -604,6 +609,14 @@ public class Bounties extends SimState {
             agents[i].init(this);
         }
         
+    }
+
+    public boolean getShouldTeleport() {
+        return shouldTeleport;
+    }
+    
+    public void setShouldTeleport(boolean shouldTeleport) {
+        this.shouldTeleport = shouldTeleport;
     }
     
     
