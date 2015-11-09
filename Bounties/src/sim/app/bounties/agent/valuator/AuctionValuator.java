@@ -39,8 +39,9 @@ public class AuctionValuator extends LearningValuator implements DecisionValuato
         for (int i = 0; i < availTasks.length; i++) { // over all tasks
             double tval = timeTable.getQValue(((Task)availTasks[i]).getID(), 0);
             double pval = pTable.getQValue(((Task)availTasks[i]).getID(), 0);
-            double value = 1.0/tval * pval *((Task)availTasks[i]).getCurrentReward();
-            
+            //double value = 1.0/tval * pval *((Task)availTasks[i]).getCurrentReward();
+            double value = 1.0 / tval * pval * (availTasks[i].getCurrentReward() + tval);
+
             if  (isDead == true){
                     value*=-1;
             }
