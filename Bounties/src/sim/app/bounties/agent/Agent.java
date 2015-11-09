@@ -195,6 +195,7 @@ public class Agent implements IAgent {
             decideTask(state);// so decide a task.
             if (oldTask.getID() != curTask.getID()) 
             {
+                //completed[oldTask.getID()]--;
                 jumpshipStat(true);
                 // learn who was going after the task when I jumpship
                 decider.learn(oldTask, 0.3, bondsman.whoseDoingTaskByID(oldTask), numTimeSteps);
@@ -212,6 +213,7 @@ public class Agent implements IAgent {
             numTimeSteps++;
             if (finishedTask()) {
                 // look into adjusting this from 0.0 to something nicer....
+                //completed[curTask.getID()]--;
                 cleanup(0.0, false); // someone else finished the task so start again
                 return; // can't start it in the same timestep that i chose it since doesn't happen if I was the one who completed it
             }
