@@ -20,8 +20,11 @@ public abstract class DefaultValuator implements DecisionValuator {
     int agentID;
     boolean isDead;
     int numTimeSteps;
+    Int2D curLoc;
     
-    
+    public void setCurrentPos(Int2D curLoc) {
+        this.curLoc = curLoc;
+    }
     public void setHome(Int2D home) {}// does nothing here... used for the optimal
     @Override
     public void setNumTimeSteps(int numTimeSteps) {

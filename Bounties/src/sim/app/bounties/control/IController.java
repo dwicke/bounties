@@ -22,4 +22,5 @@ public interface IController {
     public boolean gotoTaskPosition(final SimState state, Real position);
     public boolean setPosition(final SimState state, Int2D position);
     public void setMyRobot(IAgent robot);
+    public Int2D getCurrentLocation(final SimState state);
 }

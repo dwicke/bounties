@@ -132,9 +132,9 @@ public class Agent implements IAgent {
     
     void decideTask(SimState state) {
         if(bondsman.getAvailableTasks().length > 0) {
-            
-        	
-        		
+
+            decider.setCurrentPos(control.getCurrentLocation(state));
+
             // get the next task
             curTask = decider.decideNextTask(bondsman.getAvailableTasks());
             
@@ -188,14 +188,8 @@ public class Agent implements IAgent {
         return false;
     }
     
-    @Override
-    public void step(SimState state) {
-        // the preamble before deciding or going toward a task check if I'm in a state that allows me to
-        if (beforeDecide(state))
-            return;
-        
-        if(canJumpship && curTask != null) {
-            Task oldTask = curTask;
+    public void decideJumpship(SimState state) {
+        Task oldTask = curTask;
             
             decideTask(state);// so decide a task.
             if (oldTask.getID() != curTask.getID()) 
@@ -209,6 +203,17 @@ public class Agent implements IAgent {
             {
                 jumpshipStat(false);
             }
+    }
+    
+    
+    @Override
+    public void step(SimState state) {
+        // the preamble before deciding or going toward a task check if I'm in a state that allows me to
+        if (beforeDecide(state))
+            return;
+        
+        if(canJumpship && curTask != null) {
+            decideJumpship(state);
         }
         
         if (decideTaskFailed) {
@@ -227,8 +232,13 @@ public class Agent implements IAgent {
                 return;
             
             if (gotoTask()) { // if i made it to the task then finish it and learn
-                completed[curTask.getID()]++;
-                cleanup(1.0, true);
+              //  if (teleportOn == true) {
+                    completed[curTask.getID()]++;
+                    cleanup(1.0, true);
+                //} else {
+                    // its not on and I have to actually take the task back to its home base
+                    
+                //}
             }
         }
         
@@ -248,11 +258,17 @@ public class Agent implements IAgent {
         return gotoTaskPosition(bountyState, curTask);
     }
     
+    /*public boolean gotoGoal() {
+        return gotoTaskGoalPosition(bountyState, curTask.);
+    }*/
+    
     /**
      * Transport robot to home location
      */
     public void jumpHome() {
-        bountyState.robotgrid.setObjectLocation(this,this.getRobotHome());// teleport home
+        if (bountyState.getShouldTeleport()) {
+            bountyState.robotgrid.setObjectLocation(this,this.getRobotHome());// teleport home
+        }
     }
     
     
