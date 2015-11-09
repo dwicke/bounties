@@ -127,6 +127,16 @@ public class Bondsman implements Steppable {
         return tasks;
     }
     
+    public Bag resetTasks(Int2D field) {
+
+        for (int i = 0; i < bounties.numTasks; i++) {
+            Task t = (Task) tasks.objs[i];
+            t.setInitialLocation(new Int2D(bounties.random.nextInt(field.x), bounties.random.nextInt(field.y)));
+            t.generateRealTaskLocation(bounties.random);
+            bounties.tasksGrid.setObjectLocation(t, t.realLocation);
+        }
+        return tasks;
+    }
     
     
     public Bag getTasks(){

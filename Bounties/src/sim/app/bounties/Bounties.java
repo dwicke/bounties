@@ -82,6 +82,7 @@ public class Bounties extends SimState {
     public int isExclusive = 0;
     public int bondsmanType = 0;
     public boolean shouldTeleport;
+    public boolean resetTasks;
     
     
     public void setBondsmanType(int type) {
@@ -99,6 +100,30 @@ public class Bounties extends SimState {
     public double getPUpdateVal() {
         return pUpdateValue;
     }
+    
+    
+    // code for reseting the tasks
+    
+    public void resetTasks() {
+        bondsman.resetTasks(new Int2D(tasksGrid.getWidth(), tasksGrid.getHeight()));// bottom left
+        //tasksGrid.clear();
+        /*for (int i = 0; i < tasksLocs.numObjs; i++) {
+            Task curTask = ((Task)(tasksLocs.objs[i]));
+            
+            //tasksGrid.setObjectLocation(tasksLocs.objs[i], curTask.getLocation());
+        }*/
+    }
+    
+    public void setWillResetTasks(boolean resetTasks) {
+        this.resetTasks = resetTasks;
+    }
+    
+    public boolean getWillResetTasks() {
+        return resetTasks;
+    }
+    
+    
+    
     
     public void setWillRotate(int val) {
         this.willRotate = val;
@@ -411,6 +436,10 @@ public class Bounties extends SimState {
             this.shouldTeleport = (Integer.parseInt(argumentForKey("-tele", myArgs)) == 1);
         }
         
+        if(myArgs !=null && keyExists("-resTas", myArgs)) {
+            this.resetTasks = (Integer.parseInt(argumentForKey("-resTas", myArgs)) == 1);
+        }
+        
         numAgents+=numBadRobot;
         
         if(myArgs !=null && keyExists("-bondType", myArgs)) {
@@ -471,7 +500,9 @@ public class Bounties extends SimState {
         schedule.scheduleRepeating(Schedule.EPOCH+numAgents+1,0,stats,1);
         if (willRotate == 1)
             schedule.scheduleRepeating(Schedule.EPOCH+numAgents+2,0,new RotateBots(maxRotateSteps),1);
-        
+        if (this.getWillResetTasks()) {
+            schedule.scheduleRepeating(Schedule.EPOCH+numAgents+2,0,new ResetTasks(maxRotateSteps),1);
+        }
         
     }
     
@@ -643,6 +674,26 @@ public class Bounties extends SimState {
                     setRotateRobots(!lastRotateValue);// make them all go to opposite side of the board
                 }
                
+            }
+        }
+        
+    }
+    
+    public class ResetTasks implements Steppable {
+
+        long rotateStep;
+        boolean rotated = false;
+        int howManyTimes = 0;
+        public ResetTasks(long rotateStep) {
+            this.rotateStep = rotateStep;
+        }
+        
+        @Override
+        public void step(SimState state) {
+            long numSteps = state.schedule.getSteps();
+            if (numSteps % rotateStep == 0 && numSteps>0) {
+                rotated = true;
+                resetTasks();
             }
         }
         
