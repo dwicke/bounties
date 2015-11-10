@@ -268,6 +268,8 @@ public class Agent implements IAgent {
     public void jumpHome() {
         if (bountyState.getShouldTeleport()) {
             bountyState.robotgrid.setObjectLocation(this,this.getRobotHome());// teleport home
+        } else {
+            decider.setHome(control.getCurrentLocation(bountyState));// set current location as home so optimal works.
         }
     }
     
