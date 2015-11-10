@@ -190,19 +190,19 @@ public class Agent implements IAgent {
     
     public void decideJumpship(SimState state) {
         Task oldTask = curTask;
-            
-            decideTask(state);// so decide a task.
-            if (oldTask.getID() != curTask.getID()) 
-            {
-                //completed[oldTask.getID()]--;
-                jumpshipStat(true);
-                // learn who was going after the task when I jumpship
-                decider.learn(oldTask, 0.3, bondsman.whoseDoingTaskByID(oldTask), numTimeSteps);
-                jumpship.jumpship(this, oldTask, curTask, state);// take the penalty... (reset?)
-            } else
-            {
-                jumpshipStat(false);
-            }
+        decider.setPreTask(oldTask);
+        decideTask(state);// so decide a task.
+        if (oldTask.getID() != curTask.getID()) 
+        {
+            //completed[oldTask.getID()]--;
+            jumpshipStat(true);
+            // learn who was going after the task when I jumpship
+            decider.learn(oldTask, 0.3, bondsman.whoseDoingTaskByID(oldTask), numTimeSteps);
+            jumpship.jumpship(this, oldTask, curTask, state);// take the penalty... (reset?)
+        } else
+        {
+            jumpshipStat(false);
+        }
     }
     
     
@@ -232,13 +232,8 @@ public class Agent implements IAgent {
                 return;
             
             if (gotoTask()) { // if i made it to the task then finish it and learn
-              //  if (teleportOn == true) {
                     completed[curTask.getID()]++;
                     cleanup(1.0, true);
-                //} else {
-                    // its not on and I have to actually take the task back to its home base
-                    
-                //}
             }
         }
         

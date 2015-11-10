@@ -29,6 +29,7 @@ import sim.app.bounties.agent.valuator.JumpshipSimpleValuator;
 import sim.app.bounties.agent.valuator.OptimalValuator;
 import sim.app.bounties.bondsman.*;
 import sim.app.bounties.bondsman.BountyAdaptiveBondsman;
+import sim.app.bounties.jumpship.DefaultJumpship;
 import sim.app.bounties.jumpship.ResetJumpship;
 import sim.app.bounties.statistics.StatsPublisher;
 import sim.engine.*;
@@ -583,7 +584,11 @@ public class Bounties extends SimState {
                     break;
                 case 10:
                     bot.setCanJumpship(true);
-                    bot.setJumpship(new ResetJumpship());
+                    if (shouldTeleport) {
+                        bot.setJumpship(new ResetJumpship()); // teleport on jumpship
+                    } else {
+                        bot.setJumpship(new DefaultJumpship()); // don't teleport
+                    }
                     valuator = new JumpshipSimpleValuator(random, epsilonChooseRandomTask, x, true, numTasks, numAgents);
                     break;
                 case 11: // random and 
@@ -595,12 +600,20 @@ public class Bounties extends SimState {
                 case 13:// jumpship/swapping auction
                     valuator = new AuctionValuator(random, 0, x, false, numTasks, numAgents);
                     bot.setCanJumpship(true);
-                    bot.setJumpship(new ResetJumpship());
+                    if (shouldTeleport) {
+                        bot.setJumpship(new ResetJumpship()); // teleport on jumpship
+                    } else {
+                        bot.setJumpship(new DefaultJumpship()); // don't teleport
+                    }
                     auctionVals.add(valuator);
                     break;
                 case 14:
                     bot.setCanJumpship(true);
-                    bot.setJumpship(new ResetJumpship());
+                    if (shouldTeleport) {
+                        bot.setJumpship(new ResetJumpship()); // teleport on jumpship
+                    } else {
+                        bot.setJumpship(new DefaultJumpship()); // don't teleport
+                    }
                     valuator = new JumpshipSimpleBValuator(random, epsilonChooseRandomTask, x, true, numTasks, numAgents);
                     break;
                 default:

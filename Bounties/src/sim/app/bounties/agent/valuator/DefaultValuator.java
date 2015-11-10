@@ -21,6 +21,11 @@ public abstract class DefaultValuator implements DecisionValuator {
     boolean isDead;
     int numTimeSteps;
     Int2D curLoc;
+    Task preTask;
+    
+    public void setPreTask(Task task) {
+        preTask = task;
+    }
     
     public void setCurrentPos(Int2D curLoc) {
         this.curLoc = curLoc;

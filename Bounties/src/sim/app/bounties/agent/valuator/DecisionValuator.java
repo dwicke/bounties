@@ -20,4 +20,5 @@ public interface DecisionValuator {
     public void setNumTimeSteps(int numTimeSteps);
     public void setHome(Int2D home);// used only for the optimal valuators.
     public void setCurrentPos(Int2D curLoc);
+    public void setPreTask(Task task);
 }
