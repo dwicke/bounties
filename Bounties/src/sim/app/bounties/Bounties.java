@@ -9,10 +9,13 @@ package sim.app.bounties;
 
 
 import sim.app.bounties.environment.Task;
+
 import java.util.Arrays;
+
 import sim.app.bounties.bondsman.Bondsman;
 import sim.app.bounties.agent.valuator.BadValuator;
 import sim.app.bounties.agent.valuator.DecisionValuator;
+import sim.app.bounties.agent.valuator.JumpshipSimpleCValuator;
 import sim.app.bounties.agent.valuator.RandomValuator;
 import sim.app.bounties.agent.valuator.SemiOptimalValuator;
 import sim.app.bounties.agent.valuator.LearningValuator;
@@ -28,7 +31,6 @@ import sim.app.bounties.agent.valuator.JumpshipSimpleBValuator;
 import sim.app.bounties.agent.valuator.JumpshipSimpleValuator;
 import sim.app.bounties.agent.valuator.OptimalValuator;
 import sim.app.bounties.bondsman.*;
-import sim.app.bounties.bondsman.BountyAdaptiveBondsman;
 import sim.app.bounties.jumpship.ResetJumpship;
 import sim.app.bounties.statistics.StatsPublisher;
 import sim.engine.*;
@@ -591,6 +593,11 @@ public class Bounties extends SimState {
                     bot.setCanJumpship(true);
                     bot.setJumpship(new ResetJumpship());
                     valuator = new JumpshipSimpleBValuator(random, epsilonChooseRandomTask, x, true, numTasks, numAgents);
+                    break;
+                case 15:
+                    bot.setCanJumpship(true);
+                    bot.setJumpship(new ResetJumpship());
+                    valuator = new JumpshipSimpleCValuator(random, epsilonChooseRandomTask, x, true, numTasks, numAgents);
                     break;
                 default:
                     break;

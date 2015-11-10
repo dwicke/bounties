@@ -1,46 +1,50 @@
 #!/bin/bash 
 
+
+# following experiments allowing teleportation
+
+
 #:: First Experiment doing nothing
-java -jar bounties.jar -for 200000 -repeat 25 -parallel 4 -prot 0 -agt 0 -die 0 -dir /home/ewei/bounties/SimpleExp1 &
-java -jar bounties.jar -for 200000 -repeat 25 -parallel 4 -prot 0 -agt 4 -die 0 -dir /home/ewei/bounties/ComplexPExp1 & 
-java -jar bounties.jar -for 200000 -repeat 25 -parallel 4 -prot 0 -agt 10 -die 0 -dir /home/ewei/bounties/SimpleJumpExp1 &
-java -jar bounties.jar -for 200000 -repeat 25 -parallel 4 -prot 0 -agt 11 -die 0 -dir /home/ewei/bounties/SimplePRExp1 &
-java -jar bounties.jar -for 200000 -repeat 25 -parallel 4 -prot 0 -agt 8 -die 0 -exclType 1 -dir /home/ewei/bounties/AuctionExp1 &
-java -jar bounties.jar -for 200000 -repeat 25 -parallel 4 -prot 0 -agt 12 -die 0 -exclType 1 -dir /home/ewei/bounties/PseudoOptimalExp1 &
+java -jar bounties.jar -for 200000 -repeat 25 -parallel 4 -prot 0 -agt 0 -die 0 -tele 1 -dir /home/ewei/bounties/SimpleExp1 &
+java -jar bounties.jar -for 200000 -repeat 25 -parallel 4 -prot 0 -agt 4 -die 0 -tele 1 -dir /home/ewei/bounties/ComplexPExp1 & 
+java -jar bounties.jar -for 200000 -repeat 25 -parallel 4 -prot 0 -agt 10 -die 0 -tele 1 -dir /home/ewei/bounties/SimpleJumpExp1 &
+java -jar bounties.jar -for 200000 -repeat 25 -parallel 4 -prot 0 -agt 11 -die 0 -tele 1 -dir /home/ewei/bounties/SimplePRExp1 &
+java -jar bounties.jar -for 200000 -repeat 25 -parallel 4 -prot 0 -agt 8 -die 0 -exclType 1 -tele 1 -dir /home/ewei/bounties/AuctionExp1 &
+java -jar bounties.jar -for 200000 -repeat 25 -parallel 4 -prot 0 -agt 12 -die 0 -exclType 1 -tele 1 -dir /home/ewei/bounties/PseudoOptimalExp1 &
 
 
 #:: Second Experiment Dieing robots
-java -jar bounties.jar -for 200000 -repeat 25 -parallel 4 -prot 0 -agt 0 -die 1 -dir /home/ewei/bounties/SimpleExp2 &
-java -jar bounties.jar -for 200000 -repeat 25 -parallel 4 -prot 0 -agt 4 -die 1 -dir /home/ewei/bounties/ComplexPExp2 &
-java -jar bounties.jar -for 200000 -repeat 25 -parallel 4 -prot 0 -agt 10 -die 1 -dir /home/ewei/bounties/SimpleJumpExp2 & 
-java -jar bounties.jar -for 200000 -repeat 25 -parallel 4 -prot 0 -agt 11 -die 1 -dir /home/ewei/bounties/SimplePRExp2 &
-java -jar bounties.jar -for 200000 -repeat 25 -parallel 4 -prot 0 -agt 8 -die 1 -exclType 1 -dir /home/ewei/bounties/AuctionExp2 &
-java -jar bounties.jar -for 200000 -repeat 25 -parallel 4 -prot 0 -agt 12 -die 1 -exclType 1 -dir /home/ewei/bounties/PseudoOptimalExp2 &
+java -jar bounties.jar -for 200000 -repeat 25 -parallel 4 -prot 0 -agt 0 -die 1 -tele 1 -dir /home/ewei/bounties/SimpleExp2 &
+java -jar bounties.jar -for 200000 -repeat 25 -parallel 4 -prot 0 -agt 4 -die 1 -tele 1 -dir /home/ewei/bounties/ComplexPExp2 &
+java -jar bounties.jar -for 200000 -repeat 25 -parallel 4 -prot 0 -agt 10 -die 1 -tele 1 -dir /home/ewei/bounties/SimpleJumpExp2 & 
+java -jar bounties.jar -for 200000 -repeat 25 -parallel 4 -prot 0 -agt 11 -die 1 -tele 1 -dir /home/ewei/bounties/SimplePRExp2 &
+java -jar bounties.jar -for 200000 -repeat 25 -parallel 4 -prot 0 -agt 8 -die 1 -tele 1 -exclType 1 -dir /home/ewei/bounties/AuctionExp2 &
+java -jar bounties.jar -for 200000 -repeat 25 -parallel 4 -prot 0 -agt 12 -die 1 -exclType 1 -tele 1 -dir /home/ewei/bounties/PseudoOptimalExp2 &
 
 
 
 #:: Third Experiment rotating robots
-java -jar bounties.jar -for 200000 -repeat 25 -parallel 4 -prot 1 -agt 0 -die 0 -dir /home/ewei/bounties/SimpleExp3 &
-java -jar bounties.jar -for 200000 -repeat 25 -parallel 4 -prot 1 -agt 4 -die 0 -dir /home/ewei/bounties/ComplexPExp3 & 
-java -jar bounties.jar -for 200000 -repeat 25 -parallel 4 -prot 1 -agt 10 -die 0 -dir /home/ewei/bounties/SimpleJumpExp3 & 
-java -jar bounties.jar -for 200000 -repeat 25 -parallel 4 -prot 1 -agt 11 -die 0 -dir /home/ewei/bounties/SimplePRExp3 &
-java -jar bounties.jar -for 200000 -repeat 25 -parallel 4 -prot 1 -agt 8 -die 0 -exclType 1 -dir /home/ewei/bounties/AuctionExp3 &
-java -jar bounties.jar -for 200000 -repeat 25 -parallel 4 -prot 1 -agt 12 -die 0 -exclType 1 -dir /home/ewei/bounties/PseudoOptimalExp3 &
+java -jar bounties.jar -for 200000 -repeat 25 -parallel 4 -resTas 1 -agt 0 -die 0 -tele 1 -dir /home/ewei/bounties/SimpleExp3 &
+java -jar bounties.jar -for 200000 -repeat 25 -parallel 4 -resTas 1 -agt 4 -die 0 -tele 1 -dir /home/ewei/bounties/ComplexPExp3 & 
+java -jar bounties.jar -for 200000 -repeat 25 -parallel 4 -resTas 1 -agt 10 -die 0 -tele 1 -dir /home/ewei/bounties/SimpleJumpExp3 & 
+java -jar bounties.jar -for 200000 -repeat 25 -parallel 4 -resTas 1 -agt 11 -die 0 -tele 1 -dir /home/ewei/bounties/SimplePRExp3 &
+java -jar bounties.jar -for 200000 -repeat 25 -parallel 4 -resTas 1 -agt 8 -die 0 -exclType 1 -tele 1 -dir /home/ewei/bounties/AuctionExp3 &
+java -jar bounties.jar -for 200000 -repeat 25 -parallel 4 -resTas 1 -agt 12 -die 0 -exclType 1 -tele 1 -dir /home/ewei/bounties/PseudoOptimalExp3 &
 
 
 #:: Fourth Experiment unreliable collaborators
-java -jar bounties.jar -for 200000 -repeat 25 -parallel 4 -bad 2 -agt 0 -die 0 -dir /home/ewei/bounties/SimpleExp4 &
-java -jar bounties.jar -for 200000 -repeat 25 -parallel 4 -bad 2 -agt 4 -die 0 -dir /home/ewei/bounties/ComplexPExp4 & 
-java -jar bounties.jar -for 200000 -repeat 25 -parallel 4 -bad 2 -agt 10 -die 0 -dir /home/ewei/bounties/SimpleJumpExp4 &
-java -jar bounties.jar -for 200000 -repeat 25 -parallel 4 -bad 2 -agt 11 -die 0 -dir /home/ewei/bounties/SimplePRExp4 &
-java -jar bounties.jar -for 200000 -repeat 25 -parallel 4 -bad 2 -agt 8 -die 0 -exclType 1 -dir /home/ewei/bounties/AuctionExp4 &
-java -jar bounties.jar -for 200000 -repeat 25 -parallel 4 -bad 2 -agt 12 -die 0 -exclType 1 -dir /home/ewei/bounties/PseudoOptimalExp4 &
+java -jar bounties.jar -for 200000 -repeat 25 -parallel 4 -bad 2 -agt 0 -die 0 -tele 1 -dir /home/ewei/bounties/SimpleExp4 &
+java -jar bounties.jar -for 200000 -repeat 25 -parallel 4 -bad 2 -agt 4 -die 0 -tele 1 -dir /home/ewei/bounties/ComplexPExp4 & 
+java -jar bounties.jar -for 200000 -repeat 25 -parallel 4 -bad 2 -agt 10 -die 0 -tele 1 -dir /home/ewei/bounties/SimpleJumpExp4 &
+java -jar bounties.jar -for 200000 -repeat 25 -parallel 4 -bad 2 -agt 11 -die 0 -tele 1 -dir /home/ewei/bounties/SimplePRExp4 &
+java -jar bounties.jar -for 200000 -repeat 25 -parallel 4 -bad 2 -agt 8 -die 0 -exclType 1 -tele 1 -dir /home/ewei/bounties/AuctionExp4 &
+java -jar bounties.jar -for 200000 -repeat 25 -parallel 4 -bad 2 -agt 12 -die 0 -exclType 1 -tele 1 -dir /home/ewei/bounties/PseudoOptimalExp4 &
 
 
 #:: Fifth Experiment unexpectedly bad tasks
-java -jar bounties.jar -for 200000 -repeat 25 -parallel 4 -ptrap 1 -agt 0 -die 0 -dir /home/ewei/bounties/SimpleExp5 &
-java -jar bounties.jar -for 200000 -repeat 25 -parallel 4 -ptrap 1 -agt 4 -die 0 -dir /home/ewei/bounties/ComplexPExp5 & 
-java -jar bounties.jar -for 200000 -repeat 25 -parallel 4 -ptrap 1 -agt 10 -die 0 -dir /home/ewei/bounties/SimpleJumpExp5 & 
-java -jar bounties.jar -for 200000 -repeat 25 -parallel 4 -ptrap 1 -agt 11 -die 0 -dir /home/ewei/bounties/SimplePRExp5 &
-java -jar bounties.jar -for 200000 -repeat 25 -parallel 4 -ptrap 1 -agt 8 -die 0 -exclType 1 -dir /home/ewei/bounties/AuctionExp5 &
-java -jar bounties.jar -for 200000 -repeat 25 -parallel 4 -ptrap 1 -agt 12 -die 0 -exclType 1 -dir /home/ewei/bounties/PseudoOptimalExp5 &
+java -jar bounties.jar -for 200000 -repeat 25 -parallel 4 -ptrap 1 -agt 0 -die 0 -tele 1 -dir /home/ewei/bounties/SimpleExp5 &
+java -jar bounties.jar -for 200000 -repeat 25 -parallel 4 -ptrap 1 -agt 4 -die 0 -tele 1 -dir /home/ewei/bounties/ComplexPExp5 & 
+java -jar bounties.jar -for 200000 -repeat 25 -parallel 4 -ptrap 1 -agt 10 -die 0 -tele 1 -dir /home/ewei/bounties/SimpleJumpExp5 & 
+java -jar bounties.jar -for 200000 -repeat 25 -parallel 4 -ptrap 1 -agt 11 -die 0 -tele 1 -dir /home/ewei/bounties/SimplePRExp5 &
+java -jar bounties.jar -for 200000 -repeat 25 -parallel 4 -ptrap 1 -agt 8 -die 0 -exclType 1 -tele 1 -dir /home/ewei/bounties/AuctionExp5 &
+java -jar bounties.jar -for 200000 -repeat 25 -parallel 4 -ptrap 1 -agt 12 -die 0 -exclType 1 -tele 1 -dir /home/ewei/bounties/PseudoOptimalExp5 &
