@@ -22,6 +22,12 @@ public abstract class DefaultValuator implements DecisionValuator {
     int numTimeSteps;
     Int2D curLoc;
     Task preTask;
+    boolean jumped;
+    
+    @Override
+    public void setJumped(boolean jumped) {
+        this.jumped = jumped;
+    }
     
     public void setPreTask(Task task) {
         preTask = task;

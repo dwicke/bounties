@@ -28,6 +28,7 @@ import sim.app.bounties.agent.valuator.AuctionValuator;
 import sim.app.bounties.agent.valuator.ExpandedComplexValuator;
 import sim.app.bounties.agent.valuator.JumpshipComplexValuator;
 import sim.app.bounties.agent.valuator.JumpshipSimpleBValuator;
+import sim.app.bounties.agent.valuator.JumpshipSimpleJValuator;
 import sim.app.bounties.agent.valuator.JumpshipSimpleValuator;
 import sim.app.bounties.agent.valuator.OptimalValuator;
 import sim.app.bounties.bondsman.*;
@@ -623,9 +624,31 @@ public class Bounties extends SimState {
                     break;
                 case 15:
                     bot.setCanJumpship(true);
-                    bot.setJumpship(new ResetJumpship());
+                    if (shouldTeleport) {
+                        bot.setJumpship(new ResetJumpship()); // teleport on jumpship
+                    } else {
+                        bot.setJumpship(new DefaultJumpship()); // don't teleport
+                    }
                     valuator = new JumpshipSimpleCValuator(random, epsilonChooseRandomTask, x, true, numTasks, numAgents);
                     break;
+                case 16:
+                    bot.setCanJumpship(true);
+                    if (shouldTeleport) {
+                        bot.setJumpship(new ResetJumpship()); // teleport on jumpship
+                    } else {
+                        bot.setJumpship(new DefaultJumpship()); // don't teleport
+                    }
+                    valuator = new JumpshipSimpleJValuator(random, epsilonChooseRandomTask, x, true, numTasks, numAgents);
+                    break;
+                case 17:
+                    bot.setCanJumpship(true);
+                    if (shouldTeleport) {
+                        bot.setJumpship(new ResetJumpship()); // teleport on jumpship
+                    } else {
+                        bot.setJumpship(new DefaultJumpship()); // don't teleport
+                    }
+                    valuator = new ComplexValuator(random, 0, x, true, numTasks, numAgents);
+                    break; 
                 default:
                     break;
             }

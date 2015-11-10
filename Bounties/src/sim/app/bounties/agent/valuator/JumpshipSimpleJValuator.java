@@ -36,8 +36,9 @@ public class JumpshipSimpleJValuator extends LearningValuator implements Decisio
             // over all tasks
             double tval = timeTable.getQValue(availTask.getID(), 0);
            
-            double pval = getPValue(availTask) * getPJumpValue();
+            double pval = getPValue(availTask); /// (getPValue(availTask) + getPJumpValue());
             double value = 1.0 / tval * pval * (availTask.getCurrentReward() + tval);
+            
             if (value > max) {
                 max = value;
                 curTask = availTask;
@@ -47,8 +48,13 @@ public class JumpshipSimpleJValuator extends LearningValuator implements Decisio
     }
     
     double getPJumpValue() {
-        //return (preTask == null) ? 1.0 : pJumpTable.getQValue(preTask.getID(), 0);//not sure ...
-        return pJumpTable.getQValue(preTask.getID(), 0);
+        if (preTask == null) {
+            System.err.println("pretask is null!");
+                    
+        }
+        return (preTask == null) ? 1.0 : pJumpTable.getQValue(preTask.getID(), 0);//not sure ...
+        //return pJumpTable.getQValue(preTask.getID(), 0);
+        //return (preTask == null) ? 1.0 : pTable.getQValue(preTask.getID(), 0);
     }
     
     @Override
@@ -61,13 +67,23 @@ public class JumpshipSimpleJValuator extends LearningValuator implements Decisio
             timeTable.update(curTask.getID(), 0, numTimeSteps);
             pTable.update(curTask.getID(), 0, reward);
             
-            
+            // success if I've jumped from another task to this task which i've suceeded at
+            if (jumped)
+                pJumpTable.update(preTask.getID(), 0, reward);
             
         }else{
             pTable.update(curTask.getID(), 0, reward);
+            
+            // fail when i jumpship from another task or
+            // i've jumpship from a jumpship
+            if (jumped)
+                pJumpTable.update(preTask.getID(), 0, reward);
+            
         }
-        if (this.hasOneUp)
+        if (this.hasOneUp) {
                 pTable.oneUpdate(oneUpdateGamma);
+                pJumpTable.oneUpdate(oneUpdateGamma);
+        }
     }
 
     @Override
