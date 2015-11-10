@@ -83,7 +83,7 @@ public class Bounties extends SimState {
     public int bondsmanType = 0;
     public boolean shouldTeleport;
     public boolean resetTasks;
-    
+    public int defaultReward = 0; // 0 for no teleport 100 for teleport and a 60x40 grid
     
     public void setBondsmanType(int type) {
         bondsmanType = type;
@@ -159,6 +159,12 @@ public class Bounties extends SimState {
         return rotateRobots;
     }
     
+    public void setDefaultReward(int defRwd) {
+        this.defaultReward = defRwd;
+    }
+    public int getDefaultReward() {
+        return defaultReward;
+    }
     
     public int getAgentType() {
         return agentType;
@@ -440,6 +446,10 @@ public class Bounties extends SimState {
             this.resetTasks = (Integer.parseInt(argumentForKey("-resTas", myArgs)) == 1);
         }
         
+        if(myArgs !=null && keyExists("-defRew", myArgs)) {
+            this.defaultReward = Integer.parseInt(argumentForKey("-defRew", myArgs));
+        }
+        
         numAgents+=numBadRobot;
         
         if(myArgs !=null && keyExists("-bondType", myArgs)) {
@@ -477,6 +487,7 @@ public class Bounties extends SimState {
         
         for (int i = 0; i < tasksLocs.numObjs; i++) {
             Task curTask = ((Task)(tasksLocs.objs[i]));
+            curTask.setDefaultReward(defaultReward);
             tasksGrid.setObjectLocation(tasksLocs.objs[i], curTask.getLocation());
         }
         
