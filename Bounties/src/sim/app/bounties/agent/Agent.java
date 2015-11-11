@@ -234,7 +234,6 @@ public class Agent implements IAgent {
             if (finishedTask()) {
                 // look into adjusting this from 0.0 to something nicer....
                 //completed[curTask.getID()]--;
-            	curTask.setCompleteCounter(curTask.getCompleteCounter()+1);
                 cleanup(0.0, false); // someone else finished the task so start again
                 return; // can't start it in the same timestep that i chose it since doesn't happen if I was the one who completed it
             }
@@ -244,6 +243,7 @@ public class Agent implements IAgent {
             
             if (gotoTask()) { // if i made it to the task then finish it and learn
                     completed[curTask.getID()]++;
+                    curTask.setCompleteCounter(curTask.getCompleteCounter()+1);
                     cleanup(1.0, true);
             }
         }
