@@ -36,6 +36,7 @@ public class Bondsman implements Steppable {
     private final int badOdds = 10;
     public int clumpcnt = 0;
     public double currentAvgNumAgents = 0.0;
+    int incrementAmount = 1;
     
     public Bondsman(){
     }
@@ -97,11 +98,15 @@ public class Bondsman implements Steppable {
 		double g = (n+1-2*sum/denominator)/n;
                 return g;
 	}
-
-	public void incrementBounty(){
+    
+    
+    public void setIncrementAmount(int incrementAmount) {
+        this.incrementAmount = incrementAmount;
+    }
+    public void incrementBounty(){
         for(int i = 0; i< tasks.size(); i++){
            // if (((Task) tasks.objs[i]).getIsAvailable()) // only increment the 
-                ((Task)tasks.objs[i]).incrementCurrentReward();
+                ((Task)tasks.objs[i]).incrementCurrentReward(incrementAmount);
         }
     }
     public void incrementExistence() {

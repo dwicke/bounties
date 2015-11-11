@@ -50,6 +50,17 @@ public class Agent implements IAgent {
     int tried[];
     int completed[];
     int currentTaskId = -1;
+    int trapStep = 10;
+
+    public int getTrapStep() {
+        return trapStep;
+    }
+
+    public void setTrapStep(int trapStep) {
+        this.trapStep = trapStep;
+    }
+    
+    
     
     public int[] getTried() {
         return tried;
@@ -181,7 +192,7 @@ public class Agent implements IAgent {
     boolean preGotoTask() {
         if(curTask!=null && ((curTask.badForWho == this.id && this.hasTraps == true) ||
                 this.isBad == true)) {
-            if(bountyState.schedule.getSteps() % 10 != 0 && this.hasTraps)
+            if(bountyState.schedule.getSteps() % trapStep != 0 && this.hasTraps)
                 return true;
             if(bountyState.schedule.getSteps() % 20 != 0 && this.isBad)
                 return true;
@@ -192,6 +203,7 @@ public class Agent implements IAgent {
     public void decideJumpship(SimState state) {
         Task oldTask = curTask;
         decider.setPreTask(oldTask);
+        double oldNumSteps = numTimeSteps;
         decideTask(state);// so decide a task.
         if (oldTask.getID() != curTask.getID()) 
         {
@@ -201,7 +213,7 @@ public class Agent implements IAgent {
             // pick what table to update.
             decider.setJumped(true);
             // learn who was going after the task when I jumpship
-            decider.learn(oldTask, 0.3, bondsman.whoseDoingTaskByID(oldTask), numTimeSteps);
+            decider.learn(oldTask, 0.25, bondsman.whoseDoingTaskByID(oldTask), numTimeSteps);
             jumpship.jumpship(this, oldTask, curTask, state);// take the penalty... (reset?)
         } else
         {

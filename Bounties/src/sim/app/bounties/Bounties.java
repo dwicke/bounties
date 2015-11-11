@@ -24,13 +24,14 @@ import sim.app.bounties.agent.valuator.ComplexValuator;
 import sim.app.bounties.agent.Agent;
 import sim.app.bounties.control.TeleportController;
 import sim.app.bounties.agent.IAgent;
-import sim.app.bounties.agent.valuator.AuctionValuator;
+import sim.app.bounties.agent.valuator.BountyAuctionValuator;
 import sim.app.bounties.agent.valuator.ExpandedComplexValuator;
 import sim.app.bounties.agent.valuator.JumpshipComplexValuator;
 import sim.app.bounties.agent.valuator.JumpshipSimpleBValuator;
 import sim.app.bounties.agent.valuator.JumpshipSimpleJValuator;
 import sim.app.bounties.agent.valuator.JumpshipSimpleValuator;
 import sim.app.bounties.agent.valuator.OptimalValuator;
+import sim.app.bounties.agent.valuator.RealAuctionValuator;
 import sim.app.bounties.bondsman.*;
 
 import sim.app.bounties.bondsman.BountyAdaptiveBondsman;
@@ -82,6 +83,7 @@ public class Bounties extends SimState {
     private int willdie = 0; // 0 - won't die, 1 - will die
     private int hasTraps = 0;
     public int numAgents = 4;
+    public int numDefaultAgents = 4;
     public int numTasks = 20;
     public int numBadRobot = 0;
     private double epsilonChooseRandomTask = 0.002;
@@ -91,6 +93,24 @@ public class Bounties extends SimState {
     public boolean shouldTeleport;
     public boolean resetTasks;
     public int defaultReward = 0; // 0 for no teleport 100 for teleport and a 60x40 grid
+    public int incrementAmount = 1;
+    public int trapStep = 10;
+
+    public int getTrapStep() {
+        return trapStep;
+    }
+
+    public void setTrapStep(int trapStep) {
+        this.trapStep = trapStep;
+    }
+
+    public int getIncrementAmount() {
+        return incrementAmount;
+    }
+
+    public void setIncrementAmount(int incrementAmount) {
+        this.incrementAmount = incrementAmount;
+    }
     
     public void setBondsmanType(int type) {
         bondsmanType = type;
@@ -342,6 +362,7 @@ public class Bounties extends SimState {
     public void setNumAgents(int val) {
         if (val > 0) {
             numAgents = val;
+            numDefaultAgents = val;
         }
     }
     public int getAvgCount() {
@@ -457,6 +478,16 @@ public class Bounties extends SimState {
             this.defaultReward = Integer.parseInt(argumentForKey("-defRew", myArgs));
         }
         
+        if(myArgs !=null && keyExists("-incB", myArgs)) {
+            this.incrementAmount = Integer.parseInt(argumentForKey("-incB", myArgs));
+        }
+        
+        if(myArgs !=null && keyExists("-trapStep", myArgs)) {
+            this.trapStep = Integer.parseInt(argumentForKey("-trapStep", myArgs));
+        }
+        
+        System.err.println("Num Bad robots = " + numBadRobot + " numAgents = " + numAgents);
+        numAgents = numDefaultAgents;
         numAgents+=numBadRobot;
         
         if(myArgs !=null && keyExists("-bondType", myArgs)) {
@@ -484,7 +515,7 @@ public class Bounties extends SimState {
                 bondsman = new Bondsman(this, isExclusive);
                 break;
         }
-        
+        bondsman.setIncrementAmount(incrementAmount);
         
         // make new grids
         tasksGrid = new SparseGrid2D(GRID_WIDTH, GRID_HEIGHT);
@@ -582,7 +613,7 @@ public class Bounties extends SimState {
                     valuator = new SemiOptimalValuator(random, 0, x, quads[x%4]);
                     break;
                 case 8:// auction
-                    valuator = new AuctionValuator(random, 0, x, false, numTasks, numAgents);
+                    valuator = new BountyAuctionValuator(random, 0, x, false, numTasks, numAgents);
                     auctionVals.add(valuator);
                     break;
                 case 9: // ExpandedComplexValuator
@@ -604,7 +635,7 @@ public class Bounties extends SimState {
                     valuator = new OptimalValuator(random, x, quads[x%4]);
                     break;
                 case 13:// jumpship/swapping auction
-                    valuator = new AuctionValuator(random, 0, x, false, numTasks, numAgents);
+                    valuator = new BountyAuctionValuator(random, 0, x, false, numTasks, numAgents);
                     bot.setCanJumpship(true);
                     if (shouldTeleport) {
                         bot.setJumpship(new ResetJumpship()); // teleport on jumpship
@@ -648,12 +679,19 @@ public class Bounties extends SimState {
                         bot.setJumpship(new DefaultJumpship()); // don't teleport
                     }
                     valuator = new ComplexValuator(random, 0, x, true, numTasks, numAgents);
-                    break; 
+                    break;
+                case 18:
+                    valuator = new RealAuctionValuator(random, 0, x, false, numTasks, numAgents);
+                    auctionVals.add(valuator);
+                    break;
                 default:
                     break;
             }
             
             bot.setHasTraps(hasTraps == 1);
+            if (hasTraps == 1) {
+                bot.setTrapStep(this.trapStep);
+            }
             bot.setCanDie(willdie == 1);
             if(valuator instanceof LearningValuator)
                 (( LearningValuator)valuator).setOneUpdateGamma(pUpdateValue);
@@ -672,11 +710,11 @@ public class Bounties extends SimState {
         }
         
         // first ensure the auction bots know who the other auction bots are
-        AuctionValuator[] botAuc = new AuctionValuator[auctionVals.size()];
+        BountyAuctionValuator[] botAuc = new BountyAuctionValuator[auctionVals.size()];
         for(int i = 0; i < auctionVals.size(); i++) {
-            botAuc[i] = (AuctionValuator) auctionVals.objs[i];            
+            botAuc[i] = (BountyAuctionValuator) auctionVals.objs[i];            
         }
-        for(AuctionValuator ob : botAuc)
+        for(BountyAuctionValuator ob : botAuc)
         {
             System.err.println("cur ob: " + ob);
             ob.setAuctionCompetitors(botAuc);

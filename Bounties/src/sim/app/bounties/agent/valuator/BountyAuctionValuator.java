@@ -14,16 +14,16 @@ import sim.util.Bag;
  *
  * @author drew
  */
-public class AuctionValuator extends LearningValuator implements DecisionValuator{
-    AuctionValuator[] auctionValuators;
+public class BountyAuctionValuator extends LearningValuator implements DecisionValuator{
+    BountyAuctionValuator[] auctionValuators;
     
     
-    public AuctionValuator(MersenneTwisterFast random, double epsilonChooseRandomTask, int agentID, boolean hasOneUp, int numTasks, int numRobots) {
+    public BountyAuctionValuator(MersenneTwisterFast random, double epsilonChooseRandomTask, int agentID, boolean hasOneUp, int numTasks, int numRobots) {
         super(random, epsilonChooseRandomTask, agentID, hasOneUp, numTasks, numRobots);
     }
     
     
-    public void setAuctionCompetitors(AuctionValuator[] bots) {
+    public void setAuctionCompetitors(BountyAuctionValuator[] bots) {
         this.auctionValuators = bots;
     }    
     
@@ -84,6 +84,7 @@ public class AuctionValuator extends LearningValuator implements DecisionValuato
             valuations = getNewValuations(valuations, max);
         }
         System.err.println("ERRRR  no task found for agent " + agentID);
+        printValuations(valuations);
         return null;// this should never happen and will result in the agent not going after a task!
     }
     

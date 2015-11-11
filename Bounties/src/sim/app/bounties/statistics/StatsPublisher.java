@@ -69,6 +69,16 @@ public class StatsPublisher implements Steppable{
             }
             
             /*
+            File fileGini = new File(directoryName + "/" + "giniIndex" + state.seed() + ".bounties");
+            fileGini.getParentFile().mkdirs();   
+            PrintWriter writerGini = new PrintWriter(file, "UTF-8");
+           
+            for(int i = 0; i<bagOfTotal.numObjs; i++){
+                writerGini.print(((Double)bagOfTotal.objs[i]) + ",");
+            }*/
+            
+            
+            /*
             File fileRed = new File(directoryName + "Red" + "/" + "NumRedundAg" + state.seed() + ".bounties");
             fileRed.getParentFile().mkdirs();   
             PrintWriter writerRed = new PrintWriter(fileRed, "UTF-8");

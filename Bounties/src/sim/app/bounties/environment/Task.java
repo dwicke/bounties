@@ -160,7 +160,10 @@ public class Task implements Real, Fixed2D{
         if (currentReward < 10000000 && isDone() == false)// don't increment while the task is done 
             currentReward+=1;
     }
-    
+    public void incrementCurrentReward(int incrementAmount) {
+        if (currentReward < 10000000 && isDone() == false)// don't increment while the task is done 
+            currentReward+=incrementAmount;
+    }
     public int getDefaultReward() {
         return defaultReward;
     }
