@@ -58,10 +58,10 @@ public class Bondsman implements Steppable {
         makeAvailable();
         incrementBounty(); // increment the bounties
         incrementExistence();
-        calculateGiniIndex();
+        getCalculateGiniIndex();
     }
     
-    private void calculateGiniIndex() {
+    public double getCalculateGiniIndex() {
 		ArrayList<Task> taskList = new ArrayList<Task>();
 		taskList.addAll(tasks);
 		
@@ -95,6 +95,7 @@ public class Bondsman implements Steppable {
 		}
 		
 		double g = (n+1-2*sum/denominator)/n;
+                return g;
 	}
 
 	public void incrementBounty(){
