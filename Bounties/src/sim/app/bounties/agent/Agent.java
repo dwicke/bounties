@@ -169,6 +169,7 @@ public class Agent implements IAgent {
             curTask.setLastFinished(id, bountyState.schedule.getSteps(), bondsman.whoseDoingTaskByID(curTask));
             bondsman.finishTask(curTask, id, bountyState.schedule.getSteps(), numTimeSteps);
         }
+        
         decider.learn(curTask, reward, curTask.getLastAgentsWorkingOnTask(), numTimeSteps);
         jumpHome();
         curTask = null;
@@ -194,8 +195,11 @@ public class Agent implements IAgent {
         decideTask(state);// so decide a task.
         if (oldTask.getID() != curTask.getID()) 
         {
-            //completed[oldTask.getID()]--;
+            
             jumpshipStat(true);
+            // consider telling the learner that i've jumped ship so that it can
+            // pick what table to update.
+            decider.setJumped(true);
             // learn who was going after the task when I jumpship
             decider.learn(oldTask, 0.3, bondsman.whoseDoingTaskByID(oldTask), numTimeSteps);
             jumpship.jumpship(this, oldTask, curTask, state);// take the penalty... (reset?)
@@ -213,11 +217,16 @@ public class Agent implements IAgent {
             return;
         
         if(canJumpship && curTask != null) {
+            decider.setPreTask(curTask);// this is the previous task now for when i decide a new task
             decideJumpship(state);
         }
         
         if (decideTaskFailed) {
+
         	decider.setPreTask(null);
+            // didn't jumpship so tell the learner...
+            decider.setJumped(false);
+
             decideTask(state);// so try and decide on a task
         } 
         else {
