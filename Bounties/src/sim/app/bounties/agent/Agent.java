@@ -217,6 +217,7 @@ public class Agent implements IAgent {
         }
         
         if (decideTaskFailed) {
+        	decider.setPreTask(null);
             decideTask(state);// so try and decide on a task
         } 
         else {
@@ -224,6 +225,7 @@ public class Agent implements IAgent {
             if (finishedTask()) {
                 // look into adjusting this from 0.0 to something nicer....
                 //completed[curTask.getID()]--;
+            	curTask.setCompleteCounter(curTask.getCompleteCounter()+1);
                 cleanup(0.0, false); // someone else finished the task so start again
                 return; // can't start it in the same timestep that i chose it since doesn't happen if I was the one who completed it
             }

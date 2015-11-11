@@ -7,7 +7,13 @@
 package sim.app.bounties.bondsman;
 
 import sim.app.bounties.agent.IAgent;
+
+import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.Comparator;
+
 import sim.app.bounties.Bounties;
 import sim.app.bounties.environment.Task;
 import sim.engine.SimState;
@@ -52,9 +58,46 @@ public class Bondsman implements Steppable {
         makeAvailable();
         incrementBounty(); // increment the bounties
         incrementExistence();
+        calculateGiniIndex();
     }
     
-    public void incrementBounty(){
+    private void calculateGiniIndex() {
+		ArrayList<Task> taskList = new ArrayList<Task>();
+		taskList.addAll(tasks);
+		
+		// first sort the list ascendingly
+		Collections.sort(taskList, new Comparator<Task>() {
+
+			@Override
+			public int compare(Task o1, Task o2) {
+				int counter1 = o1.getCompleteCounter();
+				int counter2 = o2.getCompleteCounter();
+				
+				if(counter1 < counter2) {
+					return -1;
+				}
+				else if(counter1 > counter2){
+					return 1;
+				}
+				else {
+					return 0;
+				}
+			}
+		});
+		
+		double n = taskList.size();
+		double sum = 0;
+		double denominator = 0;
+		for(int i = 0;i<n;++i) {
+			double value = (n+1-(i+1))*(double)taskList.get(i).getCompleteCounter();
+			sum += value;
+			denominator += (double)taskList.get(i).getCompleteCounter();
+		}
+		
+		double g = (n+1-2*sum/denominator)/n;
+	}
+
+	public void incrementBounty(){
         for(int i = 0; i< tasks.size(); i++){
            // if (((Task) tasks.objs[i]).getIsAvailable()) // only increment the 
                 ((Task)tasks.objs[i]).incrementCurrentReward();

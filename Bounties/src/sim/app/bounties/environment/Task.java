@@ -33,6 +33,7 @@ public class Task implements Real, Fixed2D{
     private Bag lastAgentsWorkingOnTask; // these are the agents working on the task when someone finished it
     private Bag currentAgentsWorkingOnTask; // these are the agents working on the task now
     private int timeUntilRespawn = 0;
+    private int completeCounter = 0;
     
     public int badForWho = -1;
     public int maxRespawnTime = 20;
@@ -43,10 +44,20 @@ public class Task implements Real, Fixed2D{
     
     public boolean isNonExclusive = true;
     
+    
+    
     public Task() {
         currentReward = defaultReward;
         lastAgentsWorkingOnTask = new Bag();
         currentAgentsWorkingOnTask = new Bag();
+    }
+    
+    public void setCompleteCounter(int val) {
+    	this.completeCounter = val;
+    }
+    
+    public int getCompleteCounter() {
+    	return this.completeCounter;
     }
     
     public void setDefaultReward(int defaultReward) {
