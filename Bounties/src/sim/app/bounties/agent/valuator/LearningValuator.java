@@ -73,32 +73,32 @@ public abstract class LearningValuator extends DefaultValuator implements Decisi
         Task curTask = null;
         PriorityQueue<TaskValuePair> queue = new PriorityQueue<TaskValuePair>();
 
-//        for (Task availTask : availableTasks) {
-//            // over all tasks
-//            double tval = timeTable.getQValue(availTask.getID(), 0);
-//            double pval = getPValue(availTask);
-//            double value = 1.0 / tval * pval * availTask.getCurrentReward();
-//            if (value > max) {
-//                max = value;
-//                curTask = availTask;
-//            }
-//            
-//        }
-//        return curTask;
-		for (Task availTask : availableTasks) {
-			// over all tasks
-			double tval = timeTable.getQValue(availTask.getID(), 0);
-			double pval = getPValue(availTask);
-			double value = 1.0 / tval * pval * availTask.getCurrentReward();
-			queue.add(new TaskValuePair(value, availTask));
-		}
-		ArrayList<Task> candidateList = new ArrayList<Task>();
-		for (int i = 0; i < 3; ++i) {
-			candidateList.add(queue.poll().task);
-		}
-
-		int index = random.nextInt(candidateList.size());
-		return candidateList.get(index);
+        for (Task availTask : availableTasks) {
+            // over all tasks
+            double tval = timeTable.getQValue(availTask.getID(), 0);
+            double pval = getPValue(availTask);
+            double value = 1.0 / tval * pval * availTask.getCurrentReward();
+            if (value > max) {
+                max = value;
+                curTask = availTask;
+            }
+            
+        }
+        return curTask;
+//		for (Task availTask : availableTasks) {
+//			// over all tasks
+//			double tval = timeTable.getQValue(availTask.getID(), 0);
+//			double pval = getPValue(availTask);
+//			double value = 1.0 / tval * pval * availTask.getCurrentReward();
+//			queue.add(new TaskValuePair(value, availTask));
+//		}
+//		ArrayList<Task> candidateList = new ArrayList<Task>();
+//		for (int i = 0; i < 3; ++i) {
+//			candidateList.add(queue.poll().task);
+//		}
+//
+//		int index = random.nextInt(candidateList.size());
+//		return candidateList.get(index);
         
     }
     

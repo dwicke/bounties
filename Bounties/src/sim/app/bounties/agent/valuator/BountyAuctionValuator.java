@@ -85,6 +85,27 @@ public class BountyAuctionValuator extends LearningValuator implements DecisionV
         }
         System.err.println("ERRRR  no task found for agent " + agentID);
         printValuations(valuations);
+        
+        // There is a case in which if everyone values the tasks equally
+        // that given 4 agents and 6 tasks that the agents won't get assigned
+        // a task.  Basically say the fist three agents get assigned tasks
+        // then 3 tasks have been assigned so only 3 available
+        // then we try and assign the 4 agent a task
+        // since all of the agents value all of the tasks equally
+        // then the remaining 3 tasks and 4 agents who have provided
+        // valuations will leave the possiblity for that last agent
+        // to not assign itself a task!
+        // so instead of returning null and since the paper states
+        // that we must pick a task.  We pick randomly from the available tasks.
+        
+        // the other case this happens is if there are no tasks available in which
+        // case return null since I can't actually physically commit to a task since
+        // no tasks exist
+        
+        if (availableTasks.length > 0) {
+            return availableTasks[random.nextInt(availableTasks.length)];
+        }
+        
         return null;// this should never happen and will result in the agent not going after a task!
     }
     

@@ -146,9 +146,15 @@ public class Agent implements IAgent {
 
             decider.setCurrentPos(control.getCurrentLocation(state));
 
+            if (isBad == false) {
             // get the next task
             curTask = decider.decideNextTask(bondsman.getAvailableTasks());
-            
+            }
+            else {
+                Task[] av = bondsman.getAvailableTasks();
+                if (av.length > 0)
+                    curTask = av[bountyState.random.nextInt(av.length)];
+            }
             if (currentTaskId != curTask.getID() && currentTaskId != -1) {
             	tried[currentTaskId]++;
             }
@@ -228,14 +234,14 @@ public class Agent implements IAgent {
         if (beforeDecide(state))
             return;
         
-        if(canJumpship && curTask != null) {
+        if(canJumpship && curTask != null && isBad == false) {
             decider.setPreTask(curTask);// this is the previous task now for when i decide a new task
             decideJumpship(state);
         }
         
         if (decideTaskFailed) {
 
-        	decider.setPreTask(null);
+            decider.setPreTask(null);
             // didn't jumpship so tell the learner...
             decider.setJumped(false);
 
