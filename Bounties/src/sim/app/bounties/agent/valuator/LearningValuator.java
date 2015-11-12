@@ -5,6 +5,13 @@
  */
 package sim.app.bounties.agent.valuator;
 
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.PriorityQueue;
+
+import com.lowagie.text.List;
+
 import ec.util.MersenneTwisterFast;
 import sim.app.bounties.environment.Task;
 import sim.app.bounties.util.QTable;
@@ -41,21 +48,58 @@ public abstract class LearningValuator extends DefaultValuator implements Decisi
         this.numTimeSteps = numTimeSteps;
     }
     
+    class TaskValuePair implements Comparable<TaskValuePair>{
+    	double value;
+    	Task task;
+    	
+    	public TaskValuePair(double value, Task t) {
+			this.value = value;
+			this.task = t;
+		}
+
+		@Override
+		public int compareTo(TaskValuePair o) {
+			if(this.value <  o.value)
+				return 1;
+			else if(this.value > o.value)
+				return -1;
+			return 0;
+		}
+    }
+    
     @Override
     Task pickTask(Task availableTasks[]) {
         double max = -1;
         Task curTask = null;
-        for (Task availTask : availableTasks) {
-            // over all tasks
-            double tval = timeTable.getQValue(availTask.getID(), 0);
-            double pval = getPValue(availTask);
-            double value = 1.0 / tval * pval * availTask.getCurrentReward();
-            if (value > max) {
-                max = value;
-                curTask = availTask;
-            }
-        }
-        return curTask;
+        PriorityQueue<TaskValuePair> queue = new PriorityQueue<TaskValuePair>();
+
+//        for (Task availTask : availableTasks) {
+//            // over all tasks
+//            double tval = timeTable.getQValue(availTask.getID(), 0);
+//            double pval = getPValue(availTask);
+//            double value = 1.0 / tval * pval * availTask.getCurrentReward();
+//            if (value > max) {
+//                max = value;
+//                curTask = availTask;
+//            }
+//            
+//        }
+//        return curTask;
+		for (Task availTask : availableTasks) {
+			// over all tasks
+			double tval = timeTable.getQValue(availTask.getID(), 0);
+			double pval = getPValue(availTask);
+			double value = 1.0 / tval * pval * availTask.getCurrentReward();
+			queue.add(new TaskValuePair(value, availTask));
+		}
+		ArrayList<Task> candidateList = new ArrayList<Task>();
+		for (int i = 0; i < 3; ++i) {
+			candidateList.add(queue.poll().task);
+		}
+
+		int index = random.nextInt(candidateList.size());
+		return candidateList.get(index);
+        
     }
     
     abstract double getPValue(Task availTask);
