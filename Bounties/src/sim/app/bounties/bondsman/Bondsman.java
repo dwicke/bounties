@@ -53,7 +53,7 @@ public class Bondsman implements Steppable {
         // set everyone to do task -1 since not doing anytask
         Arrays.fill(whosDoingWhatTaskID, -1);
         incrementAmount = new int[this.bounties.numTasks];
-        Arrays.fill(incrementAmount, 2);// make it 2 so can decrease...? if not work make double and default 1 and halve it then on bad
+        Arrays.fill(incrementAmount, 1);// make it 2 so can decrease...? if not work make double and default 1 and halve it then on bad
     }
     
     @Override
@@ -173,7 +173,7 @@ public class Bondsman implements Steppable {
                     ((Task) tasks.objs[i]).setAvailable(true);
                     ((Task) tasks.objs[i]).setDone(false);
                     ((Task) tasks.objs[i]).makeRespawnTime(bounties.random);
-                    incrementAmount[((Task)tasks.objs[i]).getID()] = 2;
+                    incrementAmount[((Task)tasks.objs[i]).getID()] = 1;
                         
                 }
             }
