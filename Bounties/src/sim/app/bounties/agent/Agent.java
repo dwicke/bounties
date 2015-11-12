@@ -194,7 +194,7 @@ public class Agent implements IAgent {
                 this.isBad == true)) {
             if(bountyState.schedule.getSteps() % trapStep != 0 && this.hasTraps)
                 return true;
-            if(bountyState.schedule.getSteps() % 20 != 0 && this.isBad)
+            if(bountyState.schedule.getSteps() % 10 != 0 && this.isBad)
                 return true;
         }
         return false;

@@ -537,10 +537,11 @@ public class Bounties extends SimState {
         
         
         // Now make BadRobots
+        /*
         for (int i = numAgents-numBadRobot; i < numAgents; i++) {
             agents[i] = createBadBot(i);
             schedule.scheduleRepeating(Schedule.EPOCH + i, 0, (Steppable)agents[i], 1);
-        }
+        }*/
         
         StatsPublisher stats = new StatsPublisher(this, maxNumSteps,dir);
         // now schedule the bondsman so that it can add more tasks as needed.
@@ -580,9 +581,15 @@ public class Bounties extends SimState {
         quads[2] = new Int2D(GRID_WIDTH - 1, GRID_HEIGHT - 1);        
         Bag auctionVals = new Bag();
         
-        for (int x = 0; x < numBots-badRobots; x++) {
+        for (int x = 0; x < numBots; x++) {
+            
+            
             
             IAgent bot = new Agent();
+            if ( x >= numBots-badRobots) {
+                // then we have a bad robot so make it slower
+                bot.setIsBad(true);
+            }
             DecisionValuator valuator = null;
             
              // 0 - simple, 1 - simpleP, 2 - simpleR, 3 - complex, 4 - complexP, 5 - complexR, 6 - random, 7 - psuedoOptimal
@@ -731,7 +738,7 @@ public class Bounties extends SimState {
             ob.setAuctionCompetitors(botAuc);
         }
         */
-        for (int i = 0; i < numBots-badRobots; i++) {
+        for (int i = 0; i < numBots/*-badRobots*/; i++) {
             agents[i].init(this);
         }
         
