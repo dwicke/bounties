@@ -38,6 +38,9 @@ public class RealAuctionValuator extends BountyAuctionValuator{
             //double value = 1.0/tval * pval *((Task)availTasks[i]).getCurrentReward();
             double value = tval > 0.0 ? 1/tval : 0.0;
 
+            // consider making:
+            // Priority-Based Task Allocation in Auction-Based Applications
+            
             if  (isDead == true){
                     value*=-1;
             }

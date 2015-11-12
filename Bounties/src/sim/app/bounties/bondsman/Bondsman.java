@@ -36,7 +36,7 @@ public class Bondsman implements Steppable {
     private final int badOdds = 10;
     public int clumpcnt = 0;
     public double currentAvgNumAgents = 0.0;
-    int incrementAmount = 1;
+    int incrementAmount[];
     
     public Bondsman(){
     }
@@ -52,6 +52,8 @@ public class Bondsman implements Steppable {
         whosDoingWhatTaskID = new int[this.bounties.numAgents];
         // set everyone to do task -1 since not doing anytask
         Arrays.fill(whosDoingWhatTaskID, -1);
+        incrementAmount = new int[this.bounties.numTasks];
+        Arrays.fill(incrementAmount, 2);// make it 2 so can decrease...? if not work make double and default 1 and halve it then on bad
     }
     
     @Override
@@ -60,7 +62,48 @@ public class Bondsman implements Steppable {
         incrementBounty(); // increment the bounties
         incrementExistence();
         getCalculateGiniIndex();
+        getGeneralEntropyIndex(1.0);
     }
+    
+    public double getTheilIndex() {
+        return getGeneralEntropyIndex(1.0);
+    }
+    public double getGeneralEntropyIndex(double alpha) {
+        
+        double entropy = 0.0;
+        
+        ArrayList<Task> taskList = new ArrayList<Task>();
+	taskList.addAll(tasks);
+        
+        double N = tasks.numObjs;
+        double mean = 0.0;
+        for (int i =0; i < N; i++) {
+            mean += taskList.get(i).getCompleteCounter();
+        }
+        mean /= N;
+        
+        if (alpha == 0) {
+            for (int i =0; i < N; i++) {
+                double comCountOverMean = ((double)taskList.get(i).getCompleteCounter()) / mean;
+                entropy +=  Math.log(comCountOverMean);
+            }
+            entropy *= (-1/N);
+        } else if (alpha == 1) {
+            for (int i =0; i < N; i++) {
+                double comCountOverMean = ((double)taskList.get(i).getCompleteCounter()) / mean;
+                entropy += comCountOverMean * Math.log(comCountOverMean);
+            }
+            entropy *= (1/N);
+        } else {
+            for (int i =0; i < N; i++) {
+                double comCountOverMean = ((double)taskList.get(i).getCompleteCounter()) / mean;
+                entropy += Math.pow(comCountOverMean, alpha) - 1;
+            }
+            entropy *= (1/(N*alpha*(alpha-1)));
+        }
+        return entropy;
+    }
+    
     
     public double getCalculateGiniIndex() {
 		ArrayList<Task> taskList = new ArrayList<Task>();
@@ -101,12 +144,16 @@ public class Bondsman implements Steppable {
     
     
     public void setIncrementAmount(int incrementAmount) {
-        this.incrementAmount = incrementAmount;
+        //this.incrementAmount = incrementAmount;
+        Arrays.fill(this.incrementAmount, incrementAmount);
     }
     public void incrementBounty(){
         for(int i = 0; i< tasks.size(); i++){
            // if (((Task) tasks.objs[i]).getIsAvailable()) // only increment the 
-                ((Task)tasks.objs[i]).incrementCurrentReward(incrementAmount);
+                ((Task)tasks.objs[i]).incrementCurrentReward(incrementAmount[((Task)tasks.objs[i]).getID()]);
+                if (bounties.random.nextDouble() < .01 && incrementAmount[((Task)tasks.objs[i]).getID()] < 100) {
+                    //incrementAmount[((Task)tasks.objs[i]).getID()] = incrementAmount[((Task)tasks.objs[i]).getID()] * 2;
+                }
         }
     }
     public void incrementExistence() {
@@ -126,6 +173,7 @@ public class Bondsman implements Steppable {
                     ((Task) tasks.objs[i]).setAvailable(true);
                     ((Task) tasks.objs[i]).setDone(false);
                     ((Task) tasks.objs[i]).makeRespawnTime(bounties.random);
+                    incrementAmount[((Task)tasks.objs[i]).getID()] = 2;
                         
                 }
             }
