@@ -6,6 +6,7 @@
 package sim.app.bounties.agent.valuator;
 
 import ec.util.MersenneTwisterFast;
+import java.util.Arrays;
 import sim.app.bounties.environment.Task;
 import sim.app.bounties.util.QTable;
 import sim.util.Bag;
@@ -14,33 +15,41 @@ import sim.util.Bag;
  *
  * @author drew
  */
-public class JumpshipSimpleBValuator extends LearningValuator implements DecisionValuator {
+public class JumpshipSimpleRValuator extends LearningValuator implements DecisionValuator {
     private static final long serialVersionUID = 1;
     
     private int numTasks;
-    QTable bTable, tIncTable; // learn the 
     
-    public JumpshipSimpleBValuator(MersenneTwisterFast random, double epsilonChooseRandomTask, int agentID, boolean hasOneUp, int numTasks, int numRobots) {
+    
+    
+    public JumpshipSimpleRValuator(MersenneTwisterFast random, double epsilonChooseRandomTask, int agentID, boolean hasOneUp, int numTasks, int numRobots) {
         super(random, epsilonChooseRandomTask, agentID, hasOneUp, numTasks, numRobots);
         this.numTasks = numTasks;
-        
-        bTable = new QTable(numTasks, 1, tTableLearningRate, tTableDiscountBeta, initValue); 
-        tIncTable = new QTable(numTasks, 1, tTableLearningRate, tTableDiscountBeta, initValue); 
-        
-        
+        incrementRateTable = new QTable(numTasks, 1, tTableLearningRate, tTableDiscountBeta, initValue); 
     }
     @Override
     Task pickTask(Task availableTasks[]) {
+        
         double max = -1;
         Task curTask = null;
         for (Task availTask : availableTasks) {
             // over all tasks
             double tval = timeTable.getQValue(availTask.getID(), 0);
+            double incRate = incrementRateTable.getQValue(availTask.getID(), 0);
+            
+            //System.err.println("Increment rate = " + incRate);
+           /* if (tval > numTimeSteps) {
+                tval -= numTimeSteps;
+            }*/
+            double curReward = availTask.getCurrentReward();
+            if (this.preTask != null && this.preTask.getID() != availTask.getID()) {
+                curReward = availTask.getCurrentReward() - this.preTask.getCurrentReward();
+                if (curReward < 0) {
+                    curReward = 0;
+                }
+            }
             double pval = getPValue(availTask);
-            double bval = bTable.getQValue(availTask.getID(), 0);
-            double tIncVal = tIncTable.getQValue(availTask.getID(), 0);
-            double value = 1.0 / tval * pval * (availTask.getCurrentReward() + tval) +
-                                ((bval - (availTask.getCurrentReward() + tIncVal))/tIncVal) * (1 - pval);
+            double value = 1.0 / tval * pval * (curReward + tval*incRate);
             if (value > max) {
                 max = value;
                 curTask = availTask;
@@ -57,22 +66,8 @@ public class JumpshipSimpleBValuator extends LearningValuator implements Decisio
         if(reward == 1.0) {
             timeTable.update(curTask.getID(), 0, numTimeSteps);
             pTable.update(curTask.getID(), 0, reward);
-            tIncTable.update(curTask.getID(), 0, numTimeSteps);// so continue to learn 
-            
-            // bTable should actually get updated whenever a task is completed not necessariliy by me.
-            bTable.update(curTask.getID(), 0, curTask.getLastRewardPaid());
-            
         }else{
             pTable.update(curTask.getID(), 0, reward);
-            if (timeTable.getQValue(curTask.getID(), 0) > 1) {
-                // then we have completed this task before
-                tIncTable.update(curTask.getID(), 0, numTimeSteps);
-            }else {
-                // we haven't yet completed this task
-                tIncTable.setQValue(curTask.getID(), 0, 
-                        Math.max(tIncTable.getQValue(curTask.getID(), 0), numTimeSteps));
-                
-            }
         }
         if (this.hasOneUp)
                 pTable.oneUpdate(oneUpdateGamma);

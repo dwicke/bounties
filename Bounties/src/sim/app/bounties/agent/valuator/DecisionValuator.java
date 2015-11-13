@@ -22,4 +22,5 @@ public interface DecisionValuator {
     public void setCurrentPos(Int2D curLoc);
     public void setPreTask(Task task);
     public void setJumped(boolean jumped);
+    public void learnIncrementRate(Task[] tasks);
 }

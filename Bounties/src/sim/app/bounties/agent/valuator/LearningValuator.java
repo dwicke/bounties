@@ -32,6 +32,7 @@ public abstract class LearningValuator extends DefaultValuator implements Decisi
     double initValue = 1;
     boolean hasOneUp;
     int numTimeSteps;
+    QTable incrementRateTable;
     
     public LearningValuator(MersenneTwisterFast random, double epsilonChooseRandomTask, 
             int agentID, boolean hasOneUp, int numTasks, int numRobots){
@@ -39,7 +40,25 @@ public abstract class LearningValuator extends DefaultValuator implements Decisi
         this.hasOneUp = hasOneUp;
         timeTable = new QTable(numTasks, 1, tTableLearningRate, tTableDiscountBeta, initValue); 
         pTable = new QTable(numTasks, numRobots, pTableLearningRate, pTableDiscountBeta, initValue);        
+        incrementRateTable = new QTable(numTasks, 1, tTableLearningRate, tTableDiscountBeta, initValue); 
     }
+    
+ 
+    /**
+     * 
+     * @param tasks 
+     */
+    @Override
+    public void learnIncrementRate(Task[] tasks) {
+        for (Task task : tasks) {
+            //System.err.println("Defaul reward" + task.getDefaultReward() + "Difference = " + (task.getCurrentReward() - task.getLastReward()) + " current: " + task.getCurrentReward() + " last: " + task.getLastReward());
+            
+            if ((task.getCurrentReward() - task.getLastReward()) != 0) {
+                incrementRateTable.update(task.getID(), 0, task.getCurrentReward() - task.getLastReward());
+            }
+        }
+    }
+    
     
     public void setOneUpdateGamma(double oneUpdateGamma) {
         this.oneUpdateGamma = oneUpdateGamma;

@@ -16,6 +16,7 @@ import sim.util.Int2D;
 public class Task implements Real, Fixed2D{
     private static final long serialVersionUID = 1;
 
+    private int lastReward = 0;
     private int currentReward = 0; // controlled by bondsman to increase
     private int lastRewardPaid = 0;
     private boolean done = false; // true when at the goal false otherwise
@@ -24,7 +25,7 @@ public class Task implements Real, Fixed2D{
     public Int2D initialLocation;
     
     private int id = 0;
-    private int defaultReward = 0;//100;
+    private int defaultReward = 1000;//100;
     private Color availableColor = Color.RED;// may want to change color if we have different types of tasks
     private Color notAvailableColor = Color.WHITE; // make it disappear
     
@@ -48,9 +49,21 @@ public class Task implements Real, Fixed2D{
     
     public Task() {
         currentReward = defaultReward;
+        lastReward = defaultReward;
         lastAgentsWorkingOnTask = new Bag();
         currentAgentsWorkingOnTask = new Bag();
     }
+
+    public int getLastReward() {
+        return lastReward;
+    }
+
+    public void setLastRewardPaid(int lastRewardPaid) {
+        this.lastRewardPaid = lastRewardPaid;
+    }
+    
+    
+    
     
     public void setCompleteCounter(int val) {
     	this.completeCounter = val;
@@ -154,15 +167,23 @@ public class Task implements Real, Fixed2D{
     }
     
     public void setCurrentReward(int reward) {
+        lastReward = currentReward;
         currentReward = reward;
     }
     public void incrementCurrentReward() {
         if (currentReward < 10000000 && isDone() == false)// don't increment while the task is done 
+        {
+            lastReward = currentReward;
             currentReward+=1;
+        }
     }
     public void incrementCurrentReward(int incrementAmount) {
         if (currentReward < 10000000 && isDone() == false)// don't increment while the task is done 
+        {
+            lastReward = currentReward;
             currentReward+=incrementAmount;
+            //System.err.println("current reward = " + currentReward + " last reward = " + lastReward + " incrAmt = " + incrementAmount);
+        }
     }
     public int getDefaultReward() {
         return defaultReward;
@@ -191,17 +212,19 @@ public class Task implements Real, Fixed2D{
     }
 
     
-    public int getLastReward() {
+    public int getLastRewardPaid() {
         return lastRewardPaid;
     }
 
     public void resetReward() {
         lastRewardPaid = currentReward;
         currentReward = defaultReward;
+        lastReward = defaultReward;
     }
     
     public void resetReward(int reward) {
         currentReward = reward;
+        lastReward = reward;
     }
 
     @Override

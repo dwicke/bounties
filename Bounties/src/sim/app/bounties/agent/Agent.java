@@ -233,7 +233,7 @@ public class Agent implements IAgent {
         // the preamble before deciding or going toward a task check if I'm in a state that allows me to
         if (beforeDecide(state))
             return;
-        
+        decider.learnIncrementRate(bountyState.bondsman.getAvailableTasks());
         if(canJumpship && curTask != null && isBad == false) {
             decider.setPreTask(curTask);// this is the previous task now for when i decide a new task
             decideJumpship(state);

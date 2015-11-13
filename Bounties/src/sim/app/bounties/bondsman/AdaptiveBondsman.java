@@ -113,7 +113,7 @@ public class AdaptiveBondsman extends Bondsman {
             //System.err.println("Exclusive deciding if should be");
 
             // the sky is falling! so go to non-exclusive when avg > last reward
-            if((totalBounty/availTasks.length) > task.getLastReward()) {
+            if((totalBounty/availTasks.length) > task.getLastRewardPaid()) {
                 // then make it non-exclusive
                 mightDoubleBounty[task.getID()] = false;
                 // promote it as well by starting the bounty out higher?
@@ -135,7 +135,7 @@ public class AdaptiveBondsman extends Bondsman {
             // curAvg, base, lastRew
             // meaning whoever is doing this task knows what he is doing
             //System.err.println("Not exclusive deciding if should be");
-            if((totalBounty/availTasks.length) < task.getLastReward()) {
+            if((totalBounty/availTasks.length) < task.getLastRewardPaid()) {
                 // then make it exclusive
                 mightDoubleBounty[task.getID()] = true;
             }

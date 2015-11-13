@@ -24,6 +24,10 @@ public abstract class DefaultValuator implements DecisionValuator {
     Task preTask;
     boolean jumped;
     
+    //does nothing
+    @Override
+    public void learnIncrementRate(Task[] tasks) {}
+    
     @Override
     public void setJumped(boolean jumped) {
         this.jumped = jumped;

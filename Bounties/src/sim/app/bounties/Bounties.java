@@ -29,6 +29,7 @@ import sim.app.bounties.agent.valuator.ExpandedComplexValuator;
 import sim.app.bounties.agent.valuator.JumpshipComplexValuator;
 import sim.app.bounties.agent.valuator.JumpshipSimpleBValuator;
 import sim.app.bounties.agent.valuator.JumpshipSimpleJValuator;
+import sim.app.bounties.agent.valuator.JumpshipSimpleRValuator;
 import sim.app.bounties.agent.valuator.JumpshipSimpleValuator;
 import sim.app.bounties.agent.valuator.OptimalValuator;
 import sim.app.bounties.agent.valuator.RealAuctionValuator;
@@ -51,8 +52,8 @@ public class Bounties extends SimState {
 
     private static final long serialVersionUID = 1;
 
-    public static final int GRID_HEIGHT = 40;//40;
-    public static final int GRID_WIDTH = 60;//60;
+    public static final int GRID_HEIGHT = 400;//40;
+    public static final int GRID_WIDTH = 600;//60;
     public static String[] myArgs;
 
     public double[] rollingAverageJump = new double[1000];
@@ -525,7 +526,7 @@ public class Bounties extends SimState {
         
         for (int i = 0; i < tasksLocs.numObjs; i++) {
             Task curTask = ((Task)(tasksLocs.objs[i]));
-            curTask.setDefaultReward(defaultReward);
+            //curTask.setDefaultReward(defaultReward);
             tasksGrid.setObjectLocation(tasksLocs.objs[i], curTask.getLocation());
         }
         
@@ -691,6 +692,15 @@ public class Bounties extends SimState {
                     valuator = new RealAuctionValuator(random, 0, x, false, numTasks, numAgents);
                     auctionVals.add(valuator);
                     break;
+                case 19:
+                    bot.setCanJumpship(true);
+                    if (shouldTeleport) {
+                        bot.setJumpship(new ResetJumpship()); // teleport on jumpship
+                    } else {
+                        bot.setJumpship(new DefaultJumpship()); // don't teleport
+                    }
+                    valuator = new JumpshipSimpleRValuator(random, epsilonChooseRandomTask, x, true, numTasks, numAgents);
+                    break;
                 default:
                     break;
             }
@@ -698,7 +708,7 @@ public class Bounties extends SimState {
             bot.setHasTraps(hasTraps == 1);
             if (hasTraps == 1) {
                 bot.setTrapStep(this.trapStep);
-            }
+            } 
             bot.setCanDie(willdie == 1);
             if(valuator instanceof LearningValuator)
                 (( LearningValuator)valuator).setOneUpdateGamma(pUpdateValue);

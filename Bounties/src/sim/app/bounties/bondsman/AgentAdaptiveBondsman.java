@@ -69,7 +69,7 @@ public class AgentAdaptiveBondsman extends Bondsman {
     public void finishTask(Task curTask, int robotID, long timestamp, int numTimeSteps) {
         super.finishTask(curTask, robotID, timestamp, numTimeSteps);
         // "learn" the history average
-        bountyHist[curTask.getID()][robotID] = alpha * curTask.getLastReward() + 
+        bountyHist[curTask.getID()][robotID] = alpha * curTask.getLastRewardPaid() + 
                 oneminusalpha * bountyHist[curTask.getID()][robotID];
     }
     
@@ -104,7 +104,7 @@ public class AgentAdaptiveBondsman extends Bondsman {
             //System.err.println("Exclusive deciding if should be");
 
             // the sky is falling! so go to non-exclusive when avg > last reward
-            if((totalBounty/availTasks.length) > task.getLastReward()) {
+            if((totalBounty/availTasks.length) > task.getLastRewardPaid()) {
                 // then make it non-exclusive
                 isExclusive[task.getID()] = false;
                 
@@ -123,7 +123,7 @@ public class AgentAdaptiveBondsman extends Bondsman {
             // curAvg, base, lastRew
             // meaning whoever is doing this task knows what he is doing
             //System.err.println("Not exclusive deciding if should be");
-            if((totalBounty/availTasks.length) < task.getLastReward()) {
+            if((totalBounty/availTasks.length) < task.getLastRewardPaid()) {
                 // then make it exclusive
                 isExclusive[task.getID()] = true;
             }
