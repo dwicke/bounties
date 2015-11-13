@@ -120,8 +120,11 @@ public class Task implements Real, Fixed2D{
         badForWho = agentID;
     }
     
-    public boolean isTaskReady(){//check to see if this is finally time to spawn.
+    public void decrementReady() {
         timeUntilRespawn--;
+    }
+    
+    public boolean isTaskReady(){//check to see if this is finally time to spawn.
         return timeUntilRespawn<=0;//less than or equal to since timeUntilRespawn could be -1 if timeUntilRespawn was chosen to be 0
     }
     

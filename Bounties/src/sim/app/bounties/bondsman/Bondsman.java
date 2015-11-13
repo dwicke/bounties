@@ -165,14 +165,21 @@ public class Bondsman implements Steppable {
     }
     public void makeAvailable() {
         for (int i = 0; i < tasks.size(); i++) {
+            
             if (((Task) tasks.objs[i]).isDone()) {
+                ((Task) tasks.objs[i]).decrementReady();
                 if(((Task) tasks.objs[i]).isTaskReady()) {
+                    
+                    
                     // need to decide whether to make it exclusive or not
                     if (exclusiveType == 2)
                         decideExclusivity(((Task) tasks.objs[i]));
+                    
                     // need to reset the task and make it available again
                     ((Task) tasks.objs[i]).setAvailable(true);
                     ((Task) tasks.objs[i]).setDone(false);
+                    
+                    
                     if (i < (bounties.numTasks - bounties.numSpikeTasks)) {
                         ((Task) tasks.objs[i]).makeRespawnTime(bounties.random);
                     }
