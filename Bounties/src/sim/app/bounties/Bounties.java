@@ -52,8 +52,8 @@ public class Bounties extends SimState {
 
     private static final long serialVersionUID = 1;
 
-    public static final int GRID_HEIGHT = 400;//40;
-    public static final int GRID_WIDTH = 600;//60;
+    public static final int GRID_HEIGHT = 40;//40;
+    public static final int GRID_WIDTH = 60;//60;
     public static String[] myArgs;
 
     public double[] rollingAverageJump = new double[1000];
@@ -486,6 +486,7 @@ public class Bounties extends SimState {
         if(myArgs !=null && keyExists("-trapStep", myArgs)) {
             this.trapStep = Integer.parseInt(argumentForKey("-trapStep", myArgs));
         }
+        
         
         System.err.println("Num Bad robots = " + numBadRobot + " numAgents = " + numAgents);
         numAgents = numDefaultAgents;

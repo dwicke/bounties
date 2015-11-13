@@ -37,21 +37,21 @@ public class JumpshipSimpleCValuator extends LearningValuator implements Decisio
             double tval = timeTable.getQValue(availTask.getID(), 0);
             double pval = getPValue(availTask);
             double tIncVal = tIncTable.getQValue(availTask.getID(), 0);
-            
+            double incRate = incrementRateTable.getQValue(availTask.getID(), 0);
             double value = 0;
                         
             if(this.preTask!=null&&availTask.getID()==this.preTask.getID()) {
             	if(tval > numTimeSteps){
             		double told = tval;
                 	tval = tval-numTimeSteps;
-                	value = 1.0 / tval * pval * (availTask.getCurrentReward() + tval);
+                	value = 1.0 / tval * pval * (availTask.getCurrentReward() + tval*incRate);
                 }
                 else{
                 	value = Double.POSITIVE_INFINITY;
                 }
             }
             else{
-            	value = 1.0 / tval * pval * (availTask.getCurrentReward() + tval);
+            	value = 1.0 / tval * pval * (availTask.getCurrentReward() + tval*incRate);
             }
             	
             	
