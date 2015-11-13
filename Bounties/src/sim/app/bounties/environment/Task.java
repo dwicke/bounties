@@ -121,7 +121,6 @@ public class Task implements Real, Fixed2D{
     }
     
     public boolean isTaskReady(){//check to see if this is finally time to spawn.
-        
         timeUntilRespawn--;
         return timeUntilRespawn<=0;//less than or equal to since timeUntilRespawn could be -1 if timeUntilRespawn was chosen to be 0
     }
@@ -153,12 +152,19 @@ public class Task implements Real, Fixed2D{
     public long getLastFinishedTime() {
         return finishedTime;
     }
+    public void setRespawnTime(int spawnTime) {
+        timeUntilRespawn = spawnTime;
+    }
+    
     public void makeRespawnTime(MersenneTwisterFast rand){
         timeUntilRespawn = rand.nextInt(maxRespawnTime); // use uniform since we want them to come back within a reasonable time... 
     }
     public int getTimeUntilRespawn() {
         return timeUntilRespawn;
     }
+    
+    
+    
     public void setAvailable(boolean available) {
         this.available = available;
     }

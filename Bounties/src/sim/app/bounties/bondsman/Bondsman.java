@@ -173,7 +173,12 @@ public class Bondsman implements Steppable {
                     // need to reset the task and make it available again
                     ((Task) tasks.objs[i]).setAvailable(true);
                     ((Task) tasks.objs[i]).setDone(false);
-                    ((Task) tasks.objs[i]).makeRespawnTime(bounties.random);
+                    if (i < (bounties.numTasks - bounties.numSpikeTasks)) {
+                        ((Task) tasks.objs[i]).makeRespawnTime(bounties.random);
+                    }
+                    else {
+                        ((Task) tasks.objs[i]).setRespawnTime(bounties.spikeRegenRate);
+                    }
                     //incrementAmount[((Task)tasks.objs[i]).getID()] = 1;
                         
                 }
@@ -209,7 +214,7 @@ public class Bondsman implements Steppable {
     public Bag initTasks(Int2D field) {
         tasks.clear();
         isExclusive = new boolean[bounties.numTasks];
-        for (int i = 0; i < bounties.numTasks; i++) {
+        for (int i = 0; i < bounties.numTasks - bounties.numSpikeTasks; i++) {
             Task t = new Task();
             t.setID(i);
             t.setInitialLocation(new Int2D(bounties.random.nextInt(field.x), bounties.random.nextInt(field.y)));
@@ -224,6 +229,28 @@ public class Bondsman implements Steppable {
                 isExclusive[i] = (exclusiveType == 1);// 1 == exclusive 0 == not exclusive
             }
         }
+        
+        // now generate the spike tasks
+        for (int i = bounties.numTasks - bounties.numSpikeTasks; i < bounties.numTasks; i++) {
+            Task t = new Task();
+            t.setID(i);
+            t.setInitialLocation(new Int2D(bounties.random.nextInt(field.x), bounties.random.nextInt(field.y)));
+            t.generateRealTaskLocation(bounties.random);
+            bounties.tasksGrid.setObjectLocation(t, t.realLocation);
+            incrementAmount[i] = bounties.random.nextInt(maxIncrementAmount) + 1;
+            t.setDefaultReward(bounties.spikeBountyValue);
+            t.setRespawnTime(bounties.spikeRegenRate);
+            t.setAvailable(false);
+            t.setDone(true);
+            tasks.add(t);
+            if (exclusiveType == 2) {
+                isExclusive[i] = false;//bounties.random.nextBoolean(); // randomly choose initial state
+            } else {
+                isExclusive[i] = (exclusiveType == 1);// 1 == exclusive 0 == not exclusive
+            }
+        }
+        
+        
         return tasks;
     }
     
@@ -354,5 +381,7 @@ public class Bondsman implements Steppable {
         currentAvgNumAgents = (double)unique;
         return currentAvgNumAgents;
     }
+
+    
     
 }

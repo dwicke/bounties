@@ -52,8 +52,8 @@ public class Bounties extends SimState {
 
     private static final long serialVersionUID = 1;
 
-    public static final int GRID_HEIGHT = 40;//40;
-    public static final int GRID_WIDTH = 60;//60;
+    public static final int GRID_HEIGHT = 400;//40;
+    public static final int GRID_WIDTH = 600;//60;
     public static String[] myArgs;
 
     public double[] rollingAverageJump = new double[1000];
@@ -85,7 +85,15 @@ public class Bounties extends SimState {
     private int hasTraps = 0;
     public int numAgents = 4;
     public int numDefaultAgents = 4;
-    public int numTasks = 20;
+    public int numTasks = 24; // this is the total number of tasks including the spike tasks
+    
+    // spike tasks are those that appear infrequently but have a high
+    // bounty associated with them but are randomly generated.
+    public int numSpikeTasks = 4;
+    public int spikeBountyValue = 0;
+    public int spikeRegenRate = 20000;
+    
+    
     public int numBadRobot = 0;
     private double epsilonChooseRandomTask = 0.002;
     double pUpdateValue = .001;
@@ -97,6 +105,34 @@ public class Bounties extends SimState {
     public int incrementAmount = 1;
     public int trapStep = 10;
 
+    public int getNumSpikeTasks() {
+        return numSpikeTasks;
+    }
+
+    public void setNumSpikeTasks(int numSpikeTasks) {
+        this.numSpikeTasks = numSpikeTasks;
+    }
+
+    public int getSpikeBountyValue() {
+        return spikeBountyValue;
+    }
+
+    public void setSpikeBountyValue(int spikeBountyValue) {
+        this.spikeBountyValue = spikeBountyValue;
+    }
+
+    public int getSpikeRegenRate() {
+        return spikeRegenRate;
+    }
+
+    public void setSpikeRegenRate(int spikeRegenRate) {
+        this.spikeRegenRate = spikeRegenRate;
+    }
+
+    
+    
+    
+    
     public int getTrapStep() {
         return trapStep;
     }
@@ -160,6 +196,9 @@ public class Bounties extends SimState {
     public int getWillRotate() {
         return this.willRotate;
     }
+    
+    
+    
     
     public void setRotateRobots(boolean value){
            
@@ -488,9 +527,25 @@ public class Bounties extends SimState {
         }
         
         
+        if(myArgs !=null && keyExists("-numSpikeTasks", myArgs)) {
+            this.numSpikeTasks = Integer.parseInt(argumentForKey("-numSpikeTasks", myArgs));
+        }
+        
+        if(myArgs !=null && keyExists("-spikeMean", myArgs)) {
+            this.spikeBountyValue = Integer.parseInt(argumentForKey("-spikeMean", myArgs));
+        }
+        if(myArgs !=null && keyExists("-spikeRegenRate", myArgs)) {
+            this.spikeRegenRate = Integer.parseInt(argumentForKey("-spikeRegenRate", myArgs));
+        }
+        
+        
+        
+        
         System.err.println("Num Bad robots = " + numBadRobot + " numAgents = " + numAgents);
         numAgents = numDefaultAgents;
         numAgents+=numBadRobot;
+        
+        
         
         if(myArgs !=null && keyExists("-bondType", myArgs)) {
             bondsmanType = Integer.parseInt(argumentForKey("-bondType", myArgs));
@@ -524,6 +579,8 @@ public class Bounties extends SimState {
         
         // set up the tasks in each of the quadrants
         Bag tasksLocs = bondsman.initTasks(new Int2D(tasksGrid.getWidth(), tasksGrid.getHeight()));// bottom left
+        
+        
         
         for (int i = 0; i < tasksLocs.numObjs; i++) {
             Task curTask = ((Task)(tasksLocs.objs[i]));
