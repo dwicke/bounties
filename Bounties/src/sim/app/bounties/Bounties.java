@@ -537,7 +537,9 @@ public class Bounties extends SimState {
         if(myArgs !=null && keyExists("-spikeRegenRate", myArgs)) {
             this.spikeRegenRate = Integer.parseInt(argumentForKey("-spikeRegenRate", myArgs));
         }
-        
+        if(myArgs !=null && keyExists("-numTasks", myArgs)) {
+            this.numTasks = Integer.parseInt(argumentForKey("-numTasks", myArgs));
+        }
         
         
         
