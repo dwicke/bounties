@@ -40,7 +40,7 @@ public class BountyAuctionValuator extends LearningValuator implements DecisionV
             double tval = timeTable.getQValue(((Task)availTasks[i]).getID(), 0);
             double pval = pTable.getQValue(((Task)availTasks[i]).getID(), 0);
             //double value = 1.0/tval * pval *((Task)availTasks[i]).getCurrentReward();
-            double value = 1.0 / tval * pval * (availTasks[i].getCurrentReward() + tval);
+            double value = 1.0 / tval * pval * (availTasks[i].getCurrentReward());
 
             if  (isDead == true){
                     value*=-1;

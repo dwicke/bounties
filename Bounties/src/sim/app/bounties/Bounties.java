@@ -25,6 +25,8 @@ import sim.app.bounties.agent.Agent;
 import sim.app.bounties.control.TeleportController;
 import sim.app.bounties.agent.IAgent;
 import sim.app.bounties.agent.valuator.BountyAuctionValuator;
+import sim.app.bounties.agent.valuator.BountyRAuctionValuator;
+import sim.app.bounties.agent.valuator.ComplexRValuator;
 import sim.app.bounties.agent.valuator.ExpandedComplexValuator;
 import sim.app.bounties.agent.valuator.JumpshipComplexValuator;
 import sim.app.bounties.agent.valuator.JumpshipSimpleBValuator;
@@ -52,8 +54,8 @@ public class Bounties extends SimState {
 
     private static final long serialVersionUID = 1;
 
-    public static final int GRID_HEIGHT = 400;//40;
-    public static final int GRID_WIDTH = 600;//60;
+    public static final int GRID_HEIGHT = 40;//40;
+    public static final int GRID_WIDTH = 60;//60;
     public static String[] myArgs;
 
     public double[] rollingAverageJump = new double[1000];
@@ -761,6 +763,23 @@ public class Bounties extends SimState {
                     }
                     valuator = new JumpshipSimpleRValuator(random, epsilonChooseRandomTask, x, true, numTasks, numAgents);
                     break;
+                case 20: // same as JumpshipSimpleRValuator except it can't jumpship.
+                    bot.setCanJumpship(false);
+                    if (shouldTeleport) {
+                        bot.setJumpship(new ResetJumpship()); // teleport on jumpship
+                    } else {
+                        bot.setJumpship(new DefaultJumpship()); // don't teleport
+                    }
+                    valuator = new JumpshipSimpleRValuator(random, epsilonChooseRandomTask, x, true, numTasks, numAgents);
+                    break;
+                case 21:// auction with the new decision function doesn't use exploration.
+                    valuator = new BountyRAuctionValuator(random, 0, x, false, numTasks, numAgents);
+                    auctionVals.add(valuator);
+                    break;
+                case 22:// complex with new decision and random exploration
+                    valuator = new ComplexRValuator(random, epsilonChooseRandomTask, x, true, numTasks, numAgents);
+                    break;    
+                    
                 default:
                     break;
             }
