@@ -1,6 +1,6 @@
 bounties
 ========
-
+Should be refactored and possibly rearchitectured so that there is a solid core bounty hunting system and then projects can include this main bounty hunting project and build off of it.  That would make the main project less messy.  This is possible now because MASON can display g(s)etters from not just the SimState in the main view.  This needs to happen to ensure that the main code base is correct and that bugs don't get introduced.  This also mean abstracting it away from the view as well.  So, the system won't be constrained to just a grid world.
 
 TODO:
 
