@@ -5,12 +5,7 @@
  */
 package sim.app.bounties.agent.valuator;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collections;
 import java.util.PriorityQueue;
-
-import com.lowagie.text.List;
 
 import ec.util.MersenneTwisterFast;
 import sim.app.bounties.environment.Task;

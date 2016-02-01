@@ -778,8 +778,16 @@ public class Bounties extends SimState {
                     break;
                 case 22:// complex with new decision and random exploration
                     valuator = new ComplexRValuator(random, epsilonChooseRandomTask, x, true, numTasks, numAgents);
-                    break;    
-                    
+                    break;  
+                case 23:
+                    bot.setCanJumpship(true);
+                    if (shouldTeleport) {
+                        bot.setJumpship(new ResetJumpship()); // teleport on jumpship
+                    } else {
+                        bot.setJumpship(new DefaultJumpship()); // don't teleport
+                    }
+                    valuator = new JumpshipComplexValuator(random, epsilonChooseRandomTask, x, true, numTasks, numAgents);
+                    break;   
                 default:
                     break;
             }

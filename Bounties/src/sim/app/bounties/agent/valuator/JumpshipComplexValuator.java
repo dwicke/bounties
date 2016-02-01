@@ -16,8 +16,11 @@ import sim.util.Bag;
  */
 public class JumpshipComplexValuator extends LearningValuator implements DecisionValuator {
     private static final long serialVersionUID = 1;
+        private int numTasks;
+
     public JumpshipComplexValuator(MersenneTwisterFast random, double epsilonChooseRandomTask, int agentID, boolean hasOneUp, int numTasks, int numRobots) {
         super(random, epsilonChooseRandomTask, agentID, hasOneUp, numTasks, numRobots);
+        this.numTasks = numTasks;
     }
     
     
@@ -29,8 +32,19 @@ public class JumpshipComplexValuator extends LearningValuator implements Decisio
         for (Task availTask : availableTasks) {
             // over all tasks
             double tval = timeTable.getQValue(availTask.getID(), 0);
+            
+            double curReward = availTask.getCurrentReward();
+            if (this.preTask != null && this.preTask.getID() != availTask.getID()) {
+                curReward = availTask.getCurrentReward() - this.preTask.getCurrentReward();
+                if (curReward < 0) {
+                    curReward = 0;
+                }
+            }
+            
+            
             double pval = getPValue(availTask);
-            double value = 1.0 / tval * pval * (availTask.getCurrentReward() + tval);
+            //double value = 1.0 / tval * pval * (availTask.getCurrentReward() + tval);
+            double value = 1.0 / tval * pval * (curReward + tval);
             if (value > max) {
                 max = value;
                 curTask = availTask;
@@ -43,39 +57,23 @@ public class JumpshipComplexValuator extends LearningValuator implements Decisio
     public double getPValue(Task taski) {
         
         if (taski.getCurrentAgentsOnTask().isEmpty()) {
-            return 1.0;
+            //return 1.0;
+            return pTable.getQValue(taski.getID(), agentID);
         }
         
         double pmul = 1.0;
         
         for(int i = 0; i < taski.getCurrentAgentsOnTask().size(); i++) {
-            if ((int)(taski.getCurrentAgentsOnTask().objs[i]) != agentID)
+            //if ((int)(taski.getCurrentAgentsOnTask().objs[i]) != agentID)
                 pmul *= pTable.getQValue(taski.getID(), (int)(taski.getCurrentAgentsOnTask().objs[i]));
         }
         return pmul;
         
     }
 
-    /*
-    @Override
-    public double getPValue(Task taski) {
-        
-        if (taski.getLastAgentsWorkingOnTask().isEmpty()) {
-            return 1.0;
-        }
-        
-        double pmul = 1.0;
-        
-        for(int i = 0; i < taski.getLastAgentsWorkingOnTask().size(); i++) {
-            if ((int)(taski.getLastAgentsWorkingOnTask().objs[i]) != agentID)
-                pmul *= pTable.getQValue(taski.getID(), (int)(taski.getLastAgentsWorkingOnTask().objs[i]));
-        }
-        return pmul;
-        
-    }*/
 
-    @Override
-    public void learn(Task curTask, double reward, Bag agentsWorking, int numTimeSteps) {
+    private void complexLearn(Task curTask, double reward, Bag agentsWorking, int numTimeSteps) {
+        
         if(reward == 1.0) {
             timeTable.update(curTask.getID(), 0, numTimeSteps);
             for (int i = 0; i < agentsWorking.numObjs; i++) {
@@ -93,4 +91,24 @@ public class JumpshipComplexValuator extends LearningValuator implements Decisio
                 pTable.oneUpdate(oneUpdateGamma);
     }
     
+    @Override
+    public void learn(Task curTask, double reward, Bag agentsWorking, int numTimeSteps) {
+        double oldT = timeTable.getQValue(curTask.getID(), 0);
+        complexLearn(curTask, reward, agentsWorking, numTimeSteps);
+        updateEpsilon(oldT, timeTable.getQValue(curTask.getID(), 0));
+    }
+    
+    
+    
+    public void updateEpsilon(double oldT, double newT) {
+         double delta = (1.0 / (double)this.numTasks);
+        epsilonChooseRandomTask = (1.0 - delta)*epsilonChooseRandomTask +
+                                    delta*(boltzman(oldT,newT, .85));
+    }
+     
+     public double boltzman(double oldT, double newT, double sigma) {
+         return ( 1 - Math.exp(-Math.abs(newT - oldT) / sigma)) /
+                 (1 + Math.exp(-Math.abs(newT - oldT) / sigma));
+     }
+
 }

@@ -32,6 +32,7 @@ public class JumpshipSimpleValuator extends LearningValuator implements Decision
            /* if (tval > numTimeSteps) {
                 tval -= numTimeSteps;
             }*/
+            /*
             double curReward = availTask.getCurrentReward();
             if (this.preTask != null && this.preTask.getID() != availTask.getID()) {
                 curReward = availTask.getCurrentReward() - this.preTask.getCurrentReward();
@@ -39,8 +40,10 @@ public class JumpshipSimpleValuator extends LearningValuator implements Decision
                     curReward = 0;
                 }
             }
+            */
             double pval = getPValue(availTask);
-            double value = 1.0 / tval * pval * (curReward + tval);
+            //double value = 1.0 / tval * pval * (curReward + tval);
+            double value = 1.0 / tval * pval * (availTask.getCurrentReward() + tval);
             if (value > max) {
                 max = value;
                 curTask = availTask;
@@ -55,7 +58,7 @@ public class JumpshipSimpleValuator extends LearningValuator implements Decision
     
     private void learn(Task curTask, double reward, int numTimeSteps) {
         if(reward == 1.0) {
-            updateLearningRate(timeTable.getQValue(curTask.getID(), 0), numTimeSteps);
+            //updateLearningRate(timeTable.getQValue(curTask.getID(), 0), numTimeSteps); // really bad
             
             timeTable.update(curTask.getID(), 0, numTimeSteps);
             pTable.update(curTask.getID(), 0, reward);
