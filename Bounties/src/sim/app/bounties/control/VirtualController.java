@@ -18,6 +18,8 @@ import sim.util.Int2D;
 public class VirtualController implements IController {
 
     IAgent me;
+    int effortLevel;
+    int count;
     
     @Override
     public void setMyRobot(IAgent robot) {
@@ -26,6 +28,12 @@ public class VirtualController implements IController {
     
     @Override
     public boolean gotoPosition(final SimState state, Int2D position) { // exeucute task we're on if we have one
+        count++;
+        if (count != effortLevel) { // only go when I have accumulated enough effort...
+            return false;
+        }
+        
+        count = 0;
         final Bounties af = (Bounties) state;
 
         Int2D location = af.robotgrid.getObjectLocation(me);
@@ -48,6 +56,7 @@ public class VirtualController implements IController {
             return (position.x == x) && (newY == position.y);
         }
         return true;// we are there already
+
     }
     
     public Int2D getCurrentLocation(final SimState state) {
@@ -71,5 +80,10 @@ public class VirtualController implements IController {
         final Bounties af = (Bounties) state;
         af.robotgrid.setObjectLocation(me,position);
         return true;
+    }
+
+    @Override
+    public void setEffort(int effort) {
+        this.effortLevel = effort;
     }
 }

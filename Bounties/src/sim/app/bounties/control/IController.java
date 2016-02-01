@@ -23,4 +23,5 @@ public interface IController {
     public boolean setPosition(final SimState state, Int2D position);
     public void setMyRobot(IAgent robot);
     public Int2D getCurrentLocation(final SimState state);
+    public void setEffort(int effort);// number of steps to wait before moving.
 }

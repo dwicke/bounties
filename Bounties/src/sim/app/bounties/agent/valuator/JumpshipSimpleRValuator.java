@@ -64,6 +64,7 @@ public class JumpshipSimpleRValuator extends LearningValuator implements Decisio
     
     private void learn(Task curTask, double reward, int numTimeSteps) {
         if(reward == 1.0) {
+            updateLearningRate(timeTable.getQValue(curTask.getID(), 0), numTimeSteps);
             timeTable.update(curTask.getID(), 0, numTimeSteps);
             pTable.update(curTask.getID(), 0, reward);
         }else{
@@ -78,8 +79,13 @@ public class JumpshipSimpleRValuator extends LearningValuator implements Decisio
         double oldT = timeTable.getQValue(curTask.getID(), 0);
         learn(curTask, reward, numTimeSteps);// I don't use agentsWorking.
         updateEpsilon(oldT, timeTable.getQValue(curTask.getID(), 0));
+        
     }
     
+    public void updateLearningRate(double oldT, double newT) {
+        double f = Math.abs(newT - oldT) / oldT;
+        timeTable.setAlpha(tTableLearningRate*f);
+    }
      public void updateEpsilon(double oldT, double newT) {
          double delta = (1.0 / (double)this.numTasks);
         epsilonChooseRandomTask = (1.0 - delta)*epsilonChooseRandomTask +

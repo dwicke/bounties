@@ -20,6 +20,8 @@ public class DarwinController implements IController{
     
     IAgent me;
     int id;
+    int effortLevel;
+    int count;
     static Darwins[] available = new Darwins[4];
         {
         available[1] = Darwins.FIFTYTWO;
@@ -44,6 +46,12 @@ public class DarwinController implements IController{
 
     @Override
     public boolean gotoGoalPosition(SimState state, Real position) {
+        count++;
+        if (count != effortLevel) { // only go when I have accumulated enough effort...
+            return false;
+        }
+        
+        count = 0;
         if (prevGoalPos == null || !prevGoalPos.getLocation().equals(position.getLocation())) {
             prevGoalPos = position;
             int x = (int) (((DarwinParser)darwin.getParser()).getPoseX() * 10 + 30);
@@ -158,5 +166,8 @@ public class DarwinController implements IController{
     public boolean setPosition(SimState state, Int2D position) {
         throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
-    
+    @Override
+    public void setEffort(int effort) {
+        this.effortLevel = effort;
+    }
 }

@@ -10,6 +10,8 @@ public class averageList2{
 		
 		PrintWriter writer = new PrintWriter(folders[qw].getAbsolutePath() + "/final.txt", "UTF-8");
 		PrintWriter writerGrid = new PrintWriter(folders[qw].getAbsolutePath() + "/finalGrid.txt", "UTF-8");
+                PrintWriter writerSkipGrid = new PrintWriter(folders[qw].getAbsolutePath() + "/finalSkipGrid.txt", "UTF-8");
+                PrintWriter writerAvgSkip = new PrintWriter(folders[qw].getAbsolutePath() + "/finalavgSkip.txt", "UTF-8");
 		File[] file = getFiles(folders[qw].getAbsolutePath());
 		System.out.println(folders[qw].getAbsolutePath());
 		ArrayList<double[]> runs = new ArrayList<double[]>();
@@ -39,6 +41,12 @@ public class averageList2{
 			}
 			averages.set(i,aSum / runs.size());
 			writer.write(""+averages.get(i)+ "\n");
+                        
+                        if (i %100 == 0) {
+                            // then write out to the every hundred average
+                            writerAvgSkip.write(""+averages.get(i)+ " ");
+                        }
+                        
 			//System.out.println(i + "  "  + averages.get(i));
 		}
 		for(int i = 0; i<totalRuns; i++){
@@ -52,8 +60,25 @@ public class averageList2{
 			writerGrid.write("\n");
 			
 		}
+                
+                for(int i = 0; i<totalRuns; i= i+ 100){ // every hundred timesteps
+			//averages.add((double)0);
+			
+			for(int a = 0; a<runs.size(); a++){
+				//aSum += runs.get(a)[i];
+				writerSkipGrid.write(""+runs.get(a)[i]+ " ");
+			}
+			writerSkipGrid.write("\n");
+			
+		}
+                
+                
+                
+                
 		writer.close();
 		writerGrid.close();
+                writerSkipGrid.close();
+                writerAvgSkip.close();
 		}
 	}
 	public static double[] makeNumArrayFromStrings(String[] values){

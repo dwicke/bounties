@@ -51,6 +51,7 @@ public class Agent implements IAgent {
     int completed[];
     int currentTaskId = -1;
     int trapStep = 10;
+    int curEffort = 1;
 
     public int getTrapStep() {
         return trapStep;
@@ -356,6 +357,7 @@ public class Agent implements IAgent {
     @Override
     public void setRobotController(IController controller) {
         this.control = controller;
+        this.control.setEffort(curEffort);
     }
     @Override
     public boolean getIsRealRobot() {
