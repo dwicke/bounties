@@ -26,7 +26,7 @@ public class Task implements Real, Fixed2D{
     public Int2D initialLocation;
     
     private int id = 0;
-    private int defaultReward = 1000;//100;
+    private int defaultReward = 100;
     private Color availableColor = Color.RED;// may want to change color if we have different types of tasks
     private Color notAvailableColor = Color.WHITE; // make it disappear
     
@@ -35,7 +35,7 @@ public class Task implements Real, Fixed2D{
     private Bag lastAgentsWorkingOnTask; // these are the agents working on the task when someone finished it
     private Bag currentAgentsWorkingOnTask; // these are the agents working on the task now
     private Bag agentsAtTask; // the agents who are at the task
-    private int numAgentsNeeded = 2; // the number of agents needed at the task to complete it
+    private int numAgentsNeeded = 1; // the number of agents needed at the task to complete it
     private int timeUntilRespawn = 0;
     private int completeCounter = 0;
     

@@ -103,7 +103,8 @@ public class Bounties extends SimState {
     public int bondsmanType = 0;
     public boolean shouldTeleport;
     public boolean resetTasks;
-    public int defaultReward = 0; // 0 for no teleport 100 for teleport and a 60x40 grid
+    public int defaultReward = 100; // 0 for no teleport 100 for teleport and a 60x40 grid
+    public int defaultMinAgentsPerTask = 1;
     public int incrementAmount = 1;
     public int trapStep = 10;
 
@@ -520,6 +521,10 @@ public class Bounties extends SimState {
             this.defaultReward = Integer.parseInt(argumentForKey("-defRew", myArgs));
         }
         
+        if(myArgs !=null && keyExists("-defMinAg", myArgs)) {
+            this.defaultMinAgentsPerTask = Integer.parseInt(argumentForKey("-defMinAg", myArgs));
+        }
+        
         if(myArgs !=null && keyExists("-incB", myArgs)) {
             this.incrementAmount = Integer.parseInt(argumentForKey("-incB", myArgs));
         }
@@ -588,7 +593,8 @@ public class Bounties extends SimState {
         
         for (int i = 0; i < tasksLocs.numObjs; i++) {
             Task curTask = ((Task)(tasksLocs.objs[i]));
-            //curTask.setDefaultReward(defaultReward);
+            curTask.setDefaultReward(defaultReward);
+            curTask.setNumAgentsNeeded(defaultMinAgentsPerTask);
             tasksGrid.setObjectLocation(tasksLocs.objs[i], curTask.getLocation());
         }
         
