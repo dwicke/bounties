@@ -260,7 +260,9 @@ public class Agent implements IAgent {
             if(preGotoTask())// do stuff before going toward the task
                 return;
             
-            if (gotoTask()) { // if i made it to the task then finish it and learn
+            
+            
+            if (gotoTask()) { // if everyone that is needed to complete the task is present then complete it
                     completed[curTask.getID()]++;
                     curTask.setCompleteCounter(curTask.getCompleteCounter()+1);
                     cleanup(1.0, true);
@@ -275,12 +277,24 @@ public class Agent implements IAgent {
     public boolean finishedTask() {
         return curTask.getLastFinishedTime() != lastSeenFinished;
     }
+    
+
+    
     /**
      * Move toward the curTask
      * @return true if i made it to the task
      */
     public boolean gotoTask() {
-        return gotoTaskPosition(bountyState, curTask);
+        
+        if (gotoTaskPosition(bountyState, curTask)) {
+            // then I'm at the task.
+            // tell bondsman that I'm here
+            bondsman.atTask(this, curTask);
+            return bondsman.areAllPresent(curTask);
+        }
+
+        return false;
+//return gotoTaskPosition(bountyState, curTask);
     }
     
     /*public boolean gotoGoal() {

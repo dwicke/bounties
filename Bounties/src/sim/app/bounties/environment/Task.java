@@ -3,6 +3,7 @@ package sim.app.bounties.environment;
 import ec.util.MersenneTwisterFast;
 import java.awt.Color;
 import sim.app.bounties.Bounties;
+import sim.app.bounties.agent.IAgent;
 import sim.app.bounties.util.Real;
 import sim.portrayal.Fixed2D;
 import sim.util.Bag;
@@ -33,6 +34,8 @@ public class Task implements Real, Fixed2D{
     private long finishedTime = -1;
     private Bag lastAgentsWorkingOnTask; // these are the agents working on the task when someone finished it
     private Bag currentAgentsWorkingOnTask; // these are the agents working on the task now
+    private Bag agentsAtTask; // the agents who are at the task
+    private int numAgentsNeeded = 1; // the number of agents needed at the task to complete it
     private int timeUntilRespawn = 0;
     private int completeCounter = 0;
     
@@ -52,6 +55,7 @@ public class Task implements Real, Fixed2D{
         lastReward = defaultReward;
         lastAgentsWorkingOnTask = new Bag();
         currentAgentsWorkingOnTask = new Bag();
+        agentsAtTask = new Bag();
     }
 
     public int getLastReward() {
@@ -76,12 +80,48 @@ public class Task implements Real, Fixed2D{
     public void setDefaultReward(int defaultReward) {
         this.defaultReward = defaultReward;
     }
+    
+    /**
+     * How many agents are needed to be at the task for it to be marked complete
+     * @param numNeeded 
+     */
+    public void setNumAgentsNeeded(int numNeeded) {
+        this.numAgentsNeeded = numNeeded;
+    }
     public void setCurrentAgentsOnTask(Bag currentAgentsWorkingOnTask) {
         this.currentAgentsWorkingOnTask = currentAgentsWorkingOnTask;
     }
     public Bag getCurrentAgentsOnTask() {
         return this.currentAgentsWorkingOnTask;
     }
+    public Bag getAgentsAtTask() {
+        return this.agentsAtTask;
+    }    
+    
+    public void addAgentAtTask(IAgent agent) {
+        this.agentsAtTask.add(agent);
+    }
+    
+    public boolean agentAtTask(IAgent agent) {
+        return this.agentsAtTask.contains(agent);
+    }
+    
+    public boolean removeAgentAtTask(IAgent agent) {
+        return this.agentsAtTask.removeNondestructively(agent);
+    }
+    
+     public void removeAllAgentAtTask() {
+        this.agentsAtTask.clear();
+    }
+    
+    public boolean getAreAllPresent() {
+        return this.agentsAtTask.numObjs == getnumAgentsNeeded();
+    }
+    
+    public int getnumAgentsNeeded() {
+        return numAgentsNeeded;
+    }
+    
     public void setIsNonExclusive(boolean isNonExcl) {
         this.isNonExclusive = isNonExcl;
     }

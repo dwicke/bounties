@@ -645,9 +645,7 @@ public class Bounties extends SimState {
         Bag auctionVals = new Bag();
         
         for (int x = 0; x < numBots; x++) {
-            
-            
-            
+                        
             IAgent bot = new Agent();
             if ( x >= numBots-badRobots) {
                 // then we have a bad robot so make it slower

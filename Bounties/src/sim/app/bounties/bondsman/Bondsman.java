@@ -39,6 +39,7 @@ public class Bondsman implements Steppable {
     int incrementAmount[];
     int maxIncrementAmount;
     
+    
     public Bondsman(){
     }
 
@@ -306,6 +307,7 @@ public class Bondsman implements Steppable {
         curTask.setAvailable(false); // whenever an agent finishes a task then make it unavailable
         curTask.setDone(true);
         curTask.resetTimeNotFinished();
+        curTask.removeAllAgentAtTask();
         // You stay bad at it until someone else becomes bad at it.
         // this should have been more clearly stated in the paper.
         if(bounties.random.nextInt(badOdds)==0){
@@ -346,6 +348,21 @@ public class Bondsman implements Steppable {
         return robots;
     }
     
+    public void atTask(IAgent agent, Task t) {
+        t.addAgentAtTask(agent);
+    }
+    
+    public boolean leaveTask(IAgent agent, Task t) {
+        return t.removeAgentAtTask(agent);
+    }
+    
+    public Bag getAgentsAtTask(Task t) {
+        return t.getAgentsAtTask();
+    }
+    
+    public boolean areAllPresent(Task t) {
+        return t.getAreAllPresent();
+    }
     
     public boolean isExclusive(Task task) {
         return isExclusive[task.getID()];
