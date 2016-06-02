@@ -214,7 +214,7 @@ public class Agent implements IAgent {
         decideTask(state);// so decide a task.
         if (oldTask.getID() != curTask.getID()) 
         {
-            
+            oldTask.removeAgentAtTask(this);// I'm not at the task... I've jumped ship
             jumpshipStat(true);
             // consider telling the learner that i've jumped ship so that it can
             // pick what table to update.
