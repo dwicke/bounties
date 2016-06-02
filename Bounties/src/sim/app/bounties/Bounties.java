@@ -133,7 +133,13 @@ public class Bounties extends SimState {
     }
 
     
-    
+    public int getDefaultMinAgentsPerTask() {
+        return defaultMinAgentsPerTask;
+    }
+
+    public void setDefaultMinAgentsPerTask(int defaultMinAgentsPerTask) {
+        this.defaultMinAgentsPerTask = defaultMinAgentsPerTask;
+    }
     
     
     public int getTrapStep() {
