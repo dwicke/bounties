@@ -35,7 +35,7 @@ public class Task implements Real, Fixed2D{
     private Bag lastAgentsWorkingOnTask; // these are the agents working on the task when someone finished it
     private Bag currentAgentsWorkingOnTask; // these are the agents working on the task now
     private Bag agentsAtTask; // the agents who are at the task
-    private int numAgentsNeeded = 1; // the number of agents needed at the task to complete it
+    private int numAgentsNeeded = 2; // the number of agents needed at the task to complete it
     private int timeUntilRespawn = 0;
     private int completeCounter = 0;
     
@@ -99,7 +99,8 @@ public class Task implements Real, Fixed2D{
     }    
     
     public void addAgentAtTask(IAgent agent) {
-        this.agentsAtTask.add(agent);
+        if (!this.agentsAtTask.contains(agent))
+            this.agentsAtTask.add(agent);
     }
     
     public boolean agentAtTask(IAgent agent) {
