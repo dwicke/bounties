@@ -566,6 +566,8 @@ public class Bounties extends SimState {
             bondsmanType = Integer.parseInt(argumentForKey("-bondType", myArgs));
         }
 
+        
+        System.err.println("Bondsman type = " + bondsmanType);
         switch(bondsmanType) {
             case 0:
                 bondsman = new Bondsman(this, isExclusive);
@@ -581,8 +583,13 @@ public class Bounties extends SimState {
                 break;
             case 4:
                 bondsman = new BountyPlatAdaptiveBondsman(this, isExclusive);
+                break;
             case 5:
                 bondsman = new NonLinBPABondsman(this, isExclusive);
+                break;
+            case 6:
+                bondsman = new CooperativeTaskBondsman(this, isExclusive);
+                break;
             default:
                 bondsman = new Bondsman(this, isExclusive);
                 break;
@@ -649,11 +656,20 @@ public class Bounties extends SimState {
    
     public void createEdgeRobots(int numBots, int badRobots) {
         
+        
         Int2D quads[] = new Int2D[4];
+        /*
+        quads[0] = new Int2D(GRID_WIDTH / 2, 0);
+        quads[1] = new Int2D(GRID_WIDTH / 2, GRID_HEIGHT -1);
+        quads[3] = new Int2D(GRID_WIDTH / 2, 0);
+        quads[2] = new Int2D(GRID_WIDTH / 2, GRID_HEIGHT - 1); 
+        */
+        
         quads[0] = new Int2D(0, 0);
         quads[1] = new Int2D(0, GRID_HEIGHT -1);
         quads[3] = new Int2D(GRID_WIDTH - 1, 0);
-        quads[2] = new Int2D(GRID_WIDTH - 1, GRID_HEIGHT - 1);        
+        quads[2] = new Int2D(GRID_WIDTH - 1, GRID_HEIGHT - 1);  
+        
         Bag auctionVals = new Bag();
         
         for (int x = 0; x < numBots; x++) {

@@ -99,8 +99,10 @@ public class Task implements Real, Fixed2D{
     }    
     
     public void addAgentAtTask(IAgent agent) {
-        if (!this.agentsAtTask.contains(agent))
+        if (!this.agentsAtTask.contains(agent)) {
             this.agentsAtTask.add(agent);
+            this.setCurrentReward(this.currentReward + this.defaultReward);
+        }
     }
     
     public boolean agentAtTask(IAgent agent) {
@@ -117,6 +119,10 @@ public class Task implements Real, Fixed2D{
     
     public boolean getAreAllPresent() {
         return this.agentsAtTask.numObjs == getnumAgentsNeeded();
+    }
+    
+    public int getNumAgentsAtTask() {
+        return this.agentsAtTask.numObjs;
     }
     
     public int getnumAgentsNeeded() {

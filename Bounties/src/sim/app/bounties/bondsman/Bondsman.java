@@ -150,12 +150,10 @@ public class Bondsman implements Steppable {
         //Arrays.fill(this.incrementAmount, incrementAmount);
     }
     public void incrementBounty(){
+        System.err.println("Inc bounty");
         for(int i = 0; i< tasks.size(); i++){
            // if (((Task) tasks.objs[i]).getIsAvailable()) // only increment the 
-                ((Task)tasks.objs[i]).incrementCurrentReward(incrementAmount[((Task)tasks.objs[i]).getID()]);
-                if (bounties.random.nextDouble() < .01 && incrementAmount[((Task)tasks.objs[i]).getID()] < 100) {
-                    //incrementAmount[((Task)tasks.objs[i]).getID()] = incrementAmount[((Task)tasks.objs[i]).getID()] * 2;
-                }
+           ((Task)tasks.objs[i]).incrementCurrentReward(incrementAmount[((Task)tasks.objs[i]).getID()]);
         }
     }
     public void incrementExistence() {
