@@ -36,8 +36,9 @@ public class Bondsman implements Steppable {
     private final int badOdds = 10;
     public int clumpcnt = 0;
     public double currentAvgNumAgents = 0.0;
-    int incrementAmount[];
-    int maxIncrementAmount;
+    double incrementAmount[];
+    double maxIncrementAmount;
+    double minIncrementAmount = 1;
     
     
     public Bondsman(){
@@ -54,7 +55,7 @@ public class Bondsman implements Steppable {
         whosDoingWhatTaskID = new int[this.bounties.numAgents];
         // set everyone to do task -1 since not doing anytask
         Arrays.fill(whosDoingWhatTaskID, -1);
-        incrementAmount = new int[this.bounties.numTasks];
+        incrementAmount = new double[this.bounties.numTasks];
         Arrays.fill(incrementAmount, 1);// make it 2 so can decrease...? if not work make double and default 1 and halve it then on bad
     }
     
@@ -145,7 +146,7 @@ public class Bondsman implements Steppable {
 	}
     
     
-    public void setIncrementAmount(int incrementAmount) {
+    public void setIncrementAmount(double incrementAmount) {
         this.maxIncrementAmount = incrementAmount;
         //Arrays.fill(this.incrementAmount, incrementAmount);
     }
@@ -226,7 +227,8 @@ public class Bondsman implements Steppable {
             t.setInitialLocation(new Int2D(bounties.random.nextInt(field.x), bounties.random.nextInt(field.y)));
             t.generateRealTaskLocation(bounties.random);
             bounties.tasksGrid.setObjectLocation(t, t.realLocation);
-            incrementAmount[i] = bounties.random.nextInt(maxIncrementAmount) + 1;
+            incrementAmount[i] = bounties.random.nextDouble(true, true) * maxIncrementAmount + minIncrementAmount;
+            //incrementAmount[i] = bounties.random.nextInt(maxIncrementAmount) + 1;
             t.setDefaultReward(bounties.defaultReward);
             tasks.add(t);
             if (exclusiveType == 2) {
@@ -243,7 +245,8 @@ public class Bondsman implements Steppable {
             t.setInitialLocation(new Int2D(bounties.random.nextInt(field.x), bounties.random.nextInt(field.y)));
             t.generateRealTaskLocation(bounties.random);
             bounties.tasksGrid.setObjectLocation(t, t.realLocation);
-            incrementAmount[i] = bounties.random.nextInt(maxIncrementAmount) + 1;
+            incrementAmount[i] = bounties.random.nextDouble(true, true) * maxIncrementAmount + minIncrementAmount;
+            //incrementAmount[i] = bounties.random.nextInt(maxIncrementAmount) + 1;
             t.setDefaultReward(bounties.spikeBountyValue);
             t.setRespawnTime(bounties.spikeRegenRate);
             t.setAvailable(false);

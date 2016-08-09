@@ -103,9 +103,9 @@ public class Bounties extends SimState {
     public int bondsmanType = 0;
     public boolean shouldTeleport;
     public boolean resetTasks;
-    public int defaultReward = 100; // 0 for no teleport 100 for teleport and a 60x40 grid
+    public double defaultReward = 100.0; // 0 for no teleport 100 for teleport and a 60x40 grid
     public int defaultMinAgentsPerTask = 1;
-    public int incrementAmount = 1;
+    public double incrementAmount = 0.0;
     public int trapStep = 10;
 
     public int getNumSpikeTasks() {
@@ -150,11 +150,11 @@ public class Bounties extends SimState {
         this.trapStep = trapStep;
     }
 
-    public int getIncrementAmount() {
+    public double getIncrementAmount() {
         return incrementAmount;
     }
 
-    public void setIncrementAmount(int incrementAmount) {
+    public void setIncrementAmount(double incrementAmount) {
         this.incrementAmount = incrementAmount;
     }
     
@@ -238,7 +238,7 @@ public class Bounties extends SimState {
     public void setDefaultReward(int defRwd) {
         this.defaultReward = defRwd;
     }
-    public int getDefaultReward() {
+    public double getDefaultReward() {
         return defaultReward;
     }
     

@@ -17,16 +17,16 @@ import sim.util.Int2D;
 public class Task implements Real, Fixed2D{
     private static final long serialVersionUID = 1;
 
-    private int lastReward = 0;
-    private int currentReward = 0; // controlled by bondsman to increase
-    private int lastRewardPaid = 0;
+    private double lastReward = 0;
+    private double currentReward = 0; // controlled by bondsman to increase
+    private double lastRewardPaid = 0;
     private boolean done = false; // true when at the goal false otherwise
     private boolean available = true;// true when a robot is not carrying and not at a goal it is false if not at the
     public Int2D realLocation;// location
     public Int2D initialLocation;
     
     private int id = 0;
-    private int defaultReward = 100;
+    private double defaultReward = 100;
     private Color availableColor = Color.RED;// may want to change color if we have different types of tasks
     private Color notAvailableColor = Color.WHITE; // make it disappear
     
@@ -58,11 +58,11 @@ public class Task implements Real, Fixed2D{
         agentsAtTask = new Bag();
     }
 
-    public int getLastReward() {
+    public double getLastReward() {
         return lastReward;
     }
 
-    public void setLastRewardPaid(int lastRewardPaid) {
+    public void setLastRewardPaid(double lastRewardPaid) {
         this.lastRewardPaid = lastRewardPaid;
     }
     
@@ -77,7 +77,7 @@ public class Task implements Real, Fixed2D{
     	return this.completeCounter;
     }
     
-    public void setDefaultReward(int defaultReward) {
+    public void setDefaultReward(double defaultReward) {
         this.defaultReward = defaultReward;
     }
     
@@ -222,7 +222,7 @@ public class Task implements Real, Fixed2D{
         return available;
     }
     
-    public void setCurrentReward(int reward) {
+    public void setCurrentReward(double reward) {
         lastReward = currentReward;
         currentReward = reward;
     }
@@ -230,10 +230,10 @@ public class Task implements Real, Fixed2D{
         if (currentReward < 10000000 && isDone() == false)// don't increment while the task is done 
         {
             lastReward = currentReward;
-            currentReward+=1;
+            currentReward+=1.0;
         }
     }
-    public void incrementCurrentReward(int incrementAmount) {
+    public void incrementCurrentReward(double incrementAmount) {
         if (currentReward < 10000000 && isDone() == false)// don't increment while the task is done 
         {
             lastReward = currentReward;
@@ -241,11 +241,11 @@ public class Task implements Real, Fixed2D{
             //System.err.println("current reward = " + currentReward + " last reward = " + lastReward + " incrAmt = " + incrementAmount);
         }
     }
-    public int getDefaultReward() {
+    public double getDefaultReward() {
         return defaultReward;
     }
     
-    public int getCurrentReward(){
+    public double getCurrentReward(){
         return currentReward;
     }
     public int getID(){
@@ -268,7 +268,7 @@ public class Task implements Real, Fixed2D{
     }
 
     
-    public int getLastRewardPaid() {
+    public double getLastRewardPaid() {
         return lastRewardPaid;
     }
 
