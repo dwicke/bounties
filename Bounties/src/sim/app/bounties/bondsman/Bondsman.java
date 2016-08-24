@@ -6,11 +6,11 @@
 
 package sim.app.bounties.bondsman;
 
+import sim.app.bounties.bondsman.valuator.BondsmanValuator;
 import sim.app.bounties.agent.IAgent;
 
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Collection;
 import java.util.Collections;
 import java.util.Comparator;
 
@@ -36,9 +36,8 @@ public class Bondsman implements Steppable {
     private final int badOdds = 10;
     public int clumpcnt = 0;
     public double currentAvgNumAgents = 0.0;
-    double incrementAmount[];
-    double maxIncrementAmount;
-    double minIncrementAmount = 1;
+    
+    BondsmanValuator valuator;
     
     
     public Bondsman(){
@@ -48,15 +47,15 @@ public class Bondsman implements Steppable {
      * 
      * @param bounties the state
      * @param exclusiveType 0 if not exclusive, 1 if exclusive, 2 if bondsman decided
+     * @param valuator mechanism for evaluating how to set the bounty rate
      */
-    public Bondsman(Bounties bounties, int exclusiveType) {
+    public Bondsman(Bounties bounties, int exclusiveType, BondsmanValuator valuator) {
         this.exclusiveType = exclusiveType;
         this.bounties = bounties;
         whosDoingWhatTaskID = new int[this.bounties.numAgents];
         // set everyone to do task -1 since not doing anytask
         Arrays.fill(whosDoingWhatTaskID, -1);
-        incrementAmount = new double[this.bounties.numTasks];
-        Arrays.fill(incrementAmount, 1);// make it 2 so can decrease...? if not work make double and default 1 and halve it then on bad
+        this.valuator = valuator;
     }
     
     @Override
@@ -146,15 +145,11 @@ public class Bondsman implements Steppable {
 	}
     
     
-    public void setIncrementAmount(double incrementAmount) {
-        this.maxIncrementAmount = incrementAmount;
-        //Arrays.fill(this.incrementAmount, incrementAmount);
-    }
+    
     public void incrementBounty(){
-        System.err.println("Inc bounty");
         for(int i = 0; i< tasks.size(); i++){
            // if (((Task) tasks.objs[i]).getIsAvailable()) // only increment the 
-           ((Task)tasks.objs[i]).incrementCurrentReward(incrementAmount[((Task)tasks.objs[i]).getID()]);
+           ((Task)tasks.objs[i]).incrementCurrentReward(valuator.getBountyIncrement((Task)tasks.objs[i]));
         }
     }
     public void incrementExistence() {
@@ -227,15 +222,16 @@ public class Bondsman implements Steppable {
             t.setInitialLocation(new Int2D(bounties.random.nextInt(field.x), bounties.random.nextInt(field.y)));
             t.generateRealTaskLocation(bounties.random);
             bounties.tasksGrid.setObjectLocation(t, t.realLocation);
-            incrementAmount[i] = bounties.random.nextDouble(true, true) * maxIncrementAmount + minIncrementAmount;
+            //incrementAmount[i] = bounties.random.nextDouble(true, true) * maxIncrementAmount + minIncrementAmount;
             //incrementAmount[i] = bounties.random.nextInt(maxIncrementAmount) + 1;
-            t.setDefaultReward(bounties.defaultReward);
+            //t.setDefaultReward(bounties.defaultReward);
+            valuator.setInitialBounty(t);
             tasks.add(t);
             if (exclusiveType == 2) {
                 isExclusive[i] = false;//bounties.random.nextBoolean(); // randomly choose initial state
             } else {
                 isExclusive[i] = (exclusiveType == 1);// 1 == exclusive 0 == not exclusive
-            }
+            }         
         }
         
         // now generate the spike tasks
@@ -245,7 +241,7 @@ public class Bondsman implements Steppable {
             t.setInitialLocation(new Int2D(bounties.random.nextInt(field.x), bounties.random.nextInt(field.y)));
             t.generateRealTaskLocation(bounties.random);
             bounties.tasksGrid.setObjectLocation(t, t.realLocation);
-            incrementAmount[i] = bounties.random.nextDouble(true, true) * maxIncrementAmount + minIncrementAmount;
+            //incrementAmount[i] = bounties.random.nextDouble(true, true) * maxIncrementAmount + minIncrementAmount;
             //incrementAmount[i] = bounties.random.nextInt(maxIncrementAmount) + 1;
             t.setDefaultReward(bounties.spikeBountyValue);
             t.setRespawnTime(bounties.spikeRegenRate);
@@ -295,6 +291,21 @@ public class Bondsman implements Steppable {
         return tempAvail;
     }
     
+    public Task[] getUnAvailableTasks() {
+        Task[] unavail = new Task[tasks.size()];
+        int uncurAv = 0;
+        for (int i = 0; i < tasks.size(); i++) {
+            if (!(((Task) tasks.objs[i]).getIsAvailable() && (isExclusive[i] == false || whoseDoingTaskByID((Task) tasks.objs[i]).isEmpty()))) {
+                unavail[uncurAv] = (Task) tasks.objs[i];
+                uncurAv++;
+            }
+        }
+        
+        Task[] tempAvail = new Task[uncurAv];
+        System.arraycopy(unavail, 0, tempAvail, 0, uncurAv);
+        return tempAvail;
+    }
+    
     
     
     /**
@@ -317,6 +328,7 @@ public class Bondsman implements Steppable {
         
         curTask.generateRealTaskLocation(bounties.random);
         bounties.tasksGrid.setObjectLocation(curTask, curTask.realLocation);
+        valuator.updateBounty(curTask);
         curTask.resetReward();
         whosDoingWhatTaskID[robotID] = -1;
     }

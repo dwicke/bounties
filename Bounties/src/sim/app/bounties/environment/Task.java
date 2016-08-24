@@ -101,7 +101,7 @@ public class Task implements Real, Fixed2D{
     public void addAgentAtTask(IAgent agent) {
         if (!this.agentsAtTask.contains(agent)) {
             this.agentsAtTask.add(agent);
-            this.setCurrentReward(this.currentReward + this.defaultReward);
+            //this.setCurrentReward(this.currentReward + this.defaultReward);
         }
     }
     

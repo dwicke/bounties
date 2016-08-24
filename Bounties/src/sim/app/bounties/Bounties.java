@@ -29,6 +29,7 @@ import sim.app.bounties.agent.valuator.BountyRAuctionValuator;
 import sim.app.bounties.agent.valuator.ComplexRValuator;
 import sim.app.bounties.agent.valuator.ExpandedComplexValuator;
 import sim.app.bounties.agent.valuator.JumpshipComplexValuator;
+import sim.app.bounties.agent.valuator.JumpshipSDoNothingValuator;
 import sim.app.bounties.agent.valuator.JumpshipSimpleBValuator;
 import sim.app.bounties.agent.valuator.JumpshipSimpleJValuator;
 import sim.app.bounties.agent.valuator.JumpshipSimpleRValuator;
@@ -37,7 +38,10 @@ import sim.app.bounties.agent.valuator.OptimalValuator;
 import sim.app.bounties.agent.valuator.RealAuctionValuator;
 import sim.app.bounties.bondsman.*;
 
-import sim.app.bounties.bondsman.BountyAdaptiveBondsman;
+
+import sim.app.bounties.bondsman.valuator.AdaptiveBondsmanValuator;
+import sim.app.bounties.bondsman.valuator.BondsmanValuator;
+import sim.app.bounties.bondsman.valuator.DefaultBondsmanValuator;
 import sim.app.bounties.jumpship.DefaultJumpship;
 
 import sim.app.bounties.jumpship.ResetJumpship;
@@ -91,7 +95,7 @@ public class Bounties extends SimState {
     
     // spike tasks are those that appear infrequently but have a high
     // bounty associated with them but are randomly generated.
-    public int numSpikeTasks = 4;
+    public int numSpikeTasks = 0;
     public int spikeBountyValue = 0;
     public int spikeRegenRate = 20000;
     
@@ -568,33 +572,50 @@ public class Bounties extends SimState {
 
         
         System.err.println("Bondsman type = " + bondsmanType);
+        
+        
+        BondsmanValuator valuator;
         switch(bondsmanType) {
             case 0:
-                bondsman = new Bondsman(this, isExclusive);
+                valuator = new DefaultBondsmanValuator(this);
                 break;
             case 1:
-                bondsman = new AdaptiveBondsman(this, isExclusive);
-                break;
-            case 2:
-                bondsman = new BountyAdaptiveBondsman(this, isExclusive);
-                break;
-            case 3:
-                bondsman = new CutoffBondsman(this, isExclusive);
-                break;
-            case 4:
-                bondsman = new BountyPlatAdaptiveBondsman(this, isExclusive);
-                break;
-            case 5:
-                bondsman = new NonLinBPABondsman(this, isExclusive);
-                break;
-            case 6:
-                bondsman = new CooperativeTaskBondsman(this, isExclusive);
+                valuator = new AdaptiveBondsmanValuator();
                 break;
             default:
-                bondsman = new Bondsman(this, isExclusive);
+                valuator = new DefaultBondsmanValuator(this);
                 break;
         }
-        bondsman.setIncrementAmount(incrementAmount);
+        
+        bondsman = new Bondsman(this, isExclusive, valuator);
+        
+//        switch(bondsmanType) {
+//            case 0:
+//                bondsman = new Bondsman(this, isExclusive);
+//                break;
+//            case 1:
+//                bondsman = new AdaptiveBondsman(this, isExclusive);
+//                break;
+//            case 2:
+//                bondsman = new BountyAdaptiveBondsman(this, isExclusive);
+//                break;
+//            case 3:
+//                bondsman = new CutoffBondsman(this, isExclusive);
+//                break;
+//            case 4:
+//                bondsman = new BountyPlatAdaptiveBondsman(this, isExclusive);
+//                break;
+//            case 5:
+//                bondsman = new NonLinBPABondsman(this, isExclusive);
+//                break;
+//            case 6:
+//                bondsman = new CooperativeTaskBondsman(this, isExclusive);
+//                break;
+//            default:
+//                bondsman = new Bondsman(this, isExclusive);
+//                break;
+//        }
+        //bondsman.setIncrementAmount(incrementAmount);
         
         // make new grids
         tasksGrid = new SparseGrid2D(GRID_WIDTH, GRID_HEIGHT);
@@ -813,7 +834,16 @@ public class Bounties extends SimState {
                         bot.setJumpship(new DefaultJumpship()); // don't teleport
                     }
                     valuator = new JumpshipComplexValuator(random, epsilonChooseRandomTask, x, true, numTasks, numAgents);
-                    break;   
+                    break;
+                case 24:
+                    bot.setCanJumpship(true);
+                    if (shouldTeleport) {
+                        bot.setJumpship(new ResetJumpship()); // teleport on jumpship
+                    } else {
+                        bot.setJumpship(new DefaultJumpship()); // don't teleport
+                    }
+                    valuator = new JumpshipSDoNothingValuator(random, epsilonChooseRandomTask, x, true, numTasks, numAgents);
+                    break;
                 default:
                     break;
             }

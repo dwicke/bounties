@@ -14,7 +14,7 @@ import sim.util.Int2D;
  * @author drew
  */
 public interface DecisionValuator {
-    public Task decideNextTask(Task availableTasks[]);
+    public Task decideNextTask(Task availableTasks[], Task unavailableTasks[]);
     public void learn(Task curTask, double reward, Bag agentsWorking, int numTimeSteps);
     public void setIsDead(boolean isDead);
     public void setNumTimeSteps(int numTimeSteps);

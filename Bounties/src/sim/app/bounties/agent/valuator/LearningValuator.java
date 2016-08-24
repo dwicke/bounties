@@ -80,7 +80,43 @@ public abstract class LearningValuator extends DefaultValuator implements Decisi
 			return 0;
 		}
     }
-    
+    @Override
+    Task pickTask(Task availableTasks[], Task unavailableTasks[]) {
+        double max = -1;
+        Task curTask = null;
+        PriorityQueue<TaskValuePair> queue = new PriorityQueue<TaskValuePair>();
+        double curTVal = 10000.0;
+        for (Task availTask : availableTasks) {
+            // over all tasks
+            double tval = timeTable.getQValue(availTask.getID(), 0);
+            double pval = getPValue(availTask);
+            double value = 1.0 / tval * pval * availTask.getCurrentReward();
+            if (value > max) {
+                max = value;
+                curTask = availTask;
+                curTVal = tval;
+            }
+            
+        }
+        
+        Task curUnTask = null;
+        for (Task unavailTask : unavailableTasks) {
+            // over all tasks
+            double tval = timeTable.getQValue(unavailTask.getID(), 0);
+           
+            double pval = getPValue(unavailTask);
+            double value = 1.0 / tval * pval * (unavailTask.getCurrentReward() + tval);
+            if (value > max && 10.0 < curTVal /*-curTask.getTimeNotFinished()*/) {
+                max = value;
+                curUnTask = unavailTask;
+            }
+        }
+        if (curUnTask != null) {
+            System.err.println("I want to wait for an unavailable task");
+            return null;
+        }
+        return curTask;
+    }
     @Override
     Task pickTask(Task availableTasks[]) {
         double max = -1;
@@ -98,6 +134,7 @@ public abstract class LearningValuator extends DefaultValuator implements Decisi
             }
             
         }
+        
         return curTask;
 //		for (Task availTask : availableTasks) {
 //			// over all tasks

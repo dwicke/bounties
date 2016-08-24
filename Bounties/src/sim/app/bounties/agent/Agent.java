@@ -149,20 +149,21 @@ public class Agent implements IAgent {
 
             if (isBad == false) {
             // get the next task
-            curTask = decider.decideNextTask(bondsman.getAvailableTasks());
+            curTask = decider.decideNextTask(bondsman.getAvailableTasks(), bondsman.getUnAvailableTasks());
             }
             else {
                 Task[] av = bondsman.getAvailableTasks();
                 if (av.length > 0)
                     curTask = av[bountyState.random.nextInt(av.length)];
             }
-            if (currentTaskId != curTask.getID() && currentTaskId != -1) {
-            	tried[currentTaskId]++;
-            }
-            currentTaskId = curTask.getID();
+            
             decideTaskFailed = (curTask == null);
            
             if(decideTaskFailed == false) {
+                if (currentTaskId != curTask.getID() && currentTaskId != -1) {
+                    tried[currentTaskId]++;
+                }
+                currentTaskId = curTask.getID();
                 // then we picked a task so do the book keeping
                 numTimeSteps = 0;
                 updateStatistics(false,curTask.getID());
@@ -212,6 +213,9 @@ public class Agent implements IAgent {
         decider.setPreTask(oldTask);
         double oldNumSteps = numTimeSteps;
         decideTask(state);// so decide a task.
+        if (curTask == null) {
+            curTask = oldTask; // you can't jumpship to do nothing
+        }
         if (oldTask.getID() != curTask.getID()) 
         {
             oldTask.removeAgentAtTask(this);// I'm not at the task... I've jumped ship

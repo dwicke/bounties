@@ -54,12 +54,12 @@ public abstract class DefaultValuator implements DecisionValuator {
     }
     
     @Override
-    public Task decideNextTask(Task availableTasks[]) {
+    public Task decideNextTask(Task availableTasks[], Task unavailableTasks[]) {
         if(epsilonChooseRandomTask > random.nextDouble()){
             return (Task)availableTasks[random.nextInt(availableTasks.length)];
             
         }else{
-            return pickTask(availableTasks);
+            return pickTask(availableTasks, unavailableTasks);
         }
     }
     
@@ -68,5 +68,8 @@ public abstract class DefaultValuator implements DecisionValuator {
         this.isDead = isDead;
     }
     
+    Task pickTask(Task availableTasks[], Task unavailableTasks[]) {
+        return pickTask(availableTasks);
+    }
     abstract Task pickTask(Task availableTasks[]);
 }
