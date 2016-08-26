@@ -328,7 +328,7 @@ public class Bondsman implements Steppable {
         
         curTask.generateRealTaskLocation(bounties.random);
         bounties.tasksGrid.setObjectLocation(curTask, curTask.realLocation);
-        valuator.updateBounty(curTask);
+        valuator.updateBounty(curTask, numTimeSteps);
         curTask.resetReward();
         whosDoingWhatTaskID[robotID] = -1;
     }

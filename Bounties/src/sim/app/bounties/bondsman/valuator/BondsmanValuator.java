@@ -19,6 +19,7 @@ public interface BondsmanValuator {
      * This will update the initial bounty of the task and
      * will also update the bounty rate for the task.
      * @param t the task to do the update for
+     * @param numTimesteps how long it took for the successful agent to complete the task
      */
-    public void updateBounty(Task t);
+    public void updateBounty(Task t, int numTimesteps);
 }

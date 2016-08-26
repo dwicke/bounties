@@ -35,7 +35,7 @@ public class DefaultBondsmanValuator implements BondsmanValuator{
     }
 
     @Override
-    public void updateBounty(Task t) {
+    public void updateBounty(Task t, int numTimeSteps) {
         // do nothing.
     }
 

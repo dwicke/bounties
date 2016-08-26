@@ -580,7 +580,7 @@ public class Bounties extends SimState {
                 valuator = new DefaultBondsmanValuator(this);
                 break;
             case 1:
-                valuator = new AdaptiveBondsmanValuator();
+                valuator = new AdaptiveBondsmanValuator(this, 100, 2);
                 break;
             default:
                 valuator = new DefaultBondsmanValuator(this);
