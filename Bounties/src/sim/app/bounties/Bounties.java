@@ -30,6 +30,7 @@ import sim.app.bounties.agent.valuator.ComplexRValuator;
 import sim.app.bounties.agent.valuator.ExpandedComplexValuator;
 import sim.app.bounties.agent.valuator.JumpshipComplexValuator;
 import sim.app.bounties.agent.valuator.JumpshipComplexValuatorWP;
+import sim.app.bounties.agent.valuator.JumpshipGroupSimpleValuator;
 import sim.app.bounties.agent.valuator.JumpshipSDoNothingValuator;
 import sim.app.bounties.agent.valuator.JumpshipSimpleBValuator;
 import sim.app.bounties.agent.valuator.JumpshipSimpleJValuator;
@@ -857,6 +858,15 @@ public class Bounties extends SimState {
                         bot.setJumpship(new DefaultJumpship()); // don't teleport
                     }
                     valuator = new JumpshipComplexValuatorWP(random, epsilonChooseRandomTask, x, true, numTasks, numAgents);
+                    break;
+                case 26:
+                    bot.setCanJumpship(true);
+                    if (shouldTeleport) {
+                        bot.setJumpship(new ResetJumpship()); // teleport on jumpship
+                    } else {
+                        bot.setJumpship(new DefaultJumpship()); // don't teleport
+                    }
+                    valuator = new JumpshipGroupSimpleValuator(random, epsilonChooseRandomTask, x, true, numTasks, numAgents);
                     break;
                 default:
                     break;
