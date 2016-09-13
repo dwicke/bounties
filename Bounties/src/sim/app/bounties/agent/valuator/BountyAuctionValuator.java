@@ -54,6 +54,10 @@ public class BountyAuctionValuator extends LearningValuator implements DecisionV
         return evaluations;
     }
     
+    @Override
+    Task pickTask(Task availableTasks[], Task unavailableTasks[]) {
+        return pickTask(availableTasks);
+    }
     
     @Override
     public Task pickTask(Task[] availableTasks){

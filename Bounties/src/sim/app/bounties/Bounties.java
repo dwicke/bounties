@@ -29,6 +29,7 @@ import sim.app.bounties.agent.valuator.BountyRAuctionValuator;
 import sim.app.bounties.agent.valuator.ComplexRValuator;
 import sim.app.bounties.agent.valuator.ExpandedComplexValuator;
 import sim.app.bounties.agent.valuator.JumpshipComplexValuator;
+import sim.app.bounties.agent.valuator.JumpshipComplexValuatorWP;
 import sim.app.bounties.agent.valuator.JumpshipSDoNothingValuator;
 import sim.app.bounties.agent.valuator.JumpshipSimpleBValuator;
 import sim.app.bounties.agent.valuator.JumpshipSimpleJValuator;
@@ -42,6 +43,7 @@ import sim.app.bounties.bondsman.*;
 import sim.app.bounties.bondsman.valuator.AdaptiveBondsmanValuator;
 import sim.app.bounties.bondsman.valuator.BondsmanValuator;
 import sim.app.bounties.bondsman.valuator.DefaultBondsmanValuator;
+import sim.app.bounties.bondsman.valuator.RandomInitBountyValuator;
 import sim.app.bounties.jumpship.DefaultJumpship;
 
 import sim.app.bounties.jumpship.ResetJumpship;
@@ -582,6 +584,9 @@ public class Bounties extends SimState {
             case 1:
                 valuator = new AdaptiveBondsmanValuator(this, 100, 2);
                 break;
+            case 2:
+                valuator = new RandomInitBountyValuator(this);
+                break;
             default:
                 valuator = new DefaultBondsmanValuator(this);
                 break;
@@ -843,6 +848,15 @@ public class Bounties extends SimState {
                         bot.setJumpship(new DefaultJumpship()); // don't teleport
                     }
                     valuator = new JumpshipSDoNothingValuator(random, epsilonChooseRandomTask, x, true, numTasks, numAgents);
+                    break;
+                case 25:
+                    bot.setCanJumpship(true);
+                    if (shouldTeleport) {
+                        bot.setJumpship(new ResetJumpship()); // teleport on jumpship
+                    } else {
+                        bot.setJumpship(new DefaultJumpship()); // don't teleport
+                    }
+                    valuator = new JumpshipComplexValuatorWP(random, epsilonChooseRandomTask, x, true, numTasks, numAgents);
                     break;
                 default:
                     break;

@@ -98,15 +98,16 @@ public abstract class LearningValuator extends DefaultValuator implements Decisi
             }
             
         }
-        
+        /*
         Task curUnTask = null;
         for (Task unavailTask : unavailableTasks) {
             // over all tasks
-            double tval = timeTable.getQValue(unavailTask.getID(), 0);
+            double tval = unavailTask.getLocation().manhattanDistance(curLoc);//timeTable.getQValue(unavailTask.getID(), 0);
            
             double pval = getPValue(unavailTask);
             double value = 1.0 / tval * pval * (unavailTask.getCurrentReward() + tval);
-            if (value > max && 10.0 < curTVal /*-curTask.getTimeNotFinished()*/) {
+            //if (value > max && 10.0 < curTVal -curTask.getTimeNotFinished()) {
+            if (value > max && 30.0 < curTVal ) {
                 max = value;
                 curUnTask = unavailTask;
             }
@@ -115,6 +116,7 @@ public abstract class LearningValuator extends DefaultValuator implements Decisi
             System.err.println("I want to wait for an unavailable task");
             return null;
         }
+                */
         return curTask;
     }
     @Override

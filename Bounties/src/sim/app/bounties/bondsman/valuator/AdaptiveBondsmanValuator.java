@@ -18,6 +18,10 @@ public class AdaptiveBondsmanValuator implements BondsmanValuator{
     double [] xi;
     double alpha;
     double learningrate = .01;
+    
+    double beta; // should be strictly > (sum xi)/ max(xi)
+     
+    
     Bounties bounties;
     
     public AdaptiveBondsmanValuator(Bounties bounties, double initialBounty, double alpha) {
@@ -36,7 +40,7 @@ public class AdaptiveBondsmanValuator implements BondsmanValuator{
 
     @Override
     public double getBountyIncrement(Task t) {
-        System.err.println("bounty rate for task i = " + t.getID() + " = " + Math.pow((1 - 1 / (alpha * xi[t.getID()])), t.getTimeNotFinished()));
+        //System.err.println("bounty rate for task i = " + t.getID() + " = " + Math.pow((1 - 1 / (alpha * xi[t.getID()])), t.getTimeNotFinished()));
         return Math.pow((1 - 1 / (alpha * xi[t.getID()])), t.getTimeNotFinished());
     }
 
@@ -45,7 +49,7 @@ public class AdaptiveBondsmanValuator implements BondsmanValuator{
         // determine how long it took the task to be completed once started by the agent that completes
         // this is x_i and it is how we set the inital bounty.
         xi[t.getID()] = (1-learningrate) * xi[t.getID()] + learningrate*numTimeSteps;
-        System.out.println("bounty initial for id " + t.getID() + " = " + xi[t.getID()]);
+        //System.out.println("bounty initial for id " + t.getID() + " = " + xi[t.getID()]);
     }
     
 }

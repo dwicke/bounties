@@ -279,6 +279,7 @@ public class Task implements Real, Fixed2D{
     }
     
     public void resetReward(int reward) {
+        lastRewardPaid = currentReward;
         currentReward = reward;
         lastReward = reward;
     }
