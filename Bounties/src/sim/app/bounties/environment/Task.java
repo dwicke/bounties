@@ -48,6 +48,7 @@ public class Task implements Real, Fixed2D{
     
     public boolean isNonExclusive = true;
 
+    public TaskBlock myblock;
     
     
     public Task() {
@@ -58,6 +59,15 @@ public class Task implements Real, Fixed2D{
         agentsAtTask = new Bag();
     }
 
+    
+    public TaskBlock getTaskBlock() {
+        return myblock;
+    }
+    
+    public void setTaskBlock(TaskBlock block) {
+        myblock = block;
+    }
+    
     public double getLastReward() {
         return lastReward;
     }

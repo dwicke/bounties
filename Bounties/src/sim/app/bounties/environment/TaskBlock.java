@@ -14,7 +14,10 @@ import sim.util.Bag;
  */
 public class TaskBlock {
     
+    TaskChain mychain;
     Bag tasks;
+    int id; // my order/index in the chain
+    int numFinished = 0;
 
     public TaskBlock() {
         this.tasks = new Bag();
@@ -24,5 +27,24 @@ public class TaskBlock {
         this.tasks.add(t);
     }
     
+    public void setTaskChain(TaskChain chain) {
+        mychain = chain;
+    }
     
+    public TaskChain getTaskChain() {
+        return mychain;
+    }
+    
+    public TaskBlock finished(Task t) {
+        numFinished++;
+        if (numFinished == tasks.numObjs) {
+            if (mychain.finishedTaskChain()) {
+                return null;
+            }
+            else {
+                return mychain.nextTaskBlock();
+            }
+        }
+        return this;
+    }
 }

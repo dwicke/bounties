@@ -30,8 +30,9 @@ public class TaskBuilder {
     
     
     
-    Task buildTask() {
+    Task buildTask(TaskBlock block) {
         Task t = new Task();
+        t.setTaskBlock(block);
         t.setID(curID);
         curID++;
         t.setInitialLocation(new Int2D(bounties.random.nextInt(field.x), bounties.random.nextInt(field.y)));

@@ -18,7 +18,14 @@ public class TaskChain {
 
     Bag taskchain;
     int curBlock;
+
+    public TaskChain() {
+        this.taskchain = new Bag();
+        this.curBlock = 0;
+    }
     
+    
+   
     
     public void push(TaskBlock tb) {
         taskchain.push(tb);
@@ -26,15 +33,14 @@ public class TaskChain {
     }
     
     public TaskBlock nextTaskBlock() {
-        
-        TaskBlock nextBlock = (TaskBlock) taskchain.get(curBlock);
         curBlock--;
+        TaskBlock nextBlock = (TaskBlock) taskchain.get(curBlock);
         return nextBlock;
     }
     
     public TaskBlock peekNextTaskBlock() {
         
-        TaskBlock nextBlock = (TaskBlock) taskchain.get(curBlock);
+        TaskBlock nextBlock = (TaskBlock) taskchain.get(curBlock - 1);
         return nextBlock;
     }
     
@@ -42,4 +48,9 @@ public class TaskChain {
         return curBlock == -1;
     }
 
+    
+    public TaskBlock reset() {
+        curBlock = taskchain.numObjs - 2;
+        return (TaskBlock) taskchain.top();
+    }
 }

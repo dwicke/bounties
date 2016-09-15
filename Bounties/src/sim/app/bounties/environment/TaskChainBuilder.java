@@ -16,7 +16,7 @@ import sim.util.Bag;
 public class TaskChainBuilder {
 
     int maxBlockSize, maxChainLength, minBlockSize, minChainLength;
-    Bag taskClasses;
+    
     TaskBuilder taskbuilder;
     
     public TaskChainBuilder(TaskBuilder taskbuilder, int maxBlockSize, int maxChainLength, 
@@ -28,9 +28,9 @@ public class TaskChainBuilder {
         this.taskbuilder = taskbuilder;
     }
     
-    Bag buildTaskChains(int numChains, MersenneTwisterFast random) {
-        Bag taskChains = new Bag(numChains);
+    public Bag buildTaskChains(int numChains, MersenneTwisterFast random, TaskManager taskChains) {
         
+        Bag tasks = new Bag();
         for(int i = 0; i < numChains; i++) {
             TaskChain tc = new TaskChain();
             int chainLength = random.nextInt(this.maxChainLength - this.minChainLength + 1) + this.minChainLength;
@@ -39,16 +39,18 @@ public class TaskChainBuilder {
             for (int j = 0; j < chainLength; j++) {
                 // for each link in the chain i have a block
                 TaskBlock tb = new TaskBlock();
+                tb.setTaskChain(tc);
                 int numTasks = random.nextInt(this.maxBlockSize - this.minBlockSize + 1) + this.minBlockSize;
                 for (int k = 0; k < numTasks; k++) {
-                    Task newTaskClass = taskbuilder.buildTask();
-                    taskClasses.add(newTaskClass);
+                    Task newTaskClass = taskbuilder.buildTask(tb);
+                    tasks.add(newTaskClass);
                     tb.addTask(newTaskClass);
                 }
+                tc.push(tb);
             }
+            taskChains.add(tc);
         }
-        
-        return taskChains;
+        return tasks;
     }
     
     
