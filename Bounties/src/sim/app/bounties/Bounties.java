@@ -595,34 +595,7 @@ public class Bounties extends SimState {
         
         bondsman = new Bondsman(this, isExclusive, valuator);
         
-//        switch(bondsmanType) {
-//            case 0:
-//                bondsman = new Bondsman(this, isExclusive);
-//                break;
-//            case 1:
-//                bondsman = new AdaptiveBondsman(this, isExclusive);
-//                break;
-//            case 2:
-//                bondsman = new BountyAdaptiveBondsman(this, isExclusive);
-//                break;
-//            case 3:
-//                bondsman = new CutoffBondsman(this, isExclusive);
-//                break;
-//            case 4:
-//                bondsman = new BountyPlatAdaptiveBondsman(this, isExclusive);
-//                break;
-//            case 5:
-//                bondsman = new NonLinBPABondsman(this, isExclusive);
-//                break;
-//            case 6:
-//                bondsman = new CooperativeTaskBondsman(this, isExclusive);
-//                break;
-//            default:
-//                bondsman = new Bondsman(this, isExclusive);
-//                break;
-//        }
-        //bondsman.setIncrementAmount(incrementAmount);
-        
+
         // make new grids
         tasksGrid = new SparseGrid2D(GRID_WIDTH, GRID_HEIGHT);
         
