@@ -10,6 +10,7 @@ import java.awt.Color;
 import sim.app.bounties.agent.valuator.DecisionValuator;
 import sim.app.bounties.control.IController;
 import sim.app.bounties.jumpship.Jumpship;
+import sim.app.bounties.ra.resource.Resource;
 import sim.engine.SimState;
 import sim.engine.Steppable;
 import sim.util.Int2D;
@@ -36,4 +37,5 @@ public interface IAgent extends Steppable {
     public int[] getTried();
     public int[] getCompleted();
     public void setTrapStep(int trapStep);
+    public double getResourceBid(Resource resource);
 }

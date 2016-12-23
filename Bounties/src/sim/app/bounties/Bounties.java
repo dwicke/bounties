@@ -48,6 +48,9 @@ import sim.app.bounties.bondsman.valuator.RandomInitBountyValuator;
 import sim.app.bounties.jumpship.DefaultJumpship;
 
 import sim.app.bounties.jumpship.ResetJumpship;
+import sim.app.bounties.ra.auctioneer.Auction;
+import sim.app.bounties.ra.auctioneer.Auctioneer;
+import sim.app.bounties.ra.auctioneer.FixedPrice;
 import sim.app.bounties.statistics.StatsPublisher;
 import sim.engine.*;
 import static sim.engine.SimState.doLoop;
@@ -108,12 +111,14 @@ public class Bounties extends SimState {
     double pUpdateValue = .001;
     public int isExclusive = 0;
     public int bondsmanType = 0;
+    public int auctioneerType = 0;
     public boolean shouldTeleport;
     public boolean resetTasks;
     public double defaultReward = 100.0; // 0 for no teleport 100 for teleport and a 60x40 grid
     public int defaultMinAgentsPerTask = 1;
     public double incrementAmount = 0.0;
     public int trapStep = 10;
+    public Auction auction;
 
     public int getNumSpikeTasks() {
         return numSpikeTasks;
@@ -242,7 +247,7 @@ public class Bounties extends SimState {
         return rotateRobots;
     }
     
-    public void setDefaultReward(int defRwd) {
+    public void setDefaultReward(double defRwd) {
         this.defaultReward = defRwd;
     }
     public double getDefaultReward() {
@@ -595,6 +600,25 @@ public class Bounties extends SimState {
         
         bondsman = new Bondsman(this, isExclusive, valuator);
         
+        
+        // now make the auctioneer for the Auction
+        if(myArgs !=null && keyExists("-aucType", myArgs)) {
+            auctioneerType = Integer.parseInt(argumentForKey("-aucType", myArgs));
+        }
+        
+        Auctioneer auctioneer;
+        switch(auctioneerType) {
+            case 0:
+                auctioneer = new FixedPrice(this);
+                break;
+            default:
+                auctioneer = new FixedPrice(this);
+                break;
+        }
+        
+        auction = new Auction(this, auctioneer);
+        
+        
 
         // make new grids
         tasksGrid = new SparseGrid2D(GRID_WIDTH, GRID_HEIGHT);
@@ -628,12 +652,13 @@ public class Bounties extends SimState {
         StatsPublisher stats = new StatsPublisher(this, maxNumSteps,dir);
         // now schedule the bondsman so that it can add more tasks as needed.
         schedule.scheduleRepeating(Schedule.EPOCH+numAgents,0, bondsman, 1);
+        schedule.scheduleRepeating(Schedule.EPOCH+numAgents+1, 0, auction, 1);
         //schedule statistics gatherer
-        schedule.scheduleRepeating(Schedule.EPOCH+numAgents+1,0,stats,1);
+        schedule.scheduleRepeating(Schedule.EPOCH+numAgents+2,0,stats,1);
         if (willRotate == 1)
-            schedule.scheduleRepeating(Schedule.EPOCH+numAgents+2,0,new RotateBots(maxRotateSteps),1);
+            schedule.scheduleRepeating(Schedule.EPOCH+numAgents+3,0,new RotateBots(maxRotateSteps),1);
         if (this.getWillResetTasks()) {
-            schedule.scheduleRepeating(Schedule.EPOCH+numAgents+2,0,new ResetTasks(maxRotateSteps),1);
+            schedule.scheduleRepeating(Schedule.EPOCH+numAgents+3,0,new ResetTasks(maxRotateSteps),1);
         }
         
     }
@@ -901,6 +926,8 @@ public class Bounties extends SimState {
     public void setShouldTeleport(boolean shouldTeleport) {
         this.shouldTeleport = shouldTeleport;
     }
+
+    
     
     
     

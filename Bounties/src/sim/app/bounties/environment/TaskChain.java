@@ -50,7 +50,7 @@ public class TaskChain {
 
     
     public TaskBlock reset() {
-        curBlock = taskchain.numObjs - 2;
+        curBlock = taskchain.numObjs - 2; // -2 because i'm getting the top one off
         return (TaskBlock) taskchain.top();
     }
 }

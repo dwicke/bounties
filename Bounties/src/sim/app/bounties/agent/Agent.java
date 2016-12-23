@@ -11,6 +11,7 @@ import sim.app.bounties.environment.Task;
 import sim.app.bounties.agent.valuator.DecisionValuator;
 import sim.app.bounties.control.IController;
 import sim.app.bounties.jumpship.Jumpship;
+import sim.app.bounties.ra.resource.Resource;
 import sim.app.bounties.util.Real;
 import sim.engine.SimState;
 import sim.engine.Steppable;
@@ -52,6 +53,9 @@ public class Agent implements IAgent {
     int currentTaskId = -1;
     int trapStep = 10;
     int curEffort = 1;
+    double currentBounty = 0.0;
+    long completedTasks = 0;
+    private boolean resourceNeeded;
 
     public int getTrapStep() {
         return trapStep;
@@ -184,9 +188,13 @@ public class Agent implements IAgent {
      * @param won true if I won false if I lost (someone else finished the task before me.
      */
     void cleanup(double reward, boolean won) {
+        System.err.println("Num agents at task = " + curTask.getAgentsAtTask().numObjs);
         if (won) {// only if I won do I get to say it is finished
             curTask.setLastFinished(id, bountyState.schedule.getSteps(), bondsman.whoseDoingTaskByID(curTask));
             bondsman.finishTask(curTask, id, bountyState.schedule.getSteps(), numTimeSteps);
+            this.currentBounty +=  curTask.getLastRewardPaid();
+            this.completedTasks++;
+            System.err.println("Agent " + id + " reward = " + curTask.getLastRewardPaid() + " total = " + this.currentBounty + " task completed = " + this.completedTasks + " average reward/task = " + this.currentBounty/completedTasks);
         }
         
         decider.learn(curTask, reward, curTask.getLastAgentsWorkingOnTask(), numTimeSteps);
@@ -392,4 +400,17 @@ public class Agent implements IAgent {
     public void setIsBad(boolean isBad) {
         this.isBad = isBad;
     }
+
+    @Override
+    public double getResourceBid(Resource resource) {
+        if(resourceNeeded) {
+            return 1.0;
+        }
+        return 0.0;
+    }
+    
+    public void receiveResource() {
+        resourceNeeded = false;
+    }
+    
 }

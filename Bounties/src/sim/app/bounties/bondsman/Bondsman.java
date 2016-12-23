@@ -16,9 +16,6 @@ import java.util.Comparator;
 
 import sim.app.bounties.Bounties;
 import sim.app.bounties.environment.Task;
-import sim.app.bounties.environment.TaskBuilder;
-import sim.app.bounties.environment.TaskChainBuilder;
-import sim.app.bounties.environment.TaskManager;
 import sim.engine.SimState;
 import sim.engine.Steppable;
 import sim.util.Bag;
@@ -212,12 +209,7 @@ public class Bondsman implements Steppable {
     }
     
   
-//    public Bag initTasks2(Int2D field) {
-//        tasks.clear();
-//        TaskChainBuilder tcb = new TaskChainBuilder(new TaskBuilder(bounties, field, valuator), 1, 1, 1, 1);
-//        tcb.buildTaskChains(bounties.numTasks, bounties.random, tasks);
-//        return tasks;
-//    }
+
     
     /**
      * gets the initial tasks
