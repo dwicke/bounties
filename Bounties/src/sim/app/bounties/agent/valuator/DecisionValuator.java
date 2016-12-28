@@ -17,10 +17,11 @@ public interface DecisionValuator {
     public Task decideNextTask(Task availableTasks[], Task unavailableTasks[]);
     public void learn(Task curTask, double reward, Bag agentsWorking, int numTimeSteps);
     public void setIsDead(boolean isDead);
-    public void setNumTimeSteps(int numTimeSteps);
     public void setHome(Int2D home);// used only for the optimal valuators.
     public void setCurrentPos(Int2D curLoc);
     public void setPreTask(Task task);
     public void setJumped(boolean jumped);
     public void learnIncrementRate(Task[] tasks);
+    public void incrementTimeSinceLastCompletion();
+    public void resetTimeSinceLastCompletion();
 }

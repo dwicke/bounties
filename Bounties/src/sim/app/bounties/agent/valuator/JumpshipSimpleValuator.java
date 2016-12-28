@@ -58,7 +58,7 @@ public class JumpshipSimpleValuator extends LearningValuator implements Decision
     
     private void learn(Task curTask, double reward, int numTimeSteps) {
         if(reward == 1.0) {
-            //updateLearningRate(timeTable.getQValue(curTask.getID(), 0), numTimeSteps); // really bad
+            updateLearningRate(timeTable.getQValue(curTask.getID(), 0), numTimeSteps);
             
             timeTable.update(curTask.getID(), 0, numTimeSteps);
             pTable.update(curTask.getID(), 0, reward);
@@ -71,8 +71,6 @@ public class JumpshipSimpleValuator extends LearningValuator implements Decision
     public void updateLearningRate(double oldT, double newT) {
         double f = Math.abs(newT - oldT) / oldT;
         timeTable.setAlpha(tTableLearningRate*f);
-        pTable.setAlpha(pTableLearningRate*f);
-        
     }
 
     @Override

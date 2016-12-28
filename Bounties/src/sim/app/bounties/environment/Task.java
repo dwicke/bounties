@@ -4,6 +4,7 @@ import ec.util.MersenneTwisterFast;
 import java.awt.Color;
 import sim.app.bounties.Bounties;
 import sim.app.bounties.agent.IAgent;
+import sim.app.bounties.ra.resource.Resource;
 import sim.app.bounties.util.Real;
 import sim.portrayal.Fixed2D;
 import sim.util.Bag;
@@ -46,6 +47,13 @@ public class Task implements Real, Fixed2D{
     
     public double timeNotFinished = 0;// the amount of time this task has been waiting to be finished.
     
+    private double curNumResourcesNeeded = 0; // this is the number of resources currently needed to complete the task
+    private double numResourcesNeeded = 0; // number of resources needed to finish this task (incremented up to max)
+    private double maxNumResourcesNeeded = 5; // the max number of resources will ever need
+    private int incrementResourceAt = 20; // every x times the task is completed the numResourcesNeeded is incremented
+    private Resource resource;
+    
+    
     public boolean isNonExclusive = true;
 
     public TaskBlock myblock;
@@ -76,11 +84,31 @@ public class Task implements Real, Fixed2D{
         this.lastRewardPaid = lastRewardPaid;
     }
     
+    public void setCurNumResourcesNeeded(double needed) {
+        curNumResourcesNeeded = needed;
+    }
     
+    public double getNumResourcesNeeded() {
+        return numResourcesNeeded;
+    }
     
+    public double getCurNumResourcesNeeded() {
+        return curNumResourcesNeeded;
+    }
+    
+    public void setResource(Resource r) {
+        resource = r;
+    }
+    
+    public Resource getResource() {
+        return resource;
+    }
     
     public void setCompleteCounter(int val) {
     	this.completeCounter = val;
+        if (this.completeCounter % incrementResourceAt == 0 && numResourcesNeeded < maxNumResourcesNeeded) {
+            numResourcesNeeded++;
+        }
     }
     
     public int getCompleteCounter() {

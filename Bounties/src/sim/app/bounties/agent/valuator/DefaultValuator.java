@@ -19,32 +19,43 @@ public abstract class DefaultValuator implements DecisionValuator {
     double epsilonChooseRandomTask;
     int agentID;
     boolean isDead;
-    int numTimeSteps;
     Int2D curLoc;
     Task preTask;
     boolean jumped;
+    int timeSinceCompletion = 0;
+
+    
+    @Override
+    public void incrementTimeSinceLastCompletion() {
+        timeSinceCompletion++;
+    }
+    
+    @Override
+    public void resetTimeSinceLastCompletion() {
+        timeSinceCompletion = 0;
+    }
     
     //does nothing
     @Override
-    public void learnIncrementRate(Task[] tasks) {}
+    public void learnIncrementRate(Task[] tasks) {    }
     
     @Override
     public void setJumped(boolean jumped) {
         this.jumped = jumped;
     }
     
+    @Override
     public void setPreTask(Task task) {
         preTask = task;
     }
     
+    @Override
     public void setCurrentPos(Int2D curLoc) {
         this.curLoc = curLoc;
     }
-    public void setHome(Int2D home) {}// does nothing here... used for the optimal
     @Override
-    public void setNumTimeSteps(int numTimeSteps) {
-        this.numTimeSteps = numTimeSteps;
-    }
+    public void setHome(Int2D home) {}// does nothing here... used for the optimal
+    
     
     public DefaultValuator(MersenneTwisterFast random, double epsilonChooseRandomTask, int agentID) {
         this.random = random;

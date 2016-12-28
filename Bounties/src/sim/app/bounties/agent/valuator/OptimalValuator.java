@@ -26,6 +26,43 @@ public class OptimalValuator extends DefaultValuator{
     public void setHome(Int2D home) {
         this.home = home;
     }
+
+    @Override
+    Task pickTask(Task[] availableTasks, Task[] unavailableTasks) {
+        Task curAvailTask = pickTask(availableTasks);
+        double max = curAvailTask.getCurrentReward() / ((double) (curAvailTask.realLocation).manhattanDistance(home));
+        Task curTask = null;
+        for (Task availableTask : unavailableTasks) {
+            // distance from home to task (since we are at home when we choose to take a task)
+            double dist = 1.0 / ((double) (availableTask.realLocation).manhattanDistance(home));
+            // need epsilon so will try something.
+            double rewardPerDist = (dist + availableTask.getTimeUntilRespawn()) * availableTask.getCurrentReward();
+            if (rewardPerDist > max) {
+                curTask = availableTask;
+                max = rewardPerDist;
+            }
+        }
+        if (curTask != null) {
+            // then go after a task that give you the most reward that takes less time than the unavailable task
+            // to make up for the time
+            double desiredTaskDist = ((double) (curTask.realLocation).manhattanDistance(home));
+            Task waitTask = null;
+            double rewardMax = -1;
+            for (Task availableTask : availableTasks) {
+                double dist = ((double) (availableTask.realLocation).manhattanDistance(home));
+                double rewardPerDist = 1.0 / dist * availableTask.getCurrentReward() + 1;
+                if (dist < desiredTaskDist && rewardPerDist > rewardMax) {
+                    waitTask = availableTask;
+                    rewardMax = rewardPerDist;
+                }
+            }
+            return waitTask;
+        }
+        return curAvailTask;
+    }
+    
+    
+    
     
     @Override
     Task pickTask(Task[] availableTasks) {
@@ -35,7 +72,7 @@ public class OptimalValuator extends DefaultValuator{
             // distance from home to task (since we are at home when we choose to take a task)
             double dist = 1.0 / ((double) (availableTask.realLocation).manhattanDistance(home));
             // need epsilon so will try something.
-            double rewardPerDist = dist * availableTask.getCurrentReward();
+            double rewardPerDist = dist * availableTask.getCurrentReward() + 1;
             if (rewardPerDist > max) {
                 curTask = availableTask;
                 max = rewardPerDist;

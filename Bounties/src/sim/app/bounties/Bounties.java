@@ -15,7 +15,6 @@ import java.util.Arrays;
 import sim.app.bounties.bondsman.Bondsman;
 import sim.app.bounties.agent.valuator.BadValuator;
 import sim.app.bounties.agent.valuator.DecisionValuator;
-import sim.app.bounties.agent.valuator.JumpshipSimpleCValuator;
 import sim.app.bounties.agent.valuator.RandomValuator;
 import sim.app.bounties.agent.valuator.SemiOptimalValuator;
 import sim.app.bounties.agent.valuator.LearningValuator;
@@ -24,10 +23,12 @@ import sim.app.bounties.agent.valuator.ComplexValuator;
 import sim.app.bounties.agent.Agent;
 import sim.app.bounties.control.TeleportController;
 import sim.app.bounties.agent.IAgent;
+import sim.app.bounties.agent.valuator.BountyAuctionResourceValuator;
 import sim.app.bounties.agent.valuator.BountyAuctionValuator;
 import sim.app.bounties.agent.valuator.BountyRAuctionValuator;
 import sim.app.bounties.agent.valuator.ComplexRValuator;
 import sim.app.bounties.agent.valuator.ExpandedComplexValuator;
+import sim.app.bounties.agent.valuator.JSRResourceValuator;
 import sim.app.bounties.agent.valuator.JumpshipComplexValuator;
 import sim.app.bounties.agent.valuator.JumpshipComplexValuatorWP;
 import sim.app.bounties.agent.valuator.JumpshipGroupSimpleValuator;
@@ -51,6 +52,9 @@ import sim.app.bounties.jumpship.ResetJumpship;
 import sim.app.bounties.ra.auctioneer.Auction;
 import sim.app.bounties.ra.auctioneer.Auctioneer;
 import sim.app.bounties.ra.auctioneer.FixedPrice;
+import sim.app.bounties.ra.resource.Resource;
+import sim.app.bounties.ra.resource.ResourceType;
+import sim.app.bounties.ra.resource.TaskResource;
 import sim.app.bounties.statistics.StatsPublisher;
 import sim.engine.*;
 import static sim.engine.SimState.doLoop;
@@ -607,12 +611,13 @@ public class Bounties extends SimState {
         }
         
         Auctioneer auctioneer;
+        Resource res = new TaskResource(-1, 1000, ResourceType.FUEL);
         switch(auctioneerType) {
             case 0:
-                auctioneer = new FixedPrice(this);
+                auctioneer = new FixedPrice(this, res);
                 break;
             default:
-                auctioneer = new FixedPrice(this);
+                auctioneer = new FixedPrice(this, res);
                 break;
         }
         
@@ -632,6 +637,7 @@ public class Bounties extends SimState {
             Task curTask = ((Task)(tasksLocs.objs[i]));
             curTask.setDefaultReward(defaultReward);
             curTask.setNumAgentsNeeded(defaultMinAgentsPerTask);
+            curTask.setResource(res);
             tasksGrid.setObjectLocation(tasksLocs.objs[i], curTask.getLocation());
         }
         
@@ -753,6 +759,12 @@ public class Bounties extends SimState {
                     valuator = new SimpleValuator(random, epsilonChooseRandomTask, x, true, numTasks, numAgents);
                     break;
                 case 12:// optimal 
+                    bot.setCanJumpship(false);
+                    if (shouldTeleport) {
+                        bot.setJumpship(new ResetJumpship()); // teleport on jumpship
+                    } else {
+                        bot.setJumpship(new DefaultJumpship()); // don't teleport
+                    }
                     valuator = new OptimalValuator(random, x, quads[x%4]);
                     break;
                 case 13:// jumpship/swapping auction
@@ -774,16 +786,16 @@ public class Bounties extends SimState {
                     }
                     valuator = new JumpshipSimpleBValuator(random, epsilonChooseRandomTask, x, true, numTasks, numAgents);
                     break;
-                case 15:
+                case 15:// with resources
                     bot.setCanJumpship(true);
                     if (shouldTeleport) {
                         bot.setJumpship(new ResetJumpship()); // teleport on jumpship
                     } else {
                         bot.setJumpship(new DefaultJumpship()); // don't teleport
                     }
-                    valuator = new JumpshipSimpleCValuator(random, epsilonChooseRandomTask, x, true, numTasks, numAgents);
+                    valuator = new JSRResourceValuator(random, epsilonChooseRandomTask, x, true, numTasks, numAgents);
                     break;
-                case 16:
+                case 16: // not so good...
                     bot.setCanJumpship(true);
                     if (shouldTeleport) {
                         bot.setJumpship(new ResetJumpship()); // teleport on jumpship
@@ -865,6 +877,10 @@ public class Bounties extends SimState {
                         bot.setJumpship(new DefaultJumpship()); // don't teleport
                     }
                     valuator = new JumpshipGroupSimpleValuator(random, epsilonChooseRandomTask, x, true, numTasks, numAgents);
+                    break;
+                case 27:
+                    valuator = new BountyAuctionResourceValuator(random, 0, x, false, numTasks, numAgents);
+                    auctionVals.add(valuator);
                     break;
                 default:
                     break;

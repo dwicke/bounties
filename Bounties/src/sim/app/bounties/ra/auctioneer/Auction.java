@@ -28,7 +28,7 @@ public class Auction implements Steppable {
     
     @Override
     public void step(SimState state) {
-        System.err.println("I am a auction!!!");
+        //System.err.println("I am a auction!!!");
         auctioneer.collectBids();
         auctioneer.clearAuction();
     }

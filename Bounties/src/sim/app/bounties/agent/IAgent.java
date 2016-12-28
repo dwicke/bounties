@@ -38,4 +38,5 @@ public interface IAgent extends Steppable {
     public int[] getCompleted();
     public void setTrapStep(int trapStep);
     public double getResourceBid(Resource resource);
+    public void receiveResource(Resource resource);
 }

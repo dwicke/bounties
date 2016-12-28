@@ -8,6 +8,8 @@ package sim.app.bounties.ra.auctioneer;
 import sim.app.bounties.Bounties;
 import sim.app.bounties.agent.IAgent;
 import sim.app.bounties.ra.resource.Resource;
+import sim.app.bounties.ra.resource.ResourceType;
+import sim.app.bounties.ra.resource.TaskResource;
 import sim.engine.SimState;
 
 /**
@@ -22,14 +24,15 @@ public class FixedPrice implements Auctioneer{
 
     private double bids [];
     private Resource res;
-    public FixedPrice(SimState bounties) {
+    public FixedPrice(SimState bounties, Resource res) {
         bountyState = (Bounties) bounties;
         bids = new double[bountyState.numAgents];
+        this.res = res;
     }
     
     @Override
     public void collectBids() {
-        System.err.println("I am collecting bids yooo");
+       // System.err.println("I am collecting bids yooo");
         
         // loop over the bounty hunters and ask them for there bid
         for (IAgent a: bountyState.getAgents()) {
@@ -41,7 +44,10 @@ public class FixedPrice implements Auctioneer{
 
     @Override
     public void clearAuction() {
-        
+        for (int i = 0; i < bids.length; i++) {
+            if (bids[i] > 0)
+                bountyState.getAgents()[i].receiveResource(res);
+        }
     }
     
     

@@ -26,7 +26,7 @@ public abstract class LearningValuator extends DefaultValuator implements Decisi
     double pTableDiscountBeta = .1;
     double initValue = 1;
     boolean hasOneUp;
-    int numTimeSteps;
+//    int numTimeSteps;
     QTable incrementRateTable;
     
     public LearningValuator(MersenneTwisterFast random, double epsilonChooseRandomTask, 
@@ -58,9 +58,9 @@ public abstract class LearningValuator extends DefaultValuator implements Decisi
     public void setOneUpdateGamma(double oneUpdateGamma) {
         this.oneUpdateGamma = oneUpdateGamma;
     }
-    public void setNumTimeSteps(int numTimeSteps) {
-        this.numTimeSteps = numTimeSteps;
-    }
+//    public void setNumTimeSteps(int numTimeSteps) {
+//        this.numTimeSteps = numTimeSteps;
+//    }
     
     class TaskValuePair implements Comparable<TaskValuePair>{
     	double value;

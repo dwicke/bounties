@@ -37,17 +37,9 @@ public class JumpshipSimpleRValuator extends LearningValuator implements Decisio
             double tval = timeTable.getQValue(availTask.getID(), 0);
             double incRate = incrementRateTable.getQValue(availTask.getID(), 0);
             
-            //System.err.println("Increment rate = " + incRate);
-           /* if (tval > numTimeSteps) {
-                tval -= numTimeSteps;
-            }*/
+            
             double curReward = availTask.getCurrentReward();
-            if (this.preTask != null && this.preTask.getID() != availTask.getID()) {
-                curReward = availTask.getCurrentReward() - this.preTask.getCurrentReward();
-                if (curReward < 0) {
-                    curReward = 0;
-                }
-            }
+            
             double pval = getPValue(availTask);
             double value = 1.0 / tval * pval * (curReward + tval*incRate);
             if (value > max) {

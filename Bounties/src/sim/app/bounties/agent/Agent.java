@@ -15,6 +15,7 @@ import sim.app.bounties.ra.resource.Resource;
 import sim.app.bounties.util.Real;
 import sim.engine.SimState;
 import sim.engine.Steppable;
+import sim.util.Bag;
 import sim.util.Int2D;
 
 /**
@@ -55,6 +56,7 @@ public class Agent implements IAgent {
     int curEffort = 1;
     double currentBounty = 0.0;
     long completedTasks = 0;
+    private double numResources = 0;
     private boolean resourceNeeded;
 
     public int getTrapStep() {
@@ -152,8 +154,24 @@ public class Agent implements IAgent {
             decider.setCurrentPos(control.getCurrentLocation(state));
 
             if (isBad == false) {
-            // get the next task
-            curTask = decider.decideNextTask(bondsman.getAvailableTasks(), bondsman.getUnAvailableTasks());
+                // get the next task
+                Bag inBudget = new Bag();
+                for(Task t: bondsman.getAvailableTasks()) {
+                    if (((t.getCurNumResourcesNeeded() - numResources) * t.getResource().getReservePrice()) <= currentBounty){
+                        // then keep it
+                        inBudget.add(t);
+                    }else {
+                        //System.err.println("Agent id = " + getId() + " curBounty "+ currentBounty + "task id: " + t.getID() + " cost = " + t.getCurNumResourcesNeeded() * t.getResource().getReservePrice());
+                    }
+                }
+                Task aInBudget[] = new Task[inBudget.numObjs];
+                int curIndex = 0;
+                for(Object t: inBudget){
+                    aInBudget[curIndex] = (Task)t;
+                    curIndex++;
+                }
+                curTask = decider.decideNextTask(aInBudget, bondsman.getUnAvailableTasks());
+                //curTask = decider.decideNextTask(bondsman.getAvailableTasks(), bondsman.getUnAvailableTasks());
             }
             else {
                 Task[] av = bondsman.getAvailableTasks();
@@ -168,6 +186,9 @@ public class Agent implements IAgent {
                     tried[currentTaskId]++;
                 }
                 currentTaskId = curTask.getID();
+                
+                resourceNeeded = curTask.getCurNumResourcesNeeded() > numResources;
+                
                 // then we picked a task so do the book keeping
                 numTimeSteps = 0;
                 updateStatistics(false,curTask.getID());
@@ -188,8 +209,12 @@ public class Agent implements IAgent {
      * @param won true if I won false if I lost (someone else finished the task before me.
      */
     void cleanup(double reward, boolean won) {
-        System.err.println("Num agents at task = " + curTask.getAgentsAtTask().numObjs);
+        //System.err.println("Num agents at task = " + curTask.getAgentsAtTask().numObjs);
+        resourceNeeded = false;
+        decider.resetTimeSinceLastCompletion();
         if (won) {// only if I won do I get to say it is finished
+            numResources -= curTask.getCurNumResourcesNeeded();// i use up the resources on winning.
+            
             curTask.setLastFinished(id, bountyState.schedule.getSteps(), bondsman.whoseDoingTaskByID(curTask));
             bondsman.finishTask(curTask, id, bountyState.schedule.getSteps(), numTimeSteps);
             this.currentBounty +=  curTask.getLastRewardPaid();
@@ -246,12 +271,15 @@ public class Agent implements IAgent {
         // the preamble before deciding or going toward a task check if I'm in a state that allows me to
         if (beforeDecide(state))
             return;
+        decider.incrementTimeSinceLastCompletion(); // don't let the bad stuff get you down...???
+        
         decider.learnIncrementRate(bountyState.bondsman.getAvailableTasks());
         if(canJumpship && curTask != null && isBad == false) {
             decider.setPreTask(curTask);// this is the previous task now for when i decide a new task
             decideJumpship(state);
         }
         
+        // so if i could jumpship but I didn't 
         if (decideTaskFailed) {
 
             decider.setPreTask(null);
@@ -404,13 +432,17 @@ public class Agent implements IAgent {
     @Override
     public double getResourceBid(Resource resource) {
         if(resourceNeeded) {
-            return 1.0;
+            return curTask.getCurNumResourcesNeeded() - numResources;
         }
         return 0.0;
     }
     
-    public void receiveResource() {
+    @Override
+    public void receiveResource(Resource resource) {
         resourceNeeded = false;
+        this.currentBounty -= resource.getReservePrice() * (curTask.getCurNumResourcesNeeded() - numResources);
+        numResources += curTask.getCurNumResourcesNeeded() - numResources;
+        //System.err.println("Hunter id = " + getId() + " current bounty = " + currentBounty);
     }
     
 }

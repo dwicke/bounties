@@ -82,10 +82,12 @@ public class BountyAuctionValuator extends LearningValuator implements DecisionV
         
         for (int i = 0; i < availableTasks.length; i++) {
             AgentTaskPair max = getAssignment(valuations);
-            if (max.agentID == this.agentID) {
-                return availableTasks[max.taskID];
+            if (max != null) {
+                if (max.agentID == this.agentID) {
+                    return availableTasks[max.taskID];
+                }
+                valuations = getNewValuations(valuations, max);
             }
-            valuations = getNewValuations(valuations, max);
         }
         System.err.println("ERRRR  no task found for agent " + agentID);
         printValuations(valuations);
@@ -150,6 +152,9 @@ public class BountyAuctionValuator extends LearningValuator implements DecisionV
         }
         
         // now randomly pick from the duplicate set
+        if (curDup == 0) {
+            return null;
+        }
         return duplicates[random.nextInt(curDup)];
     }
     

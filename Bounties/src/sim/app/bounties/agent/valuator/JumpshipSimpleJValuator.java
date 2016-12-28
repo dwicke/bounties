@@ -36,8 +36,8 @@ public class JumpshipSimpleJValuator extends LearningValuator implements Decisio
             // over all tasks
             double tval = timeTable.getQValue(availTask.getID(), 0);
            
-            double pval = getPValue(availTask); /// (getPValue(availTask) + getPJumpValue());
-            double value = 1.0 / tval * pval * (availTask.getCurrentReward() + tval);
+            double pval = /*getPValue(availTask);*/  (getPValue(availTask) + getPJumpValue());
+            double value = 1.0 / (tval + timeSinceCompletion) * pval * (availTask.getCurrentReward() + tval);
             
             if (value > max) {
                 max = value;
@@ -52,7 +52,7 @@ public class JumpshipSimpleJValuator extends LearningValuator implements Decisio
             System.err.println("pretask is null!");
                     
         }
-        return (preTask == null) ? 1.0 : pJumpTable.getQValue(preTask.getID(), 0);//not sure ...
+        return (preTask == null) ? 0.0 : pJumpTable.getQValue(preTask.getID(), 0);//not sure ...
         //return pJumpTable.getQValue(preTask.getID(), 0);
         //return (preTask == null) ? 1.0 : pTable.getQValue(preTask.getID(), 0);
     }
