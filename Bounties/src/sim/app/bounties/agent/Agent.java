@@ -58,7 +58,12 @@ public class Agent implements IAgent {
     long completedTasks = 0;
     private double numResources = 0;
     private boolean resourceNeeded;
+    double totalResourcesUsed = 0;
 
+    
+    public double getTotalREsourcesUsed() {
+        return totalResourcesUsed;
+    }
     public int getTrapStep() {
         return trapStep;
     }
@@ -67,6 +72,13 @@ public class Agent implements IAgent {
         this.trapStep = trapStep;
     }
     
+    public double getNumResources() {
+        return numResources;
+    }
+    
+    public double getCurrentBounty() {
+        return currentBounty;
+    }
     
     
     public int[] getTried() {
@@ -169,6 +181,9 @@ public class Agent implements IAgent {
                 for(Object t: inBudget){
                     aInBudget[curIndex] = (Task)t;
                     curIndex++;
+                }
+                if (aInBudget.length == 0) {
+                    System.err.println("Agent = " + getId() + " no tasks avail");
                 }
                 curTask = decider.decideNextTask(aInBudget, bondsman.getUnAvailableTasks());
                 //curTask = decider.decideNextTask(bondsman.getAvailableTasks(), bondsman.getUnAvailableTasks());
@@ -440,6 +455,7 @@ public class Agent implements IAgent {
     @Override
     public void receiveResource(Resource resource) {
         resourceNeeded = false;
+        totalResourcesUsed += curTask.getCurNumResourcesNeeded() - numResources;
         this.currentBounty -= resource.getReservePrice() * (curTask.getCurNumResourcesNeeded() - numResources);
         numResources += curTask.getCurNumResourcesNeeded() - numResources;
         //System.err.println("Hunter id = " + getId() + " current bounty = " + currentBounty);

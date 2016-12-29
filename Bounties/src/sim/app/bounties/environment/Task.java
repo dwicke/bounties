@@ -49,7 +49,7 @@ public class Task implements Real, Fixed2D{
     
     private double curNumResourcesNeeded = 0; // this is the number of resources currently needed to complete the task
     private double numResourcesNeeded = 0; // number of resources needed to finish this task (incremented up to max)
-    private double maxNumResourcesNeeded = 5; // the max number of resources will ever need
+    private double maxNumResourcesNeeded = 6; // the max number of resources will ever need
     private int incrementResourceAt = 20; // every x times the task is completed the numResourcesNeeded is incremented
     private Resource resource;
     
