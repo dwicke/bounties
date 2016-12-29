@@ -32,5 +32,9 @@ public class Auction implements Steppable {
         auctioneer.collectBids();
         auctioneer.clearAuction();
     }
+
+    public double getProfit() {
+        return auctioneer.getProfit();
+    }
     
 }

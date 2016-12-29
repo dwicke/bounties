@@ -24,6 +24,7 @@ public class FixedPrice implements Auctioneer{
 
     private double bids [];
     private Resource res;
+    private double profit = 0.0;
     public FixedPrice(SimState bounties, Resource res) {
         bountyState = (Bounties) bounties;
         bids = new double[bountyState.numAgents];
@@ -47,9 +48,15 @@ public class FixedPrice implements Auctioneer{
         for (int i = 0; i < bids.length; i++) {
             if (bids[i] > 0) {
                 bountyState.getAgents()[i].receiveResource(res);
+                profit += bids[i] * res.getReservePrice();
                 bids[i] = 0; // reset there bid!!!
             }
         }
+    }
+
+    @Override
+    public double getProfit() {
+        return profit;
     }
     
     

@@ -13,5 +13,6 @@ public interface Auctioneer {
     
     public void collectBids();
     public void clearAuction();
-    
+    public double getProfit();
 }
+
