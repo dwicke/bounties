@@ -416,6 +416,49 @@ public class Bounties extends SimState {
     }
     
     
+    /*
+    
+  <done>      how many total tasks have completed 
+
+  <done>      what is the average bounty paid over all tasks
+
+  <done>      what is the average time it takes a task to be completed.
+
+  <done>      What is the ratio of the average bounty paid over the average time to complete task
+
+        How about the change between the timesteps of that ratio?  How does it fluctuate?
+
+        what is the total spent on resources (the amount the auctioneer made)
+    */
+    
+    public int getTotalTasksCompleted() {
+        if (bondsman != null)
+            return bondsman.getNumTasksFinished();
+        return 0;
+    }
+    
+    public double getAverageBountyPaid() {
+        if (bondsman != null)
+            return bondsman.getAveragePaid();
+        return 0.0;
+    }
+    
+    public double getAverageTaskCompletionTime() {
+        if (bondsman != null)
+            return bondsman.getAverageCompletionTime();
+        return 0.0;
+    }
+    
+    public double getRatioPaidToComplete() {
+        if (bondsman != null)
+            return getAverageBountyPaid() / getAverageTaskCompletionTime();
+        return 0.0;
+    }
+    
+    
+    
+    
+    
     public IAgent[] getAgents() {
         return agents;
     }

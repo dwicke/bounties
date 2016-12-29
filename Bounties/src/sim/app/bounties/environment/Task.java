@@ -21,6 +21,7 @@ public class Task implements Real, Fixed2D{
     private double lastReward = 0;
     private double currentReward = 0; // controlled by bondsman to increase
     private double lastRewardPaid = 0;
+    private double totalRewardPaidOut = 0.0; // total reward paid out by this task
     private boolean done = false; // true when at the goal false otherwise
     private boolean available = true;// true when a robot is not carrying and not at a goal it is false if not at the
     public Int2D realLocation;// location
@@ -39,6 +40,7 @@ public class Task implements Real, Fixed2D{
     private int numAgentsNeeded = 1; // the number of agents needed at the task to complete it
     private int timeUntilRespawn = 0;
     private int completeCounter = 0;
+    private int totalTimeWaiting = 0; // this is the total time spent available and not completed over all time
     
     public int badForWho = -1;
     public int maxRespawnTime = 20;
@@ -49,7 +51,7 @@ public class Task implements Real, Fixed2D{
     
     private double curNumResourcesNeeded = 0; // this is the number of resources currently needed to complete the task
     private double numResourcesNeeded = 0; // number of resources needed to finish this task (incremented up to max)
-    private double maxNumResourcesNeeded = 6; // the max number of resources will ever need
+    private double maxNumResourcesNeeded = 0; // the max number of resources will ever need
     private int incrementResourceAt = 20; // every x times the task is completed the numResourcesNeeded is incremented
     private Resource resource;
     
@@ -181,8 +183,14 @@ public class Task implements Real, Fixed2D{
         return timeNotFinished;
     }
     public void resetTimeNotFinished() {
+        totalTimeWaiting += timeNotFinished;
         timeNotFinished = 0;
     }
+    
+    public double getAverageCompletionTime() {
+        return ((double)totalTimeWaiting) / ((double)completeCounter);
+    }
+    
     
     public boolean isDone(){
         return done;
@@ -309,14 +317,24 @@ public class Task implements Real, Fixed2D{
     public double getLastRewardPaid() {
         return lastRewardPaid;
     }
+    
+    public double getTotalRewardPaidOut() {
+        return totalRewardPaidOut;
+    }
+    
+    public double getAverageRewardPaidOut() {
+        return totalRewardPaidOut / ((double) completeCounter);
+    }
 
     public void resetReward() {
+        totalRewardPaidOut += currentReward;
         lastRewardPaid = currentReward;
         currentReward = defaultReward;
         lastReward = defaultReward;
     }
     
-    public void resetReward(int reward) {
+    public void resetReward(double reward) {
+        totalRewardPaidOut += currentReward;
         lastRewardPaid = currentReward;
         currentReward = reward;
         lastReward = reward;

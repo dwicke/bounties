@@ -38,6 +38,7 @@ public class Bondsman implements Steppable {
     public double currentAvgNumAgents = 0.0;
     
     BondsmanValuator valuator;
+    private int numTasksFinished = 0;
     
     
     public Bondsman(){
@@ -65,6 +66,10 @@ public class Bondsman implements Steppable {
         incrementExistence();
         getCalculateGiniIndex();
         getGeneralEntropyIndex(1.0);
+    }
+    
+    public int getNumTasksFinished() {
+        return numTasksFinished;
     }
     
     public double getTheilIndex() {
@@ -318,6 +323,7 @@ public class Bondsman implements Steppable {
      * @param timestamp when did you finish it
      */
     public void finishTask(Task curTask, int robotID, long timestamp, int numTimeSteps) {
+        numTasksFinished++;
         curTask.setLastFinished(robotID, timestamp);
         curTask.setAvailable(false); // whenever an agent finishes a task then make it unavailable
         curTask.setDone(true);
@@ -333,7 +339,8 @@ public class Bondsman implements Steppable {
         curTask.generateRealTaskLocation(bounties.random);
         bounties.tasksGrid.setObjectLocation(curTask, curTask.realLocation);
         valuator.updateBounty(curTask, numTimeSteps);
-        curTask.resetReward();
+        // the reset of new base bounty is very simple and could be tighter... but good for now.
+        curTask.resetReward(curTask.getDefaultReward() * (1 + curTask.getCurNumResourcesNeeded()));
         valuator.setInitialBounty(curTask);
         whosDoingWhatTaskID[robotID] = -1;
     }
@@ -422,6 +429,22 @@ public class Bondsman implements Steppable {
         }
         currentAvgNumAgents = (double)unique;
         return currentAvgNumAgents;
+    }
+
+    public double getAveragePaid() {
+        double averagePaid = 0.0;
+        for (int i = 0; i < tasks.numObjs; i++) {
+            averagePaid += ((Task) tasks.get(i)).getAverageRewardPaidOut();
+        }
+        return averagePaid / ((double)tasks.numObjs);
+    }
+
+    public double getAverageCompletionTime() {
+        double averageCompTime = 0.0;
+        for (int i = 0; i < tasks.numObjs; i++) {
+            averageCompTime += ((Task) tasks.get(i)).getAverageCompletionTime();
+        }
+        return averageCompTime / ((double)tasks.numObjs);
     }
 
     
