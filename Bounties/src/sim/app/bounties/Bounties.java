@@ -656,7 +656,7 @@ public class Bounties extends SimState {
         }
         
         Auctioneer auctioneer;
-        Resource res = new TaskResource(-1, 100, ResourceType.FUEL);
+        Resource res = new TaskResource(-1, 20, ResourceType.FUEL);
         switch(auctioneerType) {
             case 0:
                 auctioneer = new FixedPrice(this, res);
