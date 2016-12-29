@@ -29,6 +29,7 @@ public class Task implements Real, Fixed2D{
     
     private int id = 0;
     private double defaultReward = 100;
+    private double bountyIncrement = 1.0;
     private Color availableColor = Color.RED;// may want to change color if we have different types of tasks
     private Color notAvailableColor = Color.WHITE; // make it disappear
     
@@ -187,6 +188,10 @@ public class Task implements Real, Fixed2D{
         timeNotFinished = 0;
     }
     
+    public double getTotalTimeWaiting() {
+        return totalTimeWaiting;
+    }
+    
     public double getAverageCompletionTime() {
         return ((double)totalTimeWaiting) / ((double)completeCounter);
     }
@@ -276,7 +281,7 @@ public class Task implements Real, Fixed2D{
         if (currentReward < 10000000 && isDone() == false)// don't increment while the task is done 
         {
             lastReward = currentReward;
-            currentReward+=1.0;
+            currentReward+=bountyIncrement;
         }
     }
     public void incrementCurrentReward(double incrementAmount) {

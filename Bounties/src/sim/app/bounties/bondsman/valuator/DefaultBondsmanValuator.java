@@ -16,12 +16,13 @@ import sim.app.bounties.environment.Task;
 public class DefaultBondsmanValuator implements BondsmanValuator{
 
     protected final double incrementAmount[];
+    protected final double defaultAmount = 1.0;
     protected final Bounties bounties;
     
     public DefaultBondsmanValuator(Bounties bounties) {
         this.bounties = bounties;
         incrementAmount = new double[this.bounties.numTasks];
-        Arrays.fill(incrementAmount, 1);
+        Arrays.fill(incrementAmount, defaultAmount);
     }
     
     @Override

@@ -432,19 +432,23 @@ public class Bondsman implements Steppable {
     }
 
     public double getAveragePaid() {
-        double averagePaid = 0.0;
+        double totalPaid = 0.0;
+        double totalCompleted = 0.0;
         for (int i = 0; i < tasks.numObjs; i++) {
-            averagePaid += ((Task) tasks.get(i)).getAverageRewardPaidOut();
+            totalPaid += ((Task) tasks.get(i)).getTotalRewardPaidOut();
+            totalCompleted += ((Task) tasks.get(i)).getCompleteCounter();
         }
-        return averagePaid / ((double)tasks.numObjs);
+        return totalPaid / totalCompleted;
     }
 
     public double getAverageCompletionTime() {
-        double averageCompTime = 0.0;
+        double totalWait = 0.0;
+        double totalCompleted = 0.0;
         for (int i = 0; i < tasks.numObjs; i++) {
-            averageCompTime += ((Task) tasks.get(i)).getAverageCompletionTime();
+            totalWait += ((Task) tasks.get(i)).getTotalTimeWaiting();
+            totalCompleted += ((Task) tasks.get(i)).getCompleteCounter();
         }
-        return averageCompTime / ((double)tasks.numObjs);
+        return totalWait / totalCompleted;
     }
 
     
