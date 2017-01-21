@@ -46,14 +46,23 @@ public class JSRResourceValuator extends LearningValuator implements DecisionVal
             // over all tasks
             double tval = timeTable.getQValue(availTask.getID(), 0);
             double incRate = incrementRateTable.getQValue(availTask.getID(), 0);
-            
+            /*
+            if (preTask != null && preTask.getID() == availTask.getID()) {
+                // then we are deciding whether to jumpship and we are considering continuing the current task
+                // so we have to change the tval
+                tval -= timeOnTask;
+                
+            }
+            */
             
             double curReward = availTask.getCurrentReward();
             
             
             double pval = getPValue(availTask);
             double value = pval * ((curReward + tval*incRate - availTask.getNumResourcesNeeded()*availTask.getResource().getReservePrice()) / (tval + timeSinceCompletion));//1.0 / tval * pval * (curReward + tval*incRate);
-            if (value > max) {
+            
+            
+            if (value > 0 && value > max) {
                 max = value;
                 curTask = availTask;
             }

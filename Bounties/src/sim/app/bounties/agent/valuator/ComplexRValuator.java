@@ -21,7 +21,10 @@ public class ComplexRValuator extends LearningValuator implements DecisionValuat
         this.numTasks = numTasks;
     }
 
-    
+    @Override
+    Task pickTask(Task availableTasks[], Task unavailableTasks[]) { 
+        return pickTask(availableTasks);
+    }
     @Override
     Task pickTask(Task availableTasks[]) {
         

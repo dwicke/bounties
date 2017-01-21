@@ -123,7 +123,19 @@ public class Bounties extends SimState {
     public double incrementAmount = 0.0;
     public int trapStep = 10;
     public Auction auction;
+    public double resourceCost = 20;
 
+    public double getResourceCost() {
+        return resourceCost;
+    }
+
+    public void setResourceCost(double resourceCost) {
+        this.resourceCost = resourceCost;
+    }
+
+    
+    
+    
     public int getNumSpikeTasks() {
         return numSpikeTasks;
     }
@@ -427,6 +439,8 @@ public class Bounties extends SimState {
   <done>      What is the ratio of the average bounty paid over the average time to complete task
     
               what is the total spent on resources (the amount the auctioneer made)
+    
+              So, basically
     */
     
     public int getTotalTasksCompleted() {
@@ -434,6 +448,49 @@ public class Bounties extends SimState {
             return bondsman.getNumTasksFinished();
         return 0;
     }
+    
+
+    // we are not interested in efficiency in terms of ammount paid
+    // although nice
+    // we are interested in resiliancy, speed, and sustainability.
+    // 
+    // what is the measure of these things?
+    //
+    // first look at speed
+    // speed = d/t  
+    // however it is a bit different 
+    // distance is the distance from home base to the task of the agent which completed the task
+    // time is how long the task has been available.
+    // So, basically say it takes 15 units to get to the task but it has been
+    // available for 30 time steps and assume all agents move at a unit per timestep
+    // so the speed to complete the task was .5
+    // 
+    // we want to maximize speed.  we want to have speed as close to 1 as possible
+    // 
+    // By using bounty hunting I hypothesize that this is the case.
+    // so I'm going to look at the average speed of the system.
+    // 
+    // from this can I look at acceleration?
+    // meaning how quickly the speed changes with time?
+    // oh wow this seems like a good metric...
+    // basically can I determine how quickly the bounty hunting system can adapt to changes
+    // in the system?
+    // Is acceleration the metric for resiliancy?
+    // basically how quickly the system is able to adapt to change?
+    // how do you calculate the acceleration?
+    // I'm starting to wonder if bounty hunting can be imporoved upon to improve these things.
+    //
+    //
+    //
+    // 
+    public double getCompletionSpeed() {
+        if (bondsman != null)
+            return bondsman.getCompletionSpeed();
+        return 0.0;
+    }
+    
+    //
+    
     
     public double getAverageBountyPaid() {
         if (bondsman != null)
@@ -447,9 +504,9 @@ public class Bounties extends SimState {
         return 0.0;
     }
     
-    public double getRatioPaidToComplete() {
+    public double getRatioBountyPerTimestep() {
         if (bondsman != null)
-            return getAverageBountyPaid() / getAverageTaskCompletionTime();
+            return bondsman.getAverageCostPerTimestep();
         return 0.0;
     }
     
@@ -457,6 +514,18 @@ public class Bounties extends SimState {
     public double getTotalAuctionProfit() {
         if (auction != null)
             return auction.getProfit();
+        return 0.0;
+    }
+    
+    public double getOutstandingWaitTime() {
+        if (bondsman != null)
+            return bondsman.getOutstandingWaitTime();
+        return 0.0;
+    }
+    
+    public double getAverageOustandingWaitTime() {
+        if (bondsman != null)
+            return bondsman.getAverageOutstandingWaitTime();
         return 0.0;
     }
     
@@ -656,7 +725,7 @@ public class Bounties extends SimState {
         }
         
         Auctioneer auctioneer;
-        Resource res = new TaskResource(-1, 20, ResourceType.FUEL);
+        Resource res = new TaskResource(-1, resourceCost, ResourceType.FUEL);
         switch(auctioneerType) {
             case 0:
                 auctioneer = new FixedPrice(this, res);
@@ -683,6 +752,7 @@ public class Bounties extends SimState {
             curTask.setDefaultReward(defaultReward);
             curTask.setNumAgentsNeeded(defaultMinAgentsPerTask);
             curTask.setResource(res);
+            
             tasksGrid.setObjectLocation(tasksLocs.objs[i], curTask.getLocation());
         }
         
@@ -927,6 +997,16 @@ public class Bounties extends SimState {
                     valuator = new BountyAuctionResourceValuator(random, 0, x, false, numTasks, numAgents);
                     auctionVals.add(valuator);
                     break;
+                case 28:
+                    bot.setCanJumpship(true);
+                    if (shouldTeleport) {
+                        bot.setJumpship(new ResetJumpship()); // teleport on jumpship
+                    } else {
+                        bot.setJumpship(new DefaultJumpship()); // don't teleport
+                    }
+                    valuator = new BountyAuctionResourceValuator(random, 0, x, false, numTasks, numAgents);
+                    auctionVals.add(valuator);
+                break;
                 default:
                     break;
             }

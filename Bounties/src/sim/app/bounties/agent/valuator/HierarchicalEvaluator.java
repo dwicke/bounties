@@ -20,6 +20,10 @@ public class HierarchicalEvaluator extends DefaultValuator implements DecisionVa
     }
 
     @Override
+    Task pickTask(Task availableTasks[], Task unavailableTasks[]) { 
+        return pickTask(availableTasks);
+    }
+    @Override
     Task pickTask(Task[] availableTasks) {
         throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }

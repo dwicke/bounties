@@ -28,6 +28,10 @@ public class JumpshipSimpleRValuator extends LearningValuator implements Decisio
         incrementRateTable = new QTable(numTasks, 1, tTableLearningRate, tTableDiscountBeta, initValue); 
     }
     @Override
+    Task pickTask(Task availableTasks[], Task unavailableTasks[]) { 
+        return pickTask(availableTasks);
+    }
+    @Override
     Task pickTask(Task availableTasks[]) {
         
         double max = -1;

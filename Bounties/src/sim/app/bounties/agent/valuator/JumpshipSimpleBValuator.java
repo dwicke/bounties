@@ -30,6 +30,10 @@ public class JumpshipSimpleBValuator extends LearningValuator implements Decisio
         
     }
     @Override
+    Task pickTask(Task availableTasks[], Task unavailableTasks[]) { 
+        return pickTask(availableTasks);
+    }
+    @Override
     Task pickTask(Task availableTasks[]) {
         double max = -1;
         Task curTask = null;

@@ -20,10 +20,10 @@ public abstract class LearningValuator extends DefaultValuator implements Decisi
     QTable timeTable; // time to do task
     QTable pTable; // probablility that I am successful at a task
     double oneUpdateGamma = .001;
-    double tTableLearningRate = .1;
-    double tTableDiscountBeta = .1;
-    double pTableLearningRate = .2;
-    double pTableDiscountBeta = .1;
+    double tTableLearningRate = .1; // set to .1 originally
+    double tTableDiscountBeta = .1; // not used...
+    double pTableLearningRate = .2; // set to .2 oritinally
+    double pTableDiscountBeta = .1; // not used...
     double initValue = 1;
     boolean hasOneUp;
 //    int numTimeSteps;

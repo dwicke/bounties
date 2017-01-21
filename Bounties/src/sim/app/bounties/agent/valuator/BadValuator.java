@@ -24,6 +24,10 @@ public class BadValuator extends DefaultValuator{
     }
 
     @Override
+    Task pickTask(Task availableTasks[], Task unavailableTasks[]) { 
+        return pickTask(availableTasks);
+    }
+    @Override
     Task pickTask(Task[] availableTasks) {
         Task curTask = null;
         

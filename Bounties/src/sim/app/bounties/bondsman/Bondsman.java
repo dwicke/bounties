@@ -16,6 +16,7 @@ import java.util.Comparator;
 
 import sim.app.bounties.Bounties;
 import sim.app.bounties.environment.Task;
+import sim.app.bounties.util.SlidingWindowAverage;
 import sim.engine.SimState;
 import sim.engine.Steppable;
 import sim.util.Bag;
@@ -39,6 +40,12 @@ public class Bondsman implements Steppable {
     
     BondsmanValuator valuator;
     private int numTasksFinished = 0;
+    Bag currentlyCompletedTasks = new Bag();
+    
+    double totalTraveled = 0.0;
+    double totalTimeNotFinished = 0.0;
+    
+    SlidingWindowAverage swaSpeed = new SlidingWindowAverage(1000);
     
     
     public Bondsman(){
@@ -324,6 +331,19 @@ public class Bondsman implements Steppable {
      */
     public void finishTask(Task curTask, int robotID, long timestamp, int numTimeSteps) {
         numTasksFinished++;
+        if (numTimeSteps != curTask.realLocation.manhattanDistance(bounties.agents[robotID].getRobotHome())) {
+            // if the task is right on top of the agent the distance is zero but the timesteps is equal to one.
+            System.err.println("NOOOOOOOOOO number of timesteps = " + numTimeSteps + " manhattanDistance = " + curTask.realLocation.manhattanDistance(bounties.agents[robotID].getRobotHome()));
+        }
+        double speed = curTask.realLocation.manhattanDistance(bounties.agents[robotID].getRobotHome()) / curTask.timeNotFinished;
+        //System.err.println("Agent id = " + robotID + "  Speed = " + speed + " distance = " + curTask.realLocation.manhattanDistance(bounties.agents[robotID].getRobotHome()) + "  time not finished = " + curTask.timeNotFinished);
+        
+       // if (curTask.getID() == 0) {
+            swaSpeed.addValue(curTask.realLocation.manhattanDistance(bounties.agents[robotID].getRobotHome()),curTask.timeNotFinished);
+            totalTraveled += curTask.realLocation.manhattanDistance(bounties.agents[robotID].getRobotHome()) + 1;
+            totalTimeNotFinished += curTask.timeNotFinished;
+        //}
+        
         curTask.setLastFinished(robotID, timestamp);
         curTask.setAvailable(false); // whenever an agent finishes a task then make it unavailable
         curTask.setDone(true);
@@ -431,6 +451,17 @@ public class Bondsman implements Steppable {
         return currentAvgNumAgents;
     }
 
+    public double getAverageCostPerTimestep() {
+        double totalPaid = 0.0;
+        double totalWait = 0.0;
+        for (int i = 0; i < tasks.numObjs; i++) {
+            totalPaid += ((Task) tasks.get(i)).getTotalRewardPaidOut();
+            totalWait += ((Task) tasks.get(i)).getTotalTimeWaiting();
+        }
+        return totalPaid / totalWait; // this is sort of like a $/hr over all of the tasks 
+    }
+    
+    
     public double getAveragePaid() {
         double totalPaid = 0.0;
         double totalCompleted = 0.0;
@@ -449,6 +480,52 @@ public class Bondsman implements Steppable {
             totalCompleted += ((Task) tasks.get(i)).getCompleteCounter();
         }
         return totalWait / totalCompleted;
+    }
+    
+    public double getOutstandingWaitTime() {
+        // how long in total have the available tasks been waiting to be completed?
+        double totalWait = 0.0;
+        for (int i = 0; i < tasks.numObjs; i++) {
+            if (((Task) tasks.objs[i]).getIsAvailable())
+            {
+                totalWait += ((Task) tasks.get(i)).getTimeNotFinished();
+            }
+        }
+        return totalWait;
+    }
+    
+    public double getAverageOutstandingWaitTime() {
+        // how long in total have the available tasks been waiting to be completed?
+        double totalWait = 0.0;
+        double numAvailTasks = 0.0;
+        for (int i = 0; i < tasks.numObjs; i++) {
+            if (((Task) tasks.objs[i]).getIsAvailable())
+            {
+                totalWait += ((Task) tasks.get(i)).getTimeNotFinished();
+                numAvailTasks++;
+            }
+        }
+        return totalWait / tasks.numObjs;
+    }
+
+    /*
+    // first look at speed
+    // speed = d/t  
+    // however it is a bit different 
+    // distance is the distance from home base to the task of the agent which completed the task
+    // time is how long the task has been available.
+    // So, basically say it takes 15 units to get to the task but it has been
+    // available for 30 time steps and assume all agents move at a unit per timestep
+    // so the speed to complete the task was .5
+    // 
+    // we want to maximize speed.  we want to have speed as close to 1 as possible
+    */
+    public double getCompletionSpeed() {
+        if (totalTimeNotFinished != 0.0) {
+            return swaSpeed.getRollingAverage();
+            //return totalTraveled / totalTimeNotFinished;
+        }
+        return 1.0;
     }
 
     

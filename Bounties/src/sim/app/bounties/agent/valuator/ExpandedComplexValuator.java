@@ -27,6 +27,10 @@ public class ExpandedComplexValuator extends LearningValuator implements Decisio
         super(random, epsilonChooseRandomTask, agentID, hasOneUp, numTasks, numRobots);
         kTable = new QTable(numTasks, numRobots, kTableLearningRate, kTableDiscountBeta, initValue);        
     }
+    @Override
+    Task pickTask(Task availableTasks[], Task unavailableTasks[]) { 
+        return pickTask(availableTasks);
+    }
     
     @Override
     Task pickTask(Task availableTasks[]) {

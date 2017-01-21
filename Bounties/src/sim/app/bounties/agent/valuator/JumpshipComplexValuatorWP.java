@@ -23,7 +23,10 @@ public class JumpshipComplexValuatorWP extends LearningValuator implements Decis
         RTable = new double[numTasks][numRobots];
         NCount = new double[numTasks];
     }
-    
+    @Override
+    Task pickTask(Task availableTasks[], Task unavailableTasks[]) { 
+        return pickTask(availableTasks);
+    }
     
     @Override
     Task pickTask(Task availableTasks[]) {

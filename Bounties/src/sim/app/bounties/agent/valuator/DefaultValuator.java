@@ -23,6 +23,12 @@ public abstract class DefaultValuator implements DecisionValuator {
     Task preTask;
     boolean jumped;
     int timeSinceCompletion = 0;
+    int timeOnTask = 0;
+    
+    @Override
+    public void setTimeOnTask(int timeOnTask) {
+        this.timeOnTask = timeOnTask;
+    }
 
     
     @Override

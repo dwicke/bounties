@@ -20,6 +20,10 @@ public class RandomValuator extends DefaultValuator{
     }
 
     @Override
+    Task pickTask(Task availableTasks[], Task unavailableTasks[]) { 
+        return pickTask(availableTasks);
+    }
+    @Override
     Task pickTask(Task[] availableTasks) {
         throw new IllegalStateException("a RandomValuator should never call pickTask");
     }

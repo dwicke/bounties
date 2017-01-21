@@ -135,6 +135,7 @@ public class Agent implements IAgent {
                     bondsman.doingTask(id, -1);// don't do any task
                     jumpHome();
                     curTask = null;
+                    resourceNeeded = false; // need to cancel the order
                     decideTaskFailed = true;
                     decider.setIsDead(true);
                 }
@@ -145,6 +146,7 @@ public class Agent implements IAgent {
                     bondsman.doingTask(id, -1);// don't do any task
                     jumpHome();
                     curTask = null;
+                    resourceNeeded = false; // need to cancel the order
                     decideTaskFailed = true;
                     decider.setIsDead(true);
                 }
@@ -234,7 +236,7 @@ public class Agent implements IAgent {
             bondsman.finishTask(curTask, id, bountyState.schedule.getSteps(), numTimeSteps);
             this.currentBounty +=  curTask.getLastRewardPaid();
             this.completedTasks++;
-            System.err.println("Agent " + id + " reward = " + curTask.getLastRewardPaid() + " total = " + this.currentBounty + " task completed = " + this.completedTasks + " average reward/task = " + this.currentBounty/completedTasks);
+            //System.err.println("Agent " + id + " reward = " + curTask.getLastRewardPaid() + " total = " + this.currentBounty + " task completed = " + this.completedTasks + " average reward/task = " + this.currentBounty/completedTasks);
         }
         
         decider.learn(curTask, reward, curTask.getLastAgentsWorkingOnTask(), numTimeSteps);
@@ -259,13 +261,15 @@ public class Agent implements IAgent {
     public void decideJumpship(SimState state) {
         Task oldTask = curTask;
         decider.setPreTask(oldTask);
-        double oldNumSteps = numTimeSteps;
+        int oldNumSteps = numTimeSteps;
         decideTask(state);// so decide a task.
         if (curTask == null) {
             curTask = oldTask; // you can't jumpship to do nothing
+            numTimeSteps = oldNumSteps;
         }
         if (oldTask.getID() != curTask.getID()) 
         {
+            decider.setTimeOnTask(0);
             oldTask.removeAgentAtTask(this);// I'm not at the task... I've jumped ship
             jumpshipStat(true);
             // consider telling the learner that i've jumped ship so that it can
@@ -277,6 +281,7 @@ public class Agent implements IAgent {
         } else
         {
             jumpshipStat(false);
+            numTimeSteps = oldNumSteps;
         }
     }
     
@@ -294,7 +299,6 @@ public class Agent implements IAgent {
             decideJumpship(state);
         }
         
-        // so if i could jumpship but I didn't 
         if (decideTaskFailed) {
 
             decider.setPreTask(null);
@@ -305,6 +309,7 @@ public class Agent implements IAgent {
         } 
         else {
             numTimeSteps++;
+            decider.setTimeOnTask(numTimeSteps);
             if (finishedTask()) {
                 // look into adjusting this from 0.0 to something nicer....
                 //completed[curTask.getID()]--;

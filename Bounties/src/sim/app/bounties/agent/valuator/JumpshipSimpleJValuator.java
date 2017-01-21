@@ -29,6 +29,10 @@ public class JumpshipSimpleJValuator extends LearningValuator implements Decisio
         pJumpTable = new QTable(numTasks, numRobots, pTableLearningRate, pTableDiscountBeta, initValue);        
     }
     @Override
+    Task pickTask(Task availableTasks[], Task unavailableTasks[]) { 
+        return pickTask(availableTasks);
+    }
+    @Override
     Task pickTask(Task availableTasks[]) {
         double max = -1;
         Task curTask = null;

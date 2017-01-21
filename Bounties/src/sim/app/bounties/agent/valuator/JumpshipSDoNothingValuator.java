@@ -23,6 +23,7 @@ public class JumpshipSDoNothingValuator extends LearningValuator implements Deci
         super(random, epsilonChooseRandomTask, agentID, hasOneUp, numTasks, numRobots);
         this.numTasks = numTasks;
     }
+    
     @Override
     Task pickTask(Task availableTasks[], Task unavailableTasks[]) {
         double max = -1;

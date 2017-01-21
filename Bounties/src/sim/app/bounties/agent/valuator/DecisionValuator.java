@@ -24,4 +24,5 @@ public interface DecisionValuator {
     public void learnIncrementRate(Task[] tasks);
     public void incrementTimeSinceLastCompletion();
     public void resetTimeSinceLastCompletion();
+    public void setTimeOnTask(int timeOnTask);
 }
