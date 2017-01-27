@@ -16,16 +16,12 @@ import sim.util.Int2D;
  */
 public class OptimalValuator extends DefaultValuator{
     private static final long serialVersionUID = 1;
-    Int2D home;
+    
     public OptimalValuator(MersenneTwisterFast random, int agentID, Int2D home) {
         super(random, 0, agentID);
         this.home = home;
     }
 
-    @Override
-    public void setHome(Int2D home) {
-        this.home = home;
-    }
 
     @Override
     Task pickTask(Task[] availableTasks, Task[] unavailableTasks) {

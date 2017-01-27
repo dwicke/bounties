@@ -333,14 +333,14 @@ public class Bondsman implements Steppable {
         numTasksFinished++;
         if (numTimeSteps != curTask.realLocation.manhattanDistance(bounties.agents[robotID].getRobotHome())) {
             // if the task is right on top of the agent the distance is zero but the timesteps is equal to one.
-            System.err.println("NOOOOOOOOOO number of timesteps = " + numTimeSteps + " manhattanDistance = " + curTask.realLocation.manhattanDistance(bounties.agents[robotID].getRobotHome()));
+            //System.err.println("NOOOOOOOOOO number of timesteps = " + numTimeSteps + " manhattanDistance = " + curTask.realLocation.manhattanDistance(bounties.agents[robotID].getRobotHome()));
         }
-        double speed = curTask.realLocation.manhattanDistance(bounties.agents[robotID].getRobotHome()) / curTask.timeNotFinished;
+        //double speed = curTask.realLocation.manhattanDistance(bounties.agents[robotID].getRobotHome()) / curTask.timeNotFinished;
         //System.err.println("Agent id = " + robotID + "  Speed = " + speed + " distance = " + curTask.realLocation.manhattanDistance(bounties.agents[robotID].getRobotHome()) + "  time not finished = " + curTask.timeNotFinished);
         
        // if (curTask.getID() == 0) {
             swaSpeed.addValue(curTask.realLocation.manhattanDistance(bounties.agents[robotID].getRobotHome()),curTask.timeNotFinished);
-            totalTraveled += curTask.realLocation.manhattanDistance(bounties.agents[robotID].getRobotHome()) + 1;
+            totalTraveled += curTask.realLocation.manhattanDistance(bounties.agents[robotID].getRobotHome());
             totalTimeNotFinished += curTask.timeNotFinished;
         //}
         
@@ -360,7 +360,8 @@ public class Bondsman implements Steppable {
         bounties.tasksGrid.setObjectLocation(curTask, curTask.realLocation);
         valuator.updateBounty(curTask, numTimeSteps);
         // the reset of new base bounty is very simple and could be tighter... but good for now.
-        curTask.resetReward(curTask.getDefaultReward() * (1 + curTask.getCurNumResourcesNeeded()));
+        //curTask.resetReward(curTask.getDefaultReward() * (1 + curTask.getCurNumResourcesNeeded()));
+        curTask.resetReward(curTask.getDefaultReward());
         valuator.setInitialBounty(curTask);
         whosDoingWhatTaskID[robotID] = -1;
     }

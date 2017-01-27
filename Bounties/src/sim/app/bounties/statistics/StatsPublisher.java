@@ -26,7 +26,7 @@ public class StatsPublisher implements Steppable{
     Bag bagOfRedundantTotal = new Bag();
     Bag bagOfStepsTotal = new Bag();
     
-    Bag[] arrayOfBagsOfDecisions = null;
+    //Bag[] arrayOfBagsOfDecisions = null;
     String directoryName;
     private long maxNumSteps;
     int numberOfDecisionsToRecord =10000;
@@ -34,10 +34,12 @@ public class StatsPublisher implements Steppable{
         this.board = a;
         this.maxNumSteps = maxNumSteps;
         directoryName = dir;
+        /*
         arrayOfBagsOfDecisions = new Bag[board.getNumAgents()];
         for(int i = 0; i<arrayOfBagsOfDecisions.length; i++){
             arrayOfBagsOfDecisions[i] = new Bag();
         }
+        */
         System.out.println("numROBOTS " + board.getNumAgents());
     
     }
@@ -50,6 +52,7 @@ public class StatsPublisher implements Steppable{
         bagOfRedundantTotal.add(board.getTotalRedunantAgents());
         bagOfStepsTotal.add(board.getTotalLengthOnBoard());
         
+        /*
         if( maxNumSteps - state.schedule.getSteps() < numberOfDecisionsToRecord)
         for(int i = 0; i<arrayOfBagsOfDecisions.length; i++){
             int lastDecision = ((Agent)board.getAgents()[i]).getLastDecision();
@@ -57,7 +60,7 @@ public class StatsPublisher implements Steppable{
                 arrayOfBagsOfDecisions[i].add(lastDecision);
            // System.err.println("key word" +  arrayOfBagsOfDecisions[i].objs[0]);
         }
-
+        */
         if(state.schedule.getSteps() >= maxNumSteps-2){
            try{
             File file = new File(directoryName + "/" + "maxTicks" + state.seed() + ".bounties");

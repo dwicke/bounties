@@ -24,6 +24,7 @@ public abstract class DefaultValuator implements DecisionValuator {
     boolean jumped;
     int timeSinceCompletion = 0;
     int timeOnTask = 0;
+    Int2D home;
     
     @Override
     public void setTimeOnTask(int timeOnTask) {
@@ -60,8 +61,9 @@ public abstract class DefaultValuator implements DecisionValuator {
         this.curLoc = curLoc;
     }
     @Override
-    public void setHome(Int2D home) {}// does nothing here... used for the optimal
-    
+    public void setHome(Int2D home) {
+        this.home = home;
+    }
     
     public DefaultValuator(MersenneTwisterFast random, double epsilonChooseRandomTask, int agentID) {
         this.random = random;

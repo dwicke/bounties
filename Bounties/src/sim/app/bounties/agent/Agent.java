@@ -208,7 +208,7 @@ public class Agent implements IAgent {
                 
                 // then we picked a task so do the book keeping
                 numTimeSteps = 0;
-                updateStatistics(false,curTask.getID());
+                //updateStatistics(false,curTask.getID());
                 bondsman.doingTask(id, curTask.getID());
                 curTask.setCurrentAgentsOnTask(bondsman.whoseDoingTaskByID(curTask));
                 lastSeenFinished = curTask.getLastFinishedTime(); 
@@ -229,6 +229,7 @@ public class Agent implements IAgent {
         //System.err.println("Num agents at task = " + curTask.getAgentsAtTask().numObjs);
         resourceNeeded = false;
         decider.resetTimeSinceLastCompletion();
+        decider.learn(curTask, reward, curTask.getLastAgentsWorkingOnTask(), numTimeSteps);
         if (won) {// only if I won do I get to say it is finished
             numResources -= curTask.getCurNumResourcesNeeded();// i use up the resources on winning.
             
@@ -239,7 +240,7 @@ public class Agent implements IAgent {
             //System.err.println("Agent " + id + " reward = " + curTask.getLastRewardPaid() + " total = " + this.currentBounty + " task completed = " + this.completedTasks + " average reward/task = " + this.currentBounty/completedTasks);
         }
         
-        decider.learn(curTask, reward, curTask.getLastAgentsWorkingOnTask(), numTimeSteps);
+        //decider.learn(curTask, reward, curTask.getLastAgentsWorkingOnTask(), numTimeSteps);
         jumpHome();
         curTask = null;
         numTimeSteps = 0;

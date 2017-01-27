@@ -45,14 +45,41 @@ public class JumpshipSimpleValuator extends LearningValuator implements Decision
                 }
             }
             */
+            
+//            if (this.preTask != null && this.preTask.getID() == availTask.getID() && tval > 2) {
+//                // so if this is my task then the time to complete should be changed
+//                tval = Math.abs(tval - timeOnTask);
+//            }
+            //tval = 1.0;
             double pval = getPValue(availTask);
             //double value = 1.0 / tval * pval * (curReward + tval);
-            double value = 1.0 / tval * pval * (availTask.getCurrentReward() + tval);
+            //System.err.println("Tval = " + tval + " and the real distance = " + home.manhattanDistance(availTask.realLocation));
+            //tval = home.manhattanDistance(availTask.realLocation);
+            //tval = 1.0;
+            //if (this.agentID == 0)
+            //    System.err.println(" task Id = " + availTask.getID() + "  Tval = " + tval + " real distance = " + home.manhattanDistance(availTask.realLocation));
+            
+            //double value = 1.0 / tval * pval * (availTask.getCurrentReward() + tval);
+            double value =  pval * (availTask.getCurrentReward() + 1.0);
+            
+            
             if (value > max) {
                 max = value;
                 curTask = availTask;
             }
+            
+            /// so the goal is to maximize the speed
+            // speed is the time that the agent works on the task over how long it has been available
+            //
+            
+            
+            
+            
+            
+            
+            
         }
+        
         return curTask;
     }
     @Override
@@ -62,9 +89,14 @@ public class JumpshipSimpleValuator extends LearningValuator implements Decision
     
     private void learn(Task curTask, double reward, int numTimeSteps) {
         if(reward == 1.0) {
-            updateLearningRate(timeTable.getQValue(curTask.getID(), 0), numTimeSteps);
+            
+            
+            //updateLearningRate(timeTable.getQValue(curTask.getID(), 0), numTimeSteps);
             
             timeTable.update(curTask.getID(), 0, numTimeSteps);
+            if (this.agentID == 0)
+                System.err.println("Task id = " + curTask.getID() + " numTimesteps = " + numTimeSteps + " new tval = " + timeTable.getQValue(curTask.getID(), 0) + " real distance = " + home.manhattanDistance(curTask.realLocation));
+            
             pTable.update(curTask.getID(), 0, reward);
         }else{
             pTable.update(curTask.getID(), 0, reward);
@@ -81,13 +113,20 @@ public class JumpshipSimpleValuator extends LearningValuator implements Decision
     public void learn(Task curTask, double reward, Bag agentsWorking, int numTimeSteps) {
         double oldT = timeTable.getQValue(curTask.getID(), 0);
         learn(curTask, reward, numTimeSteps);// I don't use agentsWorking.
-        updateEpsilon(oldT, timeTable.getQValue(curTask.getID(), 0));
+//        if (reward == 1.0 && oldT != 1.0)
+//            updateEpsilon(oldT, timeTable.getQValue(curTask.getID(), 0));
+        updateEpsilon(1.0, 1.0);
     }
     
      public void updateEpsilon(double oldT, double newT) {
          double delta = (1.0 / (double)this.numTasks);
+         double boltz = boltzman(oldT,newT, .85);
+         
         epsilonChooseRandomTask = (1.0 - delta)*epsilonChooseRandomTask +
-                                    delta*(boltzman(oldT,newT, .85));
+                                    delta*(boltz);
+        if (this.agentID == 0) {
+            System.err.println("boltz = " + boltz + " epsrnd = " + epsilonChooseRandomTask + " oldT " + oldT + " newT " + newT );
+        }
     }
      
      public double boltzman(double oldT, double newT, double sigma) {
