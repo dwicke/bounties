@@ -15,7 +15,9 @@ public enum ResourceType {
     // how effective you are at doing what it is you are doing (could be a bigger weapon, but this is abstract)
     EFFECTBOOST,
     // basic resource used to carry out task (not necessarily gasoline could be amunition)
-    FUEL
+    FUEL,
+    // an item used to complete the task one time use
+    TOOL 
     
     
    

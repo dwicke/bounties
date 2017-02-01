@@ -23,13 +23,9 @@ public abstract class DefaultValuator implements DecisionValuator {
     Task preTask;
     boolean jumped;
     int timeSinceCompletion = 0;
-    int timeOnTask = 0;
     Int2D home;
     
-    @Override
-    public void setTimeOnTask(int timeOnTask) {
-        this.timeOnTask = timeOnTask;
-    }
+    
 
     
     @Override
@@ -40,6 +36,10 @@ public abstract class DefaultValuator implements DecisionValuator {
     @Override
     public void resetTimeSinceLastCompletion() {
         timeSinceCompletion = 0;
+    }
+    
+    public int getTimeSinceCompletion() {
+        return timeSinceCompletion;
     }
     
     //does nothing
@@ -73,12 +73,12 @@ public abstract class DefaultValuator implements DecisionValuator {
     }
     
     @Override
-    public Task decideNextTask(Task availableTasks[], Task unavailableTasks[]) {
-        if(epsilonChooseRandomTask > random.nextDouble()){
+    public Task decideNextTask(Task availableTasks[], Task unavailableTasks[], Task curChosenTask, double timeOnTask) {
+        if(epsilonChooseRandomTask > random.nextDouble() && availableTasks.length > 0){
             return (Task)availableTasks[random.nextInt(availableTasks.length)];
             
         }else{
-            return pickTask(availableTasks, unavailableTasks);
+            return pickTask(availableTasks, unavailableTasks, curChosenTask, timeOnTask);
         }
     }
     
@@ -87,7 +87,7 @@ public abstract class DefaultValuator implements DecisionValuator {
         this.isDead = isDead;
     }
     
-    Task pickTask(Task availableTasks[], Task unavailableTasks[]) {
+    Task pickTask(Task availableTasks[], Task unavailableTasks[], Task curChosenTask, double timeOnTask) {
         return pickTask(availableTasks);
     }
     abstract Task pickTask(Task availableTasks[]);

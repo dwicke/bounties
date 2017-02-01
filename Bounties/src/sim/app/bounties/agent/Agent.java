@@ -12,6 +12,7 @@ import sim.app.bounties.agent.valuator.DecisionValuator;
 import sim.app.bounties.control.IController;
 import sim.app.bounties.jumpship.Jumpship;
 import sim.app.bounties.ra.resource.Resource;
+import sim.app.bounties.ra.resource.ResourceBag;
 import sim.app.bounties.util.Real;
 import sim.engine.SimState;
 import sim.engine.Steppable;
@@ -54,11 +55,13 @@ public class Agent implements IAgent {
     int currentTaskId = -1;
     int trapStep = 10;
     int curEffort = 1;
-    double currentBounty = 0.0;
+    double currentBounty = 100.0;
     long completedTasks = 0;
     private double numResources = 0;
     private boolean resourceNeeded;
     double totalResourcesUsed = 0;
+    
+    ResourceBag resourceBag;
 
     
     public double getTotalREsourcesUsed() {
@@ -68,6 +71,7 @@ public class Agent implements IAgent {
         return trapStep;
     }
 
+    @Override
     public void setTrapStep(int trapStep) {
         this.trapStep = trapStep;
     }
@@ -81,9 +85,11 @@ public class Agent implements IAgent {
     }
     
     
+    @Override
     public int[] getTried() {
         return tried;
     }
+    @Override
     public int[] getCompleted() {
         return completed;
     }
@@ -97,6 +103,7 @@ public class Agent implements IAgent {
     public void setJumpship(Jumpship jumpship) {
         this.jumpship = jumpship;
     }
+    @Override
     public void setCanJumpship(boolean canJumpship) {
         this.canJumpship = canJumpship;
     }
@@ -119,6 +126,7 @@ public class Agent implements IAgent {
         bondsman = bountyState.bondsman;
         tried = new int[bountyState.numTasks];
         completed = new int[bountyState.numTasks];
+        resourceBag = new ResourceBag();
         //decideTask(state);
         decideTaskFailed = true;
     }
@@ -185,9 +193,9 @@ public class Agent implements IAgent {
                     curIndex++;
                 }
                 if (aInBudget.length == 0) {
-                    System.err.println("Agent = " + getId() + " no tasks avail");
+                    //System.err.println("Agent = " + getId() + " no tasks avail");
                 }
-                curTask = decider.decideNextTask(aInBudget, bondsman.getUnAvailableTasks());
+                curTask = decider.decideNextTask(aInBudget, bondsman.getUnAvailableTasks(), curTask, numTimeSteps);
                 //curTask = decider.decideNextTask(bondsman.getAvailableTasks(), bondsman.getUnAvailableTasks());
             }
             else {
@@ -215,7 +223,7 @@ public class Agent implements IAgent {
                 //tried[curTask.getID()]++;
             }
             else {
-                
+                resourceNeeded = false;
             }
         }
     }
@@ -270,7 +278,6 @@ public class Agent implements IAgent {
         }
         if (oldTask.getID() != curTask.getID()) 
         {
-            decider.setTimeOnTask(0);
             oldTask.removeAgentAtTask(this);// I'm not at the task... I've jumped ship
             jumpshipStat(true);
             // consider telling the learner that i've jumped ship so that it can
@@ -310,7 +317,10 @@ public class Agent implements IAgent {
         } 
         else {
             numTimeSteps++;
-            decider.setTimeOnTask(numTimeSteps);
+            currentBounty--;
+//            if (id == 0)
+//                System.err.println("current bounty = " + currentBounty);
+//            
             if (finishedTask()) {
                 // look into adjusting this from 0.0 to something nicer....
                 //completed[curTask.getID()]--;

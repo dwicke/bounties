@@ -94,8 +94,8 @@ public class JumpshipSimpleValuator extends LearningValuator implements Decision
             //updateLearningRate(timeTable.getQValue(curTask.getID(), 0), numTimeSteps);
             
             timeTable.update(curTask.getID(), 0, numTimeSteps);
-            if (this.agentID == 0)
-                System.err.println("Task id = " + curTask.getID() + " numTimesteps = " + numTimeSteps + " new tval = " + timeTable.getQValue(curTask.getID(), 0) + " real distance = " + home.manhattanDistance(curTask.realLocation));
+//            if (this.agentID == 0)
+//                System.err.println("Task id = " + curTask.getID() + " numTimesteps = " + numTimeSteps + " new tval = " + timeTable.getQValue(curTask.getID(), 0) + " real distance = " + home.manhattanDistance(curTask.realLocation));
             
             pTable.update(curTask.getID(), 0, reward);
         }else{

@@ -24,7 +24,7 @@ public class OptimalValuator extends DefaultValuator{
 
 
     @Override
-    Task pickTask(Task[] availableTasks, Task[] unavailableTasks) {
+    Task pickTask(Task availableTasks[], Task unavailableTasks[], Task curChosenTask, double timeOnTask) {
         Task curAvailTask = pickTask(availableTasks);
         double max = curAvailTask.getCurrentReward() / ((double) (curAvailTask.realLocation).manhattanDistance(home));
         Task curTask = null;

@@ -14,7 +14,7 @@ import sim.util.Int2D;
  * @author drew
  */
 public interface DecisionValuator {
-    public Task decideNextTask(Task availableTasks[], Task unavailableTasks[]);
+    public Task decideNextTask(Task availableTasks[], Task unavailableTasks[], Task curChosenTask, double timeOnTask);
     public void learn(Task curTask, double reward, Bag agentsWorking, int numTimeSteps);
     public void setIsDead(boolean isDead);
     public void setHome(Int2D home);// used only for the optimal valuators.
@@ -24,5 +24,4 @@ public interface DecisionValuator {
     public void learnIncrementRate(Task[] tasks);
     public void incrementTimeSinceLastCompletion();
     public void resetTimeSinceLastCompletion();
-    public void setTimeOnTask(int timeOnTask);
 }

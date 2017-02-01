@@ -36,6 +36,10 @@ public class JSRResourceValuator extends LearningValuator implements DecisionVal
         incrementRateTable = new QTable(numTasks, 1, tTableLearningRate, tTableDiscountBeta, initValue); 
     }
     @Override
+    Task pickTask(Task availableTasks[], Task unavailableTasks[]) {
+        return pickTask(availableTasks);
+    }
+    @Override
     Task pickTask(Task availableTasks[]) {
         double max = -1;
         Task curTask = null;
@@ -46,21 +50,25 @@ public class JSRResourceValuator extends LearningValuator implements DecisionVal
             // over all tasks
             double tval = timeTable.getQValue(availTask.getID(), 0);
             double incRate = incrementRateTable.getQValue(availTask.getID(), 0);
-            /*
-            if (preTask != null && preTask.getID() == availTask.getID()) {
-                // then we are deciding whether to jumpship and we are considering continuing the current task
-                // so we have to change the tval
-                tval -= timeOnTask;
-                
-            }
-            */
+           
             
             double curReward = availTask.getCurrentReward();
             
             
             double pval = getPValue(availTask);
-            double value = pval * ((curReward + tval*incRate - availTask.getNumResourcesNeeded()*availTask.getResource().getReservePrice()) / (tval + timeSinceCompletion));//1.0 / tval * pval * (curReward + tval*incRate);
             
+            //timeSinceCompletion = 1;
+            // pval is the confidence of sucess
+            
+            //double value = pval * ((curReward + tval*incRate - availTask.getNumResourcesNeeded()*availTask.getResource().getReservePrice()) / (tval + timeSinceCompletion));//1.0 / tval * pval * (curReward + tval*incRate);
+            
+            //if ()
+            
+            
+            // pval*(reward - prospectiveCosts) - operatingCosts
+            // basically we have the confidence of success times the amount we will earn minus the amount we would spend to succeed
+            // then we subtract the operating costs basically the cost to travel to the task
+            double value = pval * (curReward + incRate*tval - availTask.getNumResourcesNeeded()*availTask.getResource().getReservePrice()) - tval;
             
             if (value > 0 && value > max) {
                 max = value;
@@ -68,6 +76,13 @@ public class JSRResourceValuator extends LearningValuator implements DecisionVal
             }
         }
         return curTask;
+    }
+    
+    double getEstimatedResourceCost(Task task) {
+        
+        return 0.0;
+        
+        
     }
     @Override
     double getPValue(Task availTask) {
@@ -91,8 +106,8 @@ public class JSRResourceValuator extends LearningValuator implements DecisionVal
     public void learn(Task curTask, double reward, Bag agentsWorking, int numTimeSteps) {
         double oldT = timeTable.getQValue(curTask.getID(), 0);
         learn(curTask, reward, numTimeSteps);// I don't use agentsWorking.
-        updateEpsilon(oldT, timeTable.getQValue(curTask.getID(), 0));
-        
+        //updateEpsilon(oldT, timeTable.getQValue(curTask.getID(), 0));
+        updateEpsilon(1.0, 1.0);
     }
     
     public void updateLearningRate(double oldT, double newT) {

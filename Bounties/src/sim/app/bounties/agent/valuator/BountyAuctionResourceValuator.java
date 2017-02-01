@@ -30,46 +30,74 @@ public class BountyAuctionResourceValuator extends BountyAuctionValuator {
     /**
      * What is my "bid" for each of the available tasks in the system
      * @param availTasks
+     * @param curChosenTask
+     * @param timeOnTask
      * @return 
      */
     @Override
-    public double[] getEvaluations(Task[] availTasks){
+    public double[] getEvaluations(Task[] availTasks, Task curChosenTask, double timeOnTask){
        
         //System.err.println("Agent id" + agentID);
         double[] evaluations = new double[availTasks.length];
-        for (int i = 0; i < availTasks.length; i++) { // over all tasks
-            double tval = timeTable.getQValue(availTasks[i].getID(), 0);
-            double incRate = incrementRateTable.getQValue(availTasks[i].getID(), 0);
+        
+        int i = 0;
+        for (Task availTask : availTasks) {
+            double confidence = pTable.getQValue(((Task)availTasks[i]).getID(), 0);
             
-            //System.err.println("Increment rate = " + incRate);
-           /* if (tval > numTimeSteps) {
-                tval -= numTimeSteps;
-            }*/
-            double curReward = availTasks[i].getCurrentReward();
-            if (this.preTask != null && this.preTask.getID() != availTasks[i].getID()) {
-                curReward = availTasks[i].getCurrentReward() - this.preTask.getCurrentReward();
-                if (curReward < 0) {
-                    curReward = 0;
-                }
+            
+            
+            // pval*(reward - prospectiveCosts) - (totalOperatingCostsSoFar + prospectiveOperatingCosts)
+            // basically we have the confidence of success times the amount we will earn minus the amount we would spend to succeed
+            // then we subtract the operating costs basically the cost to travel to the task
+            double timeOnCurTask = 0.0;
+            if (curChosenTask != null && availTask.getID() == curChosenTask.getID()) {
+                timeOnCurTask = timeOnTask;
             }
-            double pval = pTable.getQValue(((Task)availTasks[i]).getID(), 0);
-            double value = pval * ((curReward + tval*incRate - availTasks[i].getNumResourcesNeeded()*availTasks[i].getResource().getReservePrice()) / (tval + timeSinceCompletion));
-            //double value = 1.0 / tval * pval * (curReward + tval*incRate);
+            double value = confidence * (getPotentialReward(availTask, timeOnCurTask) - getProspectiveCosts(availTask) - getProspectiveOperatingCosts(availTask, timeOnCurTask))
+                    - getTotalOperatingCostsSinceLastPayment();
             if  (isDead == true){
                     value*=-1;
             }
             evaluations[i] = value;
-            //System.err.print(value + ", ");
+            i++;
         }
         
-        //System.err.println("\n-----------");
-        
+       
+
         return evaluations;
     }
     
     
     
     
+    double getPotentialReward(Task task, double timeOnCurTask) {
+        double timeLeft = timeTable.getQValue(task.getID(), 0) - timeOnCurTask;
+        if (timeLeft <= 0) {
+            timeLeft = 1.0; // i think i'll be done the next timestep.
+        }
+        return task.getCurrentReward() + incrementRateTable.getQValue(task.getID(), 0) * timeLeft;
+    }
+    
+    double getProspectiveCosts(Task task) {
+        return 0.0;
+    }
+    
+    double getTotalOperatingCostsSinceLastPayment() {
+        return getPerTimestepCost() * (double)getTimeSinceCompletion();
+    }
+    
+    double getProspectiveOperatingCosts(Task task, double timeOnCurTask) {
+        double timeLeft = timeTable.getQValue(task.getID(), 0) - timeOnCurTask;
+        if (timeLeft <= 0) {
+            timeLeft = 1.0; // i think i'll be done the next timestep.
+        }
+        return getPerTimestepCost() * timeLeft;
+    }
+    
+
+    private double getPerTimestepCost() {
+        return 1.0;// easiest way...
+    }
     
     @Override
     public void learn(Task curTask, double reward, Bag agentsWorking, int numTimeSteps) {

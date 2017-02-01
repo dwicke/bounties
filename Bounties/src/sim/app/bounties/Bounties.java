@@ -37,8 +37,10 @@ import sim.app.bounties.agent.valuator.JumpshipSimpleBValuator;
 import sim.app.bounties.agent.valuator.JumpshipSimpleJValuator;
 import sim.app.bounties.agent.valuator.JumpshipSimpleRValuator;
 import sim.app.bounties.agent.valuator.JumpshipSimpleValuator;
+import sim.app.bounties.agent.valuator.MultiTaskJumpShip;
 import sim.app.bounties.agent.valuator.OptimalValuator;
 import sim.app.bounties.agent.valuator.RealAuctionValuator;
+import sim.app.bounties.agent.valuator.SimpleCostJumpship;
 import sim.app.bounties.bondsman.*;
 
 
@@ -868,6 +870,7 @@ public class Bounties extends SimState {
                     } else {
                         bot.setJumpship(new DefaultJumpship()); // don't teleport
                     }
+                    
                     valuator = new JumpshipSimpleValuator(random, epsilonChooseRandomTask, x, true, numTasks, numAgents);
                     break;
                 case 11: // random and 
@@ -1006,7 +1009,16 @@ public class Bounties extends SimState {
                     }
                     valuator = new BountyAuctionResourceValuator(random, 0, x, false, numTasks, numAgents);
                     auctionVals.add(valuator);
-                break;
+                    break;
+                case 29:
+                    bot.setCanJumpship(true);
+                    if (shouldTeleport) {
+                        bot.setJumpship(new ResetJumpship()); // teleport on jumpship
+                    } else {
+                        bot.setJumpship(new DefaultJumpship()); // don't teleport
+                    }
+                    valuator = new SimpleCostJumpship(random, epsilonChooseRandomTask, x, numTasks, numAgents);
+                    break;
                 default:
                     break;
             }

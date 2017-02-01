@@ -8,6 +8,7 @@ package sim.app.bounties.agent.valuator;
 import ec.util.MersenneTwisterFast;
 import java.util.Collections;
 import sim.app.bounties.environment.Task;
+import sim.app.bounties.util.QTable;
 import sim.util.Bag;
 
 /**
@@ -20,6 +21,8 @@ public class BountyAuctionValuator extends LearningValuator implements DecisionV
     
     public BountyAuctionValuator(MersenneTwisterFast random, double epsilonChooseRandomTask, int agentID, boolean hasOneUp, int numTasks, int numRobots) {
         super(random, epsilonChooseRandomTask, agentID, hasOneUp, numTasks, numRobots);
+        timeTable = new QTable(numTasks, 1, tTableLearningRate, tTableDiscountBeta, random, 100, 50); 
+        pTable = new QTable(numTasks, 1, pTableLearningRate, pTableDiscountBeta, random, .5, 1.5); 
     }
     
     
@@ -32,7 +35,7 @@ public class BountyAuctionValuator extends LearningValuator implements DecisionV
      * @param availTasks
      * @return 
      */
-    public double[] getEvaluations(Task[] availTasks){
+    public double[] getEvaluations(Task[] availTasks, Task curChosenTask, double timeOnTask){
        
         //System.err.println("Agent id" + agentID);
         double[] evaluations = new double[availTasks.length];
@@ -54,13 +57,9 @@ public class BountyAuctionValuator extends LearningValuator implements DecisionV
         return evaluations;
     }
     
-    @Override
-    Task pickTask(Task availableTasks[], Task unavailableTasks[]) {
-        return pickTask(availableTasks);
-    }
     
     @Override
-    public Task pickTask(Task[] availableTasks){
+    public Task pickTask(Task availableTasks[], Task unavailableTasks[], Task curChosenTask, double timeOnTask){
         
         // basically 
         // merge the valuations from all agents
@@ -76,7 +75,7 @@ public class BountyAuctionValuator extends LearningValuator implements DecisionV
         //System.err.println("Num avail tasks = " + availableTasks.length);
         // for each agent get their valuation
         for (int i = 0; i < auctionValuators.length; i++) {
-            valuations[i] = auctionValuators[i].getEvaluations(availableTasks);// agent id corresponds to agent's index.
+            valuations[i] = auctionValuators[i].getEvaluations(availableTasks,curChosenTask,timeOnTask );// agent id corresponds to agent's index.
         }
         
         

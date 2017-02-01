@@ -33,7 +33,7 @@ public class BountyRAuctionValuator extends BountyAuctionValuator {
      * @return 
      */
     @Override
-    public double[] getEvaluations(Task[] availTasks){
+    public double[] getEvaluations(Task[] availTasks, Task curChosenTask, double timeOnTask){
        
         //System.err.println("Agent id" + agentID);
         double[] evaluations = new double[availTasks.length];
