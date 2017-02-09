@@ -352,6 +352,8 @@ public class Bondsman implements Steppable {
         curTask.removeAllAgentAtTask();
         // You stay bad at it until someone else becomes bad at it.
         // this should have been more clearly stated in the paper.
+        // really the task should be reset back to being ok for you after
+        curTask.setBadForWho(-1); // see how this does.
         if(bounties.random.nextInt(badOdds)==0){
             curTask.setBadForWho(bounties.random.nextInt(bounties.numAgents));
         }

@@ -317,7 +317,7 @@ public class Agent implements IAgent {
         } 
         else {
             numTimeSteps++;
-            currentBounty--;
+            currentBounty -= 1;
 //            if (id == 0)
 //                System.err.println("current bounty = " + currentBounty);
 //            
