@@ -62,7 +62,7 @@ public class JumpshipGroupSimpleValuator extends LearningValuator implements Dec
             int numGoingAfterTask = -numAtTask; // don't count those that are already present at the task
             // this is how many agents that are not at the task but are still going after it
             for (int i = 0; i < availTask.getCurrentAgentsOnTask().numObjs; i++) {
-                if ((int)(availTask.getCurrentAgentsOnTask().get(i)) != agentID && tval < 50) {
+                if ((Integer)(availTask.getCurrentAgentsOnTask().get(i)) != agentID && tval < 50) {
                     numGoingAfterTask++;
                 }
             }
@@ -107,7 +107,6 @@ public class JumpshipGroupSimpleValuator extends LearningValuator implements Dec
         
     }
 
-    @Override
     public void learn(Task curTask, double reward, Bag agentsWorking, int numTimeSteps) {
         double oldT = timeTable.getQValue(curTask.getID(), 0);
         learn(curTask, reward, numTimeSteps);// I don't use agentsWorking.

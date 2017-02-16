@@ -61,8 +61,8 @@ public class ExpandedComplexValuator extends LearningValuator implements Decisio
         double pmul = 1.0;
         
         for(int i = 0; i < taski.getLastAgentsWorkingOnTask().size(); i++) {
-            if ((int)(taski.getLastAgentsWorkingOnTask().objs[i]) != agentID)
-                pmul *= pTable.getQValue(taski.getID(), (int)(taski.getLastAgentsWorkingOnTask().objs[i]));
+            if ((Integer)(taski.getLastAgentsWorkingOnTask().objs[i]) != agentID)
+                pmul *= pTable.getQValue(taski.getID(), (Integer)(taski.getLastAgentsWorkingOnTask().objs[i]));
         }
         return pmul;
         
@@ -77,20 +77,19 @@ public class ExpandedComplexValuator extends LearningValuator implements Decisio
         double kmul = 1.0;
         
         for(int i = 0; i < taski.getLastAgentsWorkingOnTask().size(); i++) {
-            if ((int)(taski.getLastAgentsWorkingOnTask().objs[i]) != agentID)
-                kmul *= kTable.getQValue(taski.getID(), (int)(taski.getLastAgentsWorkingOnTask().objs[i]));
+            if ((Integer)(taski.getLastAgentsWorkingOnTask().objs[i]) != agentID)
+                kmul *= kTable.getQValue(taski.getID(), (Integer)(taski.getLastAgentsWorkingOnTask().objs[i]));
         }
         return kmul;
         
     }
 
-    @Override
     public void learn(Task curTask, double reward, Bag agentsWorking, int numTimeSteps) {
         if(reward == 1.0) {
             timeTable.update(curTask.getID(), 0, numTimeSteps);
             for (int i = 0; i < curTask.getLastAgentsWorkingOnTask().numObjs; i++) {
-                pTable.update(curTask.getID(), ((int)curTask.getLastAgentsWorkingOnTask().objs[i]), reward);
-                kTable.update(curTask.getID(), ((int)curTask.getLastAgentsWorkingOnTask().objs[i]), curTask.getIsNonExclusive());
+                pTable.update(curTask.getID(), ((Integer)curTask.getLastAgentsWorkingOnTask().objs[i]), reward);
+                kTable.update(curTask.getID(), ((Integer)curTask.getLastAgentsWorkingOnTask().objs[i]), curTask.getIsNonExclusive());
 
             }
             

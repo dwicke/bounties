@@ -67,8 +67,8 @@ public class JumpshipComplexValuator extends LearningValuator implements Decisio
         double pmul = 1.0;
         
         for(int i = 0; i < taski.getCurrentAgentsOnTask().size(); i++) {
-            //if ((int)(taski.getCurrentAgentsOnTask().objs[i]) != agentID)
-                pmul *= pTable.getQValue(taski.getID(), (int)(taski.getCurrentAgentsOnTask().objs[i]));
+            //if ((Integer)(taski.getCurrentAgentsOnTask().objs[i]) != agentID)
+                pmul *= pTable.getQValue(taski.getID(), (Integer)(taski.getCurrentAgentsOnTask().objs[i]));
         }
         return pmul;
         
@@ -80,21 +80,20 @@ public class JumpshipComplexValuator extends LearningValuator implements Decisio
         if(reward == 1.0) {
             timeTable.update(curTask.getID(), 0, numTimeSteps);
             for (int i = 0; i < agentsWorking.numObjs; i++) {
-                pTable.update(curTask.getID(),(int) (agentsWorking.objs[i]), reward);
+                pTable.update(curTask.getID(),(Integer) (agentsWorking.objs[i]), reward);
             }
             if (this.hasOneUp)
                 pTable.oneUpdate(oneUpdateGamma);
             return;
         }
         for (int i = 0; i < agentsWorking.numObjs; i++) {
-                pTable.update(curTask.getID(), ((int)agentsWorking.objs[i]), reward);
+                pTable.update(curTask.getID(), ((Integer)agentsWorking.objs[i]), reward);
         }
         //pTable.update(curTask.getID(), curTask.getLastFinishedRobotID(), reward);
        if (this.hasOneUp)
                 pTable.oneUpdate(oneUpdateGamma);
     }
     
-    @Override
     public void learn(Task curTask, double reward, Bag agentsWorking, int numTimeSteps) {
         double oldT = timeTable.getQValue(curTask.getID(), 0);
         complexLearn(curTask, reward, agentsWorking, numTimeSteps);

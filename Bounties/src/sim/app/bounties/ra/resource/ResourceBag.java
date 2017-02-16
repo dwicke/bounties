@@ -18,7 +18,7 @@ public class ResourceBag {
     EnumMap<ResourceType, Integer> resourcebag;
 
     public ResourceBag() {
-        resourcebag = new EnumMap<>(ResourceType.class);
+        resourcebag = new EnumMap<ResourceType, Integer>(ResourceType.class);
     }
     
     

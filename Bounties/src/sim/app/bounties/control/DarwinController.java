@@ -39,12 +39,10 @@ public class DarwinController implements IController{
     }
     
     
-    @Override
     public boolean gotoPosition(SimState state, Int2D position) {
         return false;
     }
 
-    @Override
     public boolean gotoGoalPosition(SimState state, Real position) {
         count++;
         if (count != effortLevel) { // only go when I have accumulated enough effort...
@@ -71,7 +69,6 @@ public class DarwinController implements IController{
 
     boolean isReady = false;
     boolean sentApproach = false;
-    @Override
     public boolean gotoTaskPosition(SimState state, Real position) {
         if (darwin.isConnected() && ((DarwinParser)darwin.getParser()).hasData()) {
             int x = (int) (((DarwinParser)darwin.getParser()).getPoseX() * 10 + 30);
@@ -157,16 +154,13 @@ public class DarwinController implements IController{
         throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
 
-    @Override
     public void setMyRobot(IAgent robot) {
         me = robot;
     }
 
-    @Override
     public boolean setPosition(SimState state, Int2D position) {
         throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
-    @Override
     public void setEffort(int effort) {
         this.effortLevel = effort;
     }
