@@ -22,8 +22,8 @@
     <dependencies>
         <dependency>
             <groupId>com.github.dwicke</groupId>
-            <artifactId>mason-maven</artifactId>
-            <version>3b7a0f1</version>
+            <artifactId>mason</artifactId>
+            <version>v1.0</version>
         </dependency>
     </dependencies>
 </project>
